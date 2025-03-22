@@ -1,6 +1,5 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
-import { User } from '../Users/User';
 
 @Entity({ name: 'sales' })
 export class Sale extends EntityBase {
@@ -18,7 +17,4 @@ export class Sale extends EntityBase {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   CreatedAt: string;
-
-  @ManyToOne(() => User, (user) => user.Sales)
-  user: User
 }

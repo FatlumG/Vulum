@@ -1,19 +1,25 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 
-@Entity({ name: 'sales' })
-export class Sale extends EntityBase {
+@Entity({ name: 'users' })
+export class User extends EntityBase {
   @PrimaryGeneratedColumn('increment')
-  OrderId: number;
+  ProductId: number;
 
   @Column()
-  OName: string;
+  ProductName: string;
 
   @Column()
-  UserId: number;
+  ProductDescription: string;
 
   @Column('decimal', { precision: 8, scale: 2, default: 0 })
-  TotalPrice: number;
+  Price: number;
+
+  @Column({ default: 1 })
+  Stock: number;
+
+  @Column()
+  Category: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   CreatedAt: string;
