@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 
-@Entity({ name: 'users' })
+@Entity({ name: 'categories' })
 export class Category extends EntityBase {
   @PrimaryGeneratedColumn('increment')
   CategoryId: number;

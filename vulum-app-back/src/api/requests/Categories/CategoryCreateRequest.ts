@@ -1,13 +1,11 @@
 import { IsNotEmpty, IsString, MinLength, MaxLength } from 'class-validator';
 
 export class CategoryCreateRequest {
-  @MaxLength(20)
   @MinLength(2)
   @IsString()
   @IsNotEmpty()
   CategoryName: string;
 
-  @MaxLength(20)
   @MinLength(2)
   @IsString()
   @IsNotEmpty()

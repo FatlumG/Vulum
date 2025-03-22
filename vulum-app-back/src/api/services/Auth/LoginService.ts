@@ -14,7 +14,7 @@ export class LoginService {
 
   public async login(data: LoginRequest) {
     let user = await this.userRepository.findOne({
-      where: { email: data.Email },
+      where: { Email: data.Email },
       relations: ['role'],
     });
 
@@ -28,10 +28,10 @@ export class LoginService {
 
     return this.authService.sign(
       {
-        userId: user.UserId,
-        email: user.Email,
-        role_id: user.RoleId,
-        role: user.role.RoleName,
+        UserId: user.UserId,
+        Email: user.Email,
+        RoleId: user.RoleId,
+        RoleName: user.role.RoleName,
       },
       { user: { id: user.UserId, email: user.Email, role: user.role.RoleName } },
     );
