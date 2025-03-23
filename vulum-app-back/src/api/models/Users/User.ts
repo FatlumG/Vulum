@@ -9,7 +9,7 @@ export class User extends EntityBase {
   @PrimaryGeneratedColumn('increment')
   UserId: number;
 
-  @Column()
+  @Column({ unique: true })
   Username: string;
 
   @Column()
@@ -18,41 +18,41 @@ export class User extends EntityBase {
   @Column()
   LName: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   ProfilePhotoUrl?: string;
 
-  @Column()
+  @Column({ unique: true })
   Email: string;
 
   @Column()
   @Exclude()
   Password: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   Phone?: string;
 
-  @Column({default: 1})
+  @Column({ default: 1 })
   PricingPlan: number;
 
-  @Column({default: 0})
+  @Column({ default: 0 })
   Products: number;
 
-  @Column({default: 0})
+  @Column({ default: 0 })
   Orders: number;
 
-  @Column({default: 0})
+  @Column({ default: 0 })
   Sales: number;
 
-  @Column({default: 0})
+  @Column({ default: 0 })
   Favorites: number;
 
-  @Column({default: 0})
+  @Column({ default: 0 })
   Todos: number;
 
-  @Column({default: 0})
+  @Column({ default: 0 })
   Payments: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   Address?: string;
 
   @Column()
