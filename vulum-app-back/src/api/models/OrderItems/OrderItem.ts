@@ -1,28 +1,33 @@
-// import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-// import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
-// import { Order } from '../Orders/Order';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
+import { Product } from '../Products/Product';
+import { Order } from '../Orders/Order';
 
-// @Entity({ name: 'sales' })
-// export class Sale extends EntityBase {
-//   @PrimaryGeneratedColumn('increment')
-//   SaleId: number;
+@Entity({ name: 'orderitems' })
+export class OrderItem extends EntityBase {
+  @PrimaryGeneratedColumn('increment')
+  OrderItemId: number;
 
-//   @Column()
-//   OrderId: number;
+  @Column()
+  OrderId: number;
 
-//   @Column()
-//   UserId: number;
+  @Column()
+  ProductId: number;
 
-//   @Column('decimal', { precision: 8, scale: 2, default: 0 })
-//   TotalPrice: number;
+  @Column()
+  Quantity: number;
 
-//   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-//   CreatedAt: string;
+  @Column('decimal', { precision: 8, scale: 2, default: 0 })
+  Price: number;
 
-//   @ManyToOne(() => User, (user) => user.Sales)
-//   user: User;
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  OrderedAt: string;
 
-//   @ManyToMany(() => Order)
-//   @JoinTable(() => OrderItems)
-//   order: Order;
-// }
+  @ManyToOne(() => Order, (order) => order.orderItems, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'OrderId' })
+  order: Order;
+
+  @ManyToOne(() => Product, (product) => product.orderItems, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'ProductId' })
+  product: Product;
+}

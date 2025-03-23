@@ -35,13 +35,6 @@ export class CategoryController extends ControllerBase {
     return await this.categoryService.findOneById(id, resourceOptions);
   }
 
-  @Get('/me')
-  public async getMe(@QueryParams() parseResourceOptions: RequestQueryParser, @LoggedUser() loggedUser: LoggedUserInterface) {
-    const resourceOptions = parseResourceOptions.getAll();
-
-    return await this.categoryService.findOneById(loggedUser.userId, resourceOptions);
-  }
-
   @Post()
   @HttpCode(201)
   public async create(@Body() category: CategoryCreateRequest) {
