@@ -12,9 +12,9 @@ export class OrderRepository extends RepositoryBase<Order> {
     return await this.save(entity);
   }
 
-  public async updateOrder(Order: Order, data: object) {
-    Object.assign(Order, data);
+  public async updateOrder(order: Order, data: object) {
+    Object.assign(order, data);
 
-    return await Order.save(data);
+    return await order.save(data);
   }
 }

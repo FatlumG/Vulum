@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 import { OrderStatus } from './OEnum';
+import { OrderItem } from '../OrderItems/OrderItem';
 
 @Entity({ name: 'orders' })
 export class Order extends EntityBase {
@@ -21,4 +22,7 @@ export class Order extends EntityBase {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   CreatedAt: string;
+
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.OrderId)
+  orderItems: OrderItem[];
 }
