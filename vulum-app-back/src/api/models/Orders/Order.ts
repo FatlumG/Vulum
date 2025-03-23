@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
-import { OrderStatus } from './Enum';
+import { OrderStatus } from './OEnum';
 
 @Entity({ name: 'orders' })
 export class Order extends EntityBase {
