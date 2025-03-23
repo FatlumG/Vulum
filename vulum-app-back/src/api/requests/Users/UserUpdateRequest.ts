@@ -30,9 +30,6 @@ export class UserUpdateRequest {
   @IsNotEmpty()
   Password: string;
 
-  @MaxLength(20)
-  @MinLength(6)
-  @IsString()
   @IsNotEmpty()
-  RoleId: string;
+  RoleId: number;
 }

@@ -19,6 +19,11 @@ export class UserService {
   }
 
   public async create(data: object) {
+    const existingUser = await this.userRepository.findOne(data);
+    if (existingUser) {
+      throw new Error('This User already exists');
+    }
+
     let user = await this.userRepository.createUser(data);
 
     this.eventDispatcher.dispatch('onUserCreate', user);
