@@ -8,7 +8,7 @@ import { Sale } from '../Sales/Sale';
 @Entity({ name: 'users' })
 export class User extends EntityBase {
   @PrimaryGeneratedColumn('increment')
-  UserId: number;
+  id: number;
 
   @Column({ unique: true })
   Username: string;

@@ -4,7 +4,7 @@ import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 @Entity({ name: 'favorites' })
 export class Favorite extends EntityBase {
   @PrimaryGeneratedColumn('increment')
-  FavoriteId: number;
+  id: number;
 
   @Column()
   UserId: number;

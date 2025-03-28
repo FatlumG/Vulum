@@ -5,7 +5,7 @@ import { BillingCycle } from './PEnum';
 @Entity({ name: 'pricing' })
 export class Plan extends EntityBase {
   @PrimaryGeneratedColumn('increment')
-  PlanId: number;
+  id: number;
 
   @Column()
   PlanName: string;

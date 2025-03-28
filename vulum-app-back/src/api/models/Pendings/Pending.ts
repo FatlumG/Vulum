@@ -4,7 +4,7 @@ import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 @Entity({ name: 'pendings' })
 export class Pending extends EntityBase {
   @PrimaryGeneratedColumn('increment')
-  PendingId: number;
+  id: number;
 
   @Column()
   OrderId: number;

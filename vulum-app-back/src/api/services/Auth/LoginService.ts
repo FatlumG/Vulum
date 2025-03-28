@@ -28,12 +28,12 @@ export class LoginService {
 
     return this.authService.sign(
       {
-        UserId: user.UserId,
+        id: user.id,
         Email: user.Email,
         RoleId: user.RoleId,
         RoleName: user.role.RoleName,
       },
-      { user: { id: user.UserId, email: user.Email, role: user.role.RoleName } },
+      { user: { id: user.id, email: user.Email, role: user.role.RoleName } },
     );
   }
 }
