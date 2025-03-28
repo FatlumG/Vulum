@@ -9,5 +9,8 @@ export class OrderCreateRequest {
   UserId: number;
 
   @IsNotEmpty()
+  CreatedBy: number;
+
+  @IsNotEmpty()
   TotalPrice: number;
 }

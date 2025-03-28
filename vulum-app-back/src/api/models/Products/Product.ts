@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 import { OrderItem } from '../OrderItems/OrderItem';
+import { User } from '../Users/User';
 
 @Entity({ name: 'products' })
 export class Product extends EntityBase {
@@ -25,6 +26,12 @@ export class Product extends EntityBase {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   CreatedAt: string;
 
+  @Column()
+  CreatedBy: number;
+
   @OneToMany(() => OrderItem, (orderItem) => orderItem.ProductId)
   orderItems: OrderItem[];
+
+  @ManyToOne(() => User, (user) => user.Products)
+  user: User;
 }
