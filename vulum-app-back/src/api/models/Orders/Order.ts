@@ -6,7 +6,7 @@ import { OrderItem } from '../OrderItems/OrderItem';
 @Entity({ name: 'orders' })
 export class Order extends EntityBase {
   @PrimaryGeneratedColumn('increment')
-  OrderId: number;
+  id: number;
 
   @Column()
   OName: string;

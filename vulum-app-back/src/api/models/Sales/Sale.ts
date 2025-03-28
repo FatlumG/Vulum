@@ -5,7 +5,7 @@ import { Order } from '../Orders/Order';
 @Entity({ name: 'sales' })
 export class Sale extends EntityBase {
   @PrimaryGeneratedColumn('increment')
-  SaleId: number;
+  id: number;
 
   @Column()
   OrderId: number;
@@ -23,6 +23,6 @@ export class Sale extends EntityBase {
   @JoinColumn({ name: 'UserId' })
   user: User;
 
-  @OneToMany(() => Order, (order) => order.OrderId)
+  @OneToMany(() => Order, (order) => order.id)
   order: Order;
 }
