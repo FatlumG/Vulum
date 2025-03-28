@@ -17,8 +17,8 @@ export class PendingService {
     return await this.pendingRepository.getManyAndCount(resourceOptions);
   }
 
-  public async findOneById(PendingId: number, resourceOptions?: object) {
-    return await this.getRequestedPendingOrFail(PendingId, resourceOptions);
+  public async findOneById(id: number, resourceOptions?: object) {
+    return await this.getRequestedPendingOrFail(id, resourceOptions);
   }
 
   public async create(data: object) {
@@ -39,8 +39,8 @@ export class PendingService {
     return await this.pendingRepository.delete(id);
   }
 
-  private async getRequestedPendingOrFail(PendingId: number, resourceOptions?: object) {
-    let pending = await this.pendingRepository.getOneById(PendingId, resourceOptions);
+  private async getRequestedPendingOrFail(id: number, resourceOptions?: object) {
+    let pending = await this.pendingRepository.getOneById(id, resourceOptions);
 
     if (!pending) {
       throw new CategoryNotFoundException();
