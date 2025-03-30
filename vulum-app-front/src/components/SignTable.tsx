@@ -1,18 +1,20 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { toggleState } from "../features/toggle/toggleSlice";
+import { useNavigate } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import google from "../assets/icons/google.svg";
 import facebook from "../assets/icons/facebook.svg";
 import apple from "../assets/icons/apple.svg";
+import { RootState } from "../app/store";
 
-function SignTable({ SignIn }) {
+interface SignTableProps {
+  SignIn: boolean;
+}
+
+const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
   const [showPassword, setShowPassword] = useState(false);
-  //   const [onSignIn, setOnSignIn] = useState(SignIn);
-  const onSignIn = useSelector((state) => state.signToggle.onSignIn);
-  const dispatch = useDispatch();
 
+  const navigate = useNavigate();
   const togglePassword = () => {
     setShowPassword(!showPassword);
   };
@@ -21,12 +23,12 @@ function SignTable({ SignIn }) {
     <div className="bg-white px-8 py-10 h-[600px] w-[500px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-10 shadow-2xl rounded-[40px]">
       <div className="flex justify-between items-center">
         <p>Welcome to Vulum</p>
-        {onSignIn ? (
+        {SignIn ? (
           <div>
             <p className="text-lightGray text-sm">No Account?</p>
             <p
               className="text-darkBlue text-sm cursor-pointer"
-              onClick={() => dispatch(toggleState())}
+              onClick={() => navigate("/sign-up")}
             >
               Sign Up
             </p>
@@ -36,7 +38,7 @@ function SignTable({ SignIn }) {
             <p className="text-lightGray text-sm">Have an Account?</p>
             <p
               className="text-darkBlue text-sm cursor-pointer"
-              onClick={() => dispatch(toggleState())}
+              onClick={() => navigate("/")}
             >
               Sign In
             </p>
@@ -44,7 +46,7 @@ function SignTable({ SignIn }) {
         )}
       </div>
       <h1 className="text-[40px] font-[600]">
-        {onSignIn ? "Sign In" : "Sign Up"}
+        {SignIn ? "Sign In" : "Sign Up"}
       </h1>
 
       <div className="mt-7 w-full">
@@ -59,7 +61,7 @@ function SignTable({ SignIn }) {
         />
       </div>
 
-      {onSignIn ? (
+      {SignIn ? (
         <div className="mt-7 w-full">
           <label htmlFor="password" className="text-[14px]">
             Enter your password
@@ -135,7 +137,7 @@ function SignTable({ SignIn }) {
                   className="absolute right-5 text-lightGray"
                 />
               )}
-              {onSignIn && (
+              {SignIn && (
                 <span className="pt-3 absolute top-[100%] right-[0] text-[12px] text-darkBlue cursor-pointer">
                   Forgot Password?
                 </span>
@@ -150,14 +152,14 @@ function SignTable({ SignIn }) {
           Sign In
         </button>
 
-        {onSignIn && (
+        {SignIn && (
           <>
             <span className="text-lightGray">OR</span>
             <div className="w-full flex justify-between items-center">
               <div className="flex justify-center items-center gap-5 bg-lightBlue py-3 px-8 rounded-xl cursor-pointer">
                 <img src={google} alt="Google Icon" />
                 <p className="text-darkBlue text-[15px]">
-                  Sign In with Google
+                  Countinue with Google
                 </p>
               </div>
               <div className="bg-[#F6F6F6] py-3 px-5 rounded-xl cursor-pointer">
@@ -172,6 +174,6 @@ function SignTable({ SignIn }) {
       </div>
     </div>
   );
-}
+};
 
 export default SignTable;
