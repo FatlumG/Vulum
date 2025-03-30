@@ -14,9 +14,11 @@ export class User extends EntityBase {
   Username: string;
 
   @Column()
+  @JoinColumn({ name: 'First Name' })
   FName: string;
 
   @Column()
+  @JoinColumn({ name: 'Last Name' })
   LName: string;
 
   @Column({ nullable: true })

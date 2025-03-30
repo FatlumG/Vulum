@@ -50,4 +50,32 @@ export class UserService {
 
     return user;
   }
+
+  public async getUsersBySearch(search: string) {
+    const isSearchEmpty = !search || search.trim() === ',';
+
+    const queryBuilder = this.userRepository.createQueryBuilder('User').leftJoinAndSelect('User.role', 'role');
+
+    if (!isSearchEmpty) {
+      const searchFields = ['FName', 'LName', 'Email', 'RoleName'];
+
+      const orConditions = searchFields.map((field) => {
+        return `${field} LIKE :search`;
+      });
+
+      const whereClause = `(${orConditions.join(' OR ')})`;
+      const searchValue = `%${search}%`;
+
+      queryBuilder.andWhere(whereClause, { search: searchValue });
+    }
+
+    queryBuilder.select(['User.id', 'User.Username', 'User.FName', 'User.LName', 'User.Email', 'User.Phone', 'role.RoleName']);
+
+    const users = await queryBuilder.getMany();
+
+    if (!users) {
+      throw new UserNotFoundException();
+    }
+    return users;
+  }
 }

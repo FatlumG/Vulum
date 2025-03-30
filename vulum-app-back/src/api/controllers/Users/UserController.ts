@@ -42,6 +42,11 @@ export class UserController extends ControllerBase {
     return await this.userService.findOneById(loggedUser.userId, resourceOptions);
   }
 
+  @Get('/:username')
+  public async getBySearch(@Param('username') username: string, @QueryParams() parseResourceOptions: RequestQueryParser) {
+    return this.userService.getUsersBySearch(username);
+  }
+
   @Post()
   @HttpCode(201)
   public async create(@Body() user: UserCreateRequest) {

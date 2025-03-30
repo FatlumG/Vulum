@@ -35,6 +35,11 @@ export class ProductController extends ControllerBase {
     return await this.productService.findOneById(id, resourceOptions);
   }
 
+  @Get('/:productName([a-zA-Z]+)')
+  public async getByProductName(@Param('productName') productName: string, @QueryParams() parseResourceOptions: RequestQueryParser) {
+    return this.productService.getProductsBySearch(productName);
+  }
+
   @Post()
   @HttpCode(201)
   public async create(@Body() product: ProductCreateRequest) {

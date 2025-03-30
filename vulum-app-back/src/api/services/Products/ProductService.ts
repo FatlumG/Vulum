@@ -48,4 +48,40 @@ export class ProductService {
 
     return product;
   }
+
+  public async getProductsBySearch(search: string) {
+    const isSearchEmpty = !search || search.trim() === ',';
+
+    const queryBuilder = this.productRepository.createQueryBuilder('Product');
+
+    if (!isSearchEmpty) {
+      const searchFields = ['ProductName', 'ProductDescription'];
+
+      const orConditions = searchFields.map((field) => {
+        return `${field} LIKE :search`;
+      });
+
+      const whereClause = `(${orConditions.join(' OR ')})`;
+      const searchValue = `%${search}%`;
+
+      queryBuilder.andWhere(whereClause, { search: searchValue });
+    }
+
+    queryBuilder.select([
+      'Product.id',
+      'Product.ProductName',
+      'Product.ProductDescription',
+      'Product.Price',
+      'Product.Stock',
+      'Product.Category',
+      'Product.CreatedAt',
+    ]);
+
+    const products = await queryBuilder.getMany();
+
+    if (!products) {
+      throw new CategoryNotFoundException();
+    }
+    return products;
+  }
 }
