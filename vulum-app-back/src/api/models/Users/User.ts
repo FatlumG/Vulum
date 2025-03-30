@@ -1,13 +1,14 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, OneToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 import { Exclude, Expose } from 'class-transformer';
 import { Role } from './Role';
 import { HashService } from '@base/infrastructure/services/hash/HashService';
+import { Sale } from '../Sales/Sale';
 
 @Entity({ name: 'users' })
 export class User extends EntityBase {
   @PrimaryGeneratedColumn('increment')
-  UserId: number;
+  id: number;
 
   @Column({ unique: true })
   Username: string;
@@ -79,4 +80,7 @@ export class User extends EntityBase {
 
     this.RoleId = roleId;
   }
+
+  @OneToMany(() => Sale, (sale) => sale.UserId)
+  sales: Sale[];
 }

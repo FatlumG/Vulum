@@ -1,25 +1,33 @@
-import { Column, Entity, ManyToOne, OneToMany, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, JoinColumn, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
+import { PaymentStatus } from './PEnum';
 import { User } from '../Users/User';
 import { Order } from '../Orders/Order';
-@Entity({ name: 'sales' })
-export class Sale extends EntityBase {
+
+@Entity({ name: 'payments' })
+export class Payment extends EntityBase {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
   @Column()
-  OrderId: number;
+  OrderId: string;
 
   @Column()
-  UserId: number;
+  UserId: string;
+
+  @Column()
+  StripePaymentId: string;
 
   @Column('decimal', { precision: 8, scale: 2, default: 0 })
-  TotalPrice: number;
+  Amount: number;
+
+  @Column({ default: PaymentStatus.PENDING })
+  PStatus: PaymentStatus;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  SoldAt: string;
+  CreatedAt: string;
 
-  @ManyToOne(() => User, (user) => user.Sales)
+  @ManyToOne(() => User, (user) => user.Payments)
   @JoinColumn({ name: 'UserId' })
   user: User;
 

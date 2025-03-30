@@ -4,7 +4,7 @@ import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 @Entity({ name: 'categories' })
 export class Category extends EntityBase {
   @PrimaryGeneratedColumn('increment')
-  CategoryId: number;
+  id: number;
 
   @Column()
   CategoryName: string;

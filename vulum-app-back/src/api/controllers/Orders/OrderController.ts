@@ -35,13 +35,6 @@ export class OrderController extends ControllerBase {
     return await this.orderService.findOneById(id, resourceOptions);
   }
 
-  @Get('/me')
-  public async getMe(@QueryParams() parseResourceOptions: RequestQueryParser, @LoggedUser() loggedUser: LoggedUserInterface) {
-    const resourceOptions = parseResourceOptions.getAll();
-
-    return await this.orderService.findOneById(loggedUser.userId, resourceOptions);
-  }
-
   @Post()
   @HttpCode(201)
   public async create(@Body() order: OrderCreateRequest) {

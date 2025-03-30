@@ -1,10 +1,12 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
+import { OrderItem } from '../OrderItems/OrderItem';
+import { User } from '../Users/User';
 
-@Entity({ name: 'users' })
-export class User extends EntityBase {
+@Entity({ name: 'products' })
+export class Product extends EntityBase {
   @PrimaryGeneratedColumn('increment')
-  ProductId: number;
+  id: number;
 
   @Column()
   ProductName: string;
@@ -23,4 +25,13 @@ export class User extends EntityBase {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   CreatedAt: string;
+
+  @Column()
+  CreatedBy: number;
+
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.ProductId)
+  orderItems: OrderItem[];
+
+  @ManyToOne(() => User, (user) => user.Products)
+  user: User;
 }

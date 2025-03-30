@@ -1,10 +1,10 @@
 import { Param, Get, JsonController, Post, Body, Put, Delete, HttpCode, UseBefore, QueryParams } from 'routing-controllers';
-import { FavoriteService } from '@api/services/Favorites/FavoriteService';
+import { SaleService } from '@api/services/Sales/SaleService';
 import { Service } from 'typedi';
-import { FavoriteCreateRequest } from '@api/requests/Favorites/FavoriteCreateRequest';
+import { SaleCreateRequest } from '@api/requests/Sales/SaleCreateRequest';
 import { AuthCheck } from '@base/infrastructure/middlewares/Auth/AuthCheck';
 import { ControllerBase } from '@base/infrastructure/abstracts/ControllerBase';
-import { FavoriteUpdateRequest } from '@api/requests/Favorites/FavoriteUpdateRequest';
+import { SaleUpdateRequest } from '@api/requests/Sales/SaleUpdateRequest';
 import { OpenAPI } from 'routing-controllers-openapi';
 import { RequestQueryParser } from 'typeorm-simple-query-parser';
 import { LoggedUser } from '@base/decorators/LoggedUser';
@@ -14,10 +14,10 @@ import { LoggedUserInterface } from '@api/interfaces/users/LoggedUserInterface';
 @OpenAPI({
   security: [{ bearerAuth: [] }],
 })
-@JsonController('/favorites')
+@JsonController('/sales')
 @UseBefore(AuthCheck)
-export class FavoriteController extends ControllerBase {
-  public constructor(private favoriteService: FavoriteService) {
+export class SaleController extends ControllerBase {
+  public constructor(private saleService: SaleService) {
     super();
   }
 
@@ -25,30 +25,30 @@ export class FavoriteController extends ControllerBase {
   public async getAll(@QueryParams() parseResourceOptions: RequestQueryParser) {
     const resourceOptions = parseResourceOptions.getAll();
 
-    return await this.favoriteService.getAll(resourceOptions);
+    return await this.saleService.getAll(resourceOptions);
   }
 
   @Get('/:id([0-9]+)')
   public async getOne(@Param('id') id: number, @QueryParams() parseResourceOptions: RequestQueryParser) {
     const resourceOptions = parseResourceOptions.getAll();
 
-    return await this.favoriteService.findOneById(id, resourceOptions);
+    return await this.saleService.findOneById(id, resourceOptions);
   }
 
   @Post()
   @HttpCode(201)
-  public async create(@Body() favorite: FavoriteCreateRequest) {
-    return await this.favoriteService.create(favorite);
+  public async create(@Body() sale: SaleCreateRequest) {
+    return await this.saleService.create(sale);
   }
 
   @Put('/:id')
-  public async update(@Param('id') id: number, @Body() favorite: FavoriteUpdateRequest) {
-    return await this.favoriteService.updateOneById(id, favorite);
+  public async update(@Param('id') id: number, @Body() sale: SaleUpdateRequest) {
+    return await this.saleService.updateOneById(id, sale);
   }
 
   @Delete('/:id')
   @HttpCode(204)
   public async delete(@Param('id') id: number) {
-    return await this.favoriteService.deleteOneById(id);
+    return await this.saleService.deleteOneById(id);
   }
 }
