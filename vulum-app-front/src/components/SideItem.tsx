@@ -1,7 +1,13 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 
-function SideItem({ icon, title, path }) {
+interface SideItemProps {
+  icon: React.ReactNode;
+  title: string;
+  path: string;
+}
+
+const SideItem: React.FC<SideItemProps> = ({ icon, title, path }) => {
   const linkClass = ({ isActive }) =>
     isActive
       ? `bg-secondary text-white flex items-center gap-3 w-[200px] h-[60px] px-3 rounded-[5px]`
@@ -13,6 +19,6 @@ function SideItem({ icon, title, path }) {
       <p>{title}</p>
     </NavLink>
   );
-}
+};
 
 export default SideItem;

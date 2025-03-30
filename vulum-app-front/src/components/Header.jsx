@@ -3,7 +3,7 @@ import vulum from "../assets/logos/vulumBlue.png";
 import profile from "../assets/figures/profilep.png";
 import ukFlag from "../assets/figures/UK Flag.png";
 import { FaChevronDown } from "react-icons/fa6";
-function Header() {
+const Header = () => {
   return (
     <div className="h-[90px] px-12 w-full flex items-center justify-between bg-white relative shadow-md">
       <img src={vulum} alt="Vulum Logo" className="w-36 " />
@@ -24,6 +24,6 @@ function Header() {
       </div>
     </div>
   );
-}
+};
 
 export default Header;

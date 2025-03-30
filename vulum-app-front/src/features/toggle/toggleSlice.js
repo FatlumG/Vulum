@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const toggleSlice = createSlice({
   name: "signToggle",
-  initialState: { onSignIn: false }, // Fix the typo here
+  initialState: { onSignIn: false },
   reducers: {
     toggleState: (state) => {
       state.onSignIn = !state.onSignIn;
@@ -11,4 +11,4 @@ const toggleSlice = createSlice({
 });
 
 export const { toggleState } = toggleSlice.actions;
-export default toggleSlice.reducer; // Fix the export here
+export default toggleSlice.reducer;

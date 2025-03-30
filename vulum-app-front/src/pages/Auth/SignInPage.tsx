@@ -1,8 +1,8 @@
 import React from "react";
-import SignTable from "../components/SignTable";
-import salyPhone from "../assets/figures/salyPhone.svg";
-import salyMoto from "../assets/figures/salyMoto.svg";
-import logo from "../assets/logos/vulumBlue.png";
+import SignTable from "../../components/SignTable";
+import salyPhone from "../../assets/figures/salyPhone.svg";
+import salyMoto from "../../assets/figures/salyMoto.svg";
+import logo from "../../assets/logos/vulumBlue.png";
 function SignPage() {
   return (
     <div className="h-[100vh] w-[full] bg-secondary">
@@ -23,7 +23,7 @@ function SignPage() {
         alt="Saly in Motorcycle"
         className="absolute top-[100px] right-[2%] z-10"
       />
-      <SignTable />
+      <SignTable SignIn={true}/>
     </div>
   );
 }

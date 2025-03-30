@@ -1,23 +1,25 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import SignPage from "./pages/SignPage";
+import SignInPage from "./pages/Auth/SignInPage";
+import SignUpPage from "./pages/Auth/SignUpPage";
 import DashboardPage from "./pages/DashboardPage";
-import ProductsPage from './pages/ProductsPage';
-import FavoritePage from './pages/FavoritePage';
-import InboxPage from './pages/InboxPage';
-import OListPage from './pages/OListPage';
-import ProdStockPage from './pages/ProdStockPage';
-import PricingPage from './pages/PricingPage';
-import CalendarPage from './pages/CalendarPage';
-import TodoPage from './pages/TodoPage';
-import ContactPage from './pages/ContactPage';
-import InvoicesPage from './pages/InvoicesPage';
-import SettingsPage from './pages/SettingsPage';
+import ProductsPage from "./pages/ProductsPage";
+import FavoritePage from "./pages/FavoritePage";
+import InboxPage from "./pages/InboxPage";
+import OListPage from "./pages/OListPage";
+import ProdStockPage from "./pages/ProdStockPage";
+import PricingPage from "./pages/PricingPage";
+import CalendarPage from "./pages/CalendarPage";
+import TodoPage from "./pages/TodoPage";
+import ContactPage from "./pages/ContactPage";
+import InvoicesPage from "./pages/InvoicesPage";
+import SettingsPage from "./pages/SettingsPage";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<SignPage />} />
+        <Route path="/" element={<SignInPage />} />
+        <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/favorites" element={<FavoritePage />} />
