@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 import { OrderItem } from '../OrderItems/OrderItem';
 import { User } from '../Users/User';
@@ -33,5 +33,6 @@ export class Product extends EntityBase {
   orderItems: OrderItem[];
 
   @ManyToOne(() => User, (user) => user.Products)
+  @JoinColumn({ name: 'CreatedBy' })
   user: User;
 }
