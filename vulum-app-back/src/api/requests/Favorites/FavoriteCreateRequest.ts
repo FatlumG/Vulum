@@ -1,9 +1,6 @@
-import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 export class FavoriteCreateRequest {
-  @IsNotEmpty()
-  UserId: number;
-
   @IsNotEmpty()
   ProductId: number;
 }

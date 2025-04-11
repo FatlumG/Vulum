@@ -3,7 +3,6 @@ import { FavoriteRepository } from '@api/repositories/Favorites/FavoriteReposito
 import { CategoryNotFoundException } from '@api/exceptions/Categories/CategoryNotFoundException';
 import { EventDispatcher, EventDispatcherInterface } from '@base/decorators/EventDispatcher';
 import { InjectRepository } from 'typeorm-typedi-extensions';
-import { HttpCode } from 'routing-controllers/types';
 
 @Service()
 export class FavoriteService {
@@ -22,7 +21,7 @@ export class FavoriteService {
     return await this.getRequestedFavoriteOrFail(id, resourceOptions);
   }
 
-  public async create(data: object) {
+  public async create(data: object, resourceOptions?: object) {
     const existingFavorite = await this.favoriteRepository.getOne(data);
 
     if (existingFavorite) {

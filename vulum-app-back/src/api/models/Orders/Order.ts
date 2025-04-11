@@ -12,8 +12,8 @@ export class Order extends EntityBase {
   @Column()
   OName: string;
 
-  @Column({ name: 'buyer' })
-  UserId: number;
+  @Column({ name: 'UserId' })
+  Buyer: number;
 
   @Column('decimal', { precision: 8, scale: 2, default: 0 })
   TotalPrice: number;

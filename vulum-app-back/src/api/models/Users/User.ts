@@ -4,6 +4,7 @@ import { Exclude, Expose } from 'class-transformer';
 import { Role } from './Role';
 import { HashService } from '@base/infrastructure/services/hash/HashService';
 import { Sale } from '../Sales/Sale';
+import { Product } from '../Products/Product';
 
 @Entity({ name: 'users' })
 export class User extends EntityBase {
@@ -85,4 +86,7 @@ export class User extends EntityBase {
 
   @OneToMany(() => Sale, (sale) => sale.UserId)
   sales: Sale[];
+
+  @OneToMany(() => Product, (product) => product.CreatedBy)
+  products: Product[];
 }
