@@ -44,7 +44,7 @@ export class ProductController extends ControllerBase {
   @Post()
   @HttpCode(201)
   public async create(@Body() product: ProductCreateRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
-    return await this.productService.create(product, loggedUser); // ✅ pass the loggedUser directly
+    return await this.productService.create(product, loggedUser);
   }
 
   @Put('/:id')

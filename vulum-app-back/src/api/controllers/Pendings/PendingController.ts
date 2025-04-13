@@ -37,8 +37,8 @@ export class PendingController extends ControllerBase {
 
   @Post()
   @HttpCode(201)
-  public async create(@Body() pending: PendingCreateRequest) {
-    return await this.pendingService.create(pending);
+  public async create(@Body() pending: PendingCreateRequest, @LoggedUser() LoggedUser: LoggedUserInterface) {
+    return await this.pendingService.create(pending, LoggedUser);
   }
 
   @Put('/:id')

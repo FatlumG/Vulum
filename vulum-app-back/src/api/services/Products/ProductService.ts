@@ -4,9 +4,7 @@ import { CategoryNotFoundException } from '@api/exceptions/Categories/CategoryNo
 import { EventDispatcher, EventDispatcherInterface } from '@base/decorators/EventDispatcher';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import { UserRepository } from '@base/api/repositories/Users/UserRepository';
-import { LoggedUser } from '@base/decorators/LoggedUser';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
-import { Request } from 'express';
 
 @Service()
 export class ProductService {

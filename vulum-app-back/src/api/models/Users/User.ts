@@ -5,6 +5,7 @@ import { Role } from './Role';
 import { HashService } from '@base/infrastructure/services/hash/HashService';
 import { Sale } from '../Sales/Sale';
 import { Product } from '../Products/Product';
+import { Pending } from '../Pendings/Pending';
 
 @Entity({ name: 'users' })
 export class User extends EntityBase {
@@ -51,6 +52,9 @@ export class User extends EntityBase {
   Favorites: number;
 
   @Column({ default: 0 })
+  Pendings: number;
+
+  @Column({ default: 0 })
   Todos: number;
 
   @Column({ default: 0 })
@@ -89,4 +93,7 @@ export class User extends EntityBase {
 
   @OneToMany(() => Product, (product) => product.CreatedBy)
   products: Product[];
+
+  @OneToMany(() => Pending, (pending) => pending.UserId)
+  pendings: Pending[];
 }

@@ -3,6 +3,7 @@ import { PendingRepository } from '@api/repositories/Pendings/PendingRepository'
 import { CategoryNotFoundException } from '@api/exceptions/Categories/CategoryNotFoundException';
 import { EventDispatcher, EventDispatcherInterface } from '@base/decorators/EventDispatcher';
 import { InjectRepository } from 'typeorm-typedi-extensions';
+import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
 
 @Service()
 export class PendingService {
@@ -21,8 +22,13 @@ export class PendingService {
     return await this.getRequestedPendingOrFail(id, resourceOptions);
   }
 
-  public async create(data: object) {
-    let pending = await this.pendingRepository.createPending(data);
+  public async create(data: object, loggedUser: LoggedUserInterface) {
+    const newProduct = {
+      ...data,
+      UserId: { id: loggedUser.id },
+    };
+
+    let pending = await this.pendingRepository.createPending(newProduct);
 
     this.eventDispatcher.dispatch('onPendingCreate', pending);
 
