@@ -1,4 +1,4 @@
-import { Param, Get, JsonController, Post, Body, Put, Delete, HttpCode, UseBefore, QueryParams } from 'routing-controllers';
+import { Param, Get, Req, Res, JsonController, Post, Body, Put, Delete, HttpCode, UseBefore, QueryParams } from 'routing-controllers';
 import { PlanService } from '@api/services/Plans/PlanService';
 import { Service } from 'typedi';
 import { PlanCreateRequest } from '@api/requests/Plans/PlanCreateRequest';
@@ -39,6 +39,18 @@ export class PlanController extends ControllerBase {
   @HttpCode(201)
   public async create(@Body() plan: PlanCreateRequest) {
     return await this.planService.create(plan);
+  }
+
+  @Post('/checkout-session')
+  @HttpCode(200)
+  async createCheckoutSession(@Body() data: { planId: number }, @LoggedUser() loggedUser: LoggedUserInterface) {
+    return await this.planService.createCheckoutSession(data.planId, loggedUser);
+  }
+
+  @Post('/webhook')
+  @HttpCode(200)
+  public async handleWebhook(@Req() req: any, @Res() res: any) {
+    return await this.planService.handleWebhook(req, res);
   }
 
   @Put('/:id')

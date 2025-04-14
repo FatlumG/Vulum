@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsEnum } from 'class-validator';
 import { BillingCycle } from '@base/api/models/Plans/PEnum';
 
 export class PlanCreateRequest {
@@ -11,8 +11,9 @@ export class PlanCreateRequest {
   PlanDescription: string;
 
   @IsNotEmpty()
+  @IsNumber()
   Price: number;
 
-
+  @IsEnum(BillingCycle)
   BillingCycle: BillingCycle;
 }

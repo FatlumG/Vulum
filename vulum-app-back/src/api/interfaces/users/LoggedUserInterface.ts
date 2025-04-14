@@ -3,6 +3,7 @@ export interface LoggedUserInterface {
   email: string;
   role_id: number;
   role: string;
+  plan_id: number;
   iat: number;
   exp: number;
 }
