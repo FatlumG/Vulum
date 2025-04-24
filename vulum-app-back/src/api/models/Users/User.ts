@@ -1,4 +1,4 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, OneToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, OneToOne, OneToMany, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 import { Exclude, Expose } from 'class-transformer';
 import { Role } from './Role';
@@ -36,7 +36,7 @@ export class User extends EntityBase {
   @Column({ nullable: true })
   Phone?: string;
 
-  @Column({ default: 1 })
+  @Column()
   PricingPlan: number;
 
   @Column({ default: 0 })

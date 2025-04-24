@@ -7,7 +7,6 @@ import { PlanCreateRequest } from '@base/api/requests/Plans/PlanCreateRequest';
 import { BillingCycle } from '@base/api/models/Plans/PEnum';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
 import { UserRepository } from '@base/api/repositories/Users/UserRepository';
-import Stripe from 'stripe';
 import stripe from '@base/config/stripe';
 
 @Service()
@@ -80,44 +79,44 @@ export class PlanService {
   }
 
   public async handleWebhook(req: any, res: any) {
-    const sig = req.headers['stripe-signature'];
+    const sig = req.headers['stripe-signature'] as string;
+    const endpointSecret = 'whsec_395e49200c08ca58c7c22cdeba47f3b2097053917f9bbc12ceb08dd97cebfcc9';
 
-    let event: Stripe.Event;
+    console.log(req.body, 'req.body');
+    console.log(sig, 'sig');
+    console.log(endpointSecret, 'endpointSecret');
+
+    let event;
 
     try {
-      // Construct the event with the signature verification
-      event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+
+      switch (event.type) {
+        case 'checkout.session.completed':
+          const session = event.data.object;
+          console.log(session, 'session');
+          break;
+
+        case 'invoice.payment_succeeded':
+          const invoice = event.data.object;
+          console.log(invoice, 'invoice');
+          break;
+
+        case 'customer.subscription.created':
+          const subscription = event.data.object;
+          console.log(subscription, 'subscription');
+          break;
+
+        default:
+          console.log(`Unhandled event type ${event.type}`);
+      }
+
+      res.status(200).send('Event received');
     } catch (err) {
-      console.error('Webhook signature verification failed:', err.message);
+      console.error('Error occurred while verifying webhook signature:', err.message);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    // Handle the event based on its type
-    if (event.type === 'checkout.session.completed') {
-      const session = event.data.object as Stripe.Checkout.Session;
-
-      try {
-        const email = session.customer_email;
-        const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
-        const priceId = lineItems.data[0]?.price?.id;
-
-        const user = await this.userRepository.findOne(email);
-        const plan = await this.planRepository.findOne(priceId);
-
-        if (user && plan) {
-          user.PricingPlan = plan.id;
-          await this.userRepository.save(user);
-          console.log(`Assigned plan "${plan.PlanName}" to user "${user.Email}"`);
-        } else {
-          console.warn(`User or plan not found for email ${email} and priceId ${priceId}`);
-        }
-      } catch (err) {
-        console.error('Error processing webhook:', err.message);
-        return res.status(500).send('Webhook processing failed');
-      }
-    }
-
-    // Return success response to Stripe
     res.status(200).send('Webhook received');
   }
 

@@ -17,6 +17,7 @@ import { routingControllersToSpec } from 'routing-controllers-openapi';
 import * as swaggerUiExpress from 'swagger-ui-express';
 import { buildSchema } from 'type-graphql';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 
 export class App {
   private app: express.Application = express();
@@ -32,13 +33,26 @@ export class App {
     this.registerEvents();
     this.registerCronJobs();
     this.serveStaticFiles();
+    this.app.use(
+      '/Plan/PlanController.handleWebhook',
+      bodyParser.raw({ type: 'application/json' }),
+    );
+    this.app.use(
+      cors({
+        origin: '*',
+        methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST'],
+        preflightContinue: false,
+        optionsSuccessStatus: 204,
+        allowedHeaders: ['Content-Type', 'Authorization', 'Stripe-Signature'],
+      }),
+    );
     this.setupMiddlewares();
     this.registerSocketControllers();
     this.registerRoutingControllers();
     this.registerDefaultHomePage();
     this.setupSwagger();
     await this.setupGraphQL();
-    // this.register404Page()
+    this.register404Page();
   }
 
   private useContainers() {
