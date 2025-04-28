@@ -1,10 +1,11 @@
-import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class OrderCreateRequest {
   @IsNotEmpty()
   @IsString()
   OName: string;
 
+  @IsNumber() 
   @IsNotEmpty()
   UserId: number;
 

@@ -34,5 +34,5 @@ export class Product extends EntityBase {
 
   @ManyToOne(() => User, (user) => user.Products)
   @JoinColumn({ name: 'CreatedBy' })
-  user: User;
+  createdBy: User;
 }

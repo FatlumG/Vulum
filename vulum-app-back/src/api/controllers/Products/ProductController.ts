@@ -8,7 +8,8 @@ import { ProductUpdateRequest } from '@api/requests/Products/ProductUpdateReques
 import { OpenAPI } from 'routing-controllers-openapi';
 import { RequestQueryParser } from 'typeorm-simple-query-parser';
 import { LoggedUser } from '@base/decorators/LoggedUser';
-import { LoggedUserInterface } from '@api/interfaces/users/LoggedUserInterface';
+import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
+import { UserService } from '@base/api/services/Users/UserService';
 
 @Service()
 @OpenAPI({
@@ -17,7 +18,7 @@ import { LoggedUserInterface } from '@api/interfaces/users/LoggedUserInterface';
 @JsonController('/products')
 @UseBefore(AuthCheck)
 export class ProductController extends ControllerBase {
-  public constructor(private productService: ProductService) {
+  public constructor(private productService: ProductService, private userService: UserService) {
     super();
   }
 
@@ -42,8 +43,8 @@ export class ProductController extends ControllerBase {
 
   @Post()
   @HttpCode(201)
-  public async create(@Body() product: ProductCreateRequest) {
-    return await this.productService.create(product);
+  public async create(@Body() product: ProductCreateRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
+    return await this.productService.create(product, loggedUser);
   }
 
   @Put('/:id')

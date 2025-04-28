@@ -35,10 +35,18 @@ export class FavoriteController extends ControllerBase {
     return await this.favoriteService.findOneById(id, resourceOptions);
   }
 
+  // @Post()
+  // @HttpCode(201)
+  // public async create(@Body() favorite: FavoriteCreateRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
+  //   return await this.favoriteService.create(favorite, { UserId: loggedUser.id });
+  // }
+
   @Post()
   @HttpCode(201)
-  public async create(@Body() favorite: FavoriteCreateRequest) {
-    return await this.favoriteService.create(favorite);
+  public async create(@Body() favorite: FavoriteCreateRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
+    console.log('Logged user id:', loggedUser.id);
+    console.log('Checking for existing favorite:', favorite.ProductId, loggedUser.id);
+    return await this.favoriteService.create(favorite, { UserId: loggedUser.id });
   }
 
   @Put('/:id')

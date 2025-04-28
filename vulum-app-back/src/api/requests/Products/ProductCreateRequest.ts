@@ -17,7 +17,4 @@ export class ProductCreateRequest {
 
   @IsNotEmpty()
   Category: number;
-
-  @IsNotEmpty()
-  CreatedBy: number;
 }

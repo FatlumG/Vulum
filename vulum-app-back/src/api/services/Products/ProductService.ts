@@ -3,11 +3,14 @@ import { ProductRepository } from '@api/repositories/Products/ProductRepository'
 import { CategoryNotFoundException } from '@api/exceptions/Categories/CategoryNotFoundException';
 import { EventDispatcher, EventDispatcherInterface } from '@base/decorators/EventDispatcher';
 import { InjectRepository } from 'typeorm-typedi-extensions';
+import { UserRepository } from '@base/api/repositories/Users/UserRepository';
+import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
 
 @Service()
 export class ProductService {
   constructor(
     @InjectRepository() private productRepository: ProductRepository,
+    @InjectRepository() private userRepository: UserRepository,
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
   ) {
     //
@@ -21,8 +24,13 @@ export class ProductService {
     return await this.getRequestedProductOrFail(id, resourceOptions);
   }
 
-  public async create(data: object) {
-    let product = await this.productRepository.createproduct(data);
+  public async create(data: object, loggedUser: LoggedUserInterface) {
+    const newProduct = {
+      ...data,
+      createdBy: { id: loggedUser.id },
+    };
+
+    const product = await this.productRepository.createproduct(newProduct);
 
     this.eventDispatcher.dispatch('onProductCreate', product);
 
