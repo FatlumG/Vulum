@@ -50,7 +50,7 @@ export class PlanController extends ControllerBase {
   @Post('/webhook')
   @HttpCode(200)
   public async handleWebhook(@Req() req: any, @Res() res: any) {
-    return await this.planService.handleWebhook(req, res);
+    // return await this.planService.handleWebhook(req, res);
   }
 
   @Put('/:id')

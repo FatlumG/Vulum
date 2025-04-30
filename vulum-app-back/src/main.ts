@@ -6,7 +6,7 @@ import { loadEventDispatcher } from '@base/utils/load-event-dispatcher';
 import { useContainer as routingControllersUseContainer, useExpressServer, getMetadataArgsStorage } from 'routing-controllers';
 import { loadHelmet } from '@base/utils/load-helmet';
 import { Container } from 'typedi';
-import { createConnection, useContainer as typeormOrmUseContainer } from 'typeorm';
+import { createConnection, In, useContainer as typeormOrmUseContainer } from 'typeorm';
 import { Container as containerTypeorm } from 'typeorm-typedi-extensions';
 import { useSocketServer, useContainer as socketUseContainer } from 'socket-controllers';
 import { registerController as registerCronJobs, useContainer as cronUseContainer } from 'cron-decorators';
@@ -18,6 +18,12 @@ import * as swaggerUiExpress from 'swagger-ui-express';
 import { buildSchema } from 'type-graphql';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import stripe from './config/stripe';
+// import { UserRepository } from './api/repositories/Users/UserRepository';
+// import { PlanRepository } from './api/repositories/Plans/PlanRepository';
+import { Plan } from './api/models/Plans/Plan';
+import { User } from './api/models/Users/User';
+import { getRepository } from 'typeorm';
 
 export class App {
   private app: express.Application = express();
@@ -34,10 +40,6 @@ export class App {
     this.registerCronJobs();
     this.serveStaticFiles();
     this.app.use(
-      '/Plan/PlanController.handleWebhook',
-      bodyParser.raw({ type: 'application/json' }),
-    );
-    this.app.use(
       cors({
         origin: '*',
         methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST'],
@@ -46,6 +48,134 @@ export class App {
         allowedHeaders: ['Content-Type', 'Authorization', 'Stripe-Signature'],
       }),
     );
+    // this.app.post('/api/pricing/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+    //   const sig = req.headers['stripe-signature'];
+    //   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET; // your webhook secret
+
+    //   let event;
+
+    //   try {
+    //     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    //     console.log(event.data.object, 'event.data.object');
+    //   } catch (err) {
+    //     console.error('Webhook signature verification failed.', err.message);
+    //     return res.status(400).send(`Webhook Error: ${err.message}`);
+    //   }
+
+    //   switch (event.type) {
+    //     case 'checkout.session.completed':
+    //       const session = event.data.object;
+    //       const { userId, planId } = session.metadata;
+
+    //       if (!userId || !planId) {
+    //         throw new Error('User or plan not found');
+    //       }
+
+    //       const userRepository = new UserRepository();
+    //       const planRepository = new PlanRepository();
+    //       const user = await userRepository.findOne(userId);
+    //       if (!user) {
+    //         throw new Error('User not found');
+    //       }
+    //       const plan: Plan | null = await planRepository.findOne(planId);
+
+    //       if (!plan) {
+    //         throw new Error('Plan not found');
+    //       }
+
+    //       user.PricingPlan = plan;
+
+    //       await userRepository.save(user);
+
+    //       console.log('Checkout session completed', session);
+    //       break;
+
+    //     case 'invoice.payment_succeeded':
+    //       const invoice = event.data.object;
+    //       console.log('Invoice payment succeeded', invoice);
+
+    //       break;
+
+    //     case 'customer.subscription.created':
+    //       const subscription = event.data.object;
+    //       console.log('Customer subscription created', subscription);
+
+    //       break;
+
+    //     default:
+    //       console.log(`Unhandled event type ${event.type}`);
+    //   }
+
+    //   res.status(200).send('Webhook received');
+    // });
+    this.app.post('/api/pricing/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+      const sig = req.headers['stripe-signature'];
+      const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+      let event;
+
+      try {
+        event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+        console.log(event.data.object, 'event.data.object');
+      } catch (err) {
+        console.error('Webhook signature verification failed.', err.message);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+      }
+
+      try {
+        switch (event.type) {
+          case 'checkout.session.completed':
+            try {
+              const session = event.data.object;
+              const { userId, planId } = session.metadata;
+
+              if (!userId || !planId) return res.status(400).send('User or plan not found');
+
+              const userRepository = getRepository(User);
+              const planRepository = getRepository(Plan);
+
+              const user = await userRepository.findOne({
+                where: { id: userId },
+                relations: ['PricingPlan'],
+              });
+              if (!user) return res.status(400).send('User not found');
+
+              const plan: Plan = await planRepository.findOne({
+                where: { id: planId },
+              });
+              if (!plan) return res.status(400).send('Plan not found');
+
+              user.PricingPlan = plan;
+              await userRepository.save(user);
+
+              console.log('Checkout session completed', session);
+              return res.status(200).send('Checkout session processed');
+            } catch (error) {
+              console.log('Webhook error for checkout.session.completed:', error);
+              return res.status(500).send('Internal server error');
+            }
+
+          case 'invoice.payment_succeeded':
+            const invoice = event.data.object;
+            console.log('Invoice payment succeeded', invoice);
+            break;
+
+          case 'customer.subscription.created':
+            const subscription = event.data.object;
+            console.log('Customer subscription created', subscription);
+            break;
+
+          default:
+            console.log(`Unhandled event type ${event.type}`);
+        }
+      } catch (err) {
+        console.error('Error handling event', err.message);
+        return res.status(500).send(`Event Handling Error: ${err.message}`);
+      }
+
+      res.status(200).send('Webhook received');
+    });
+
     this.setupMiddlewares();
     this.registerSocketControllers();
     this.registerRoutingControllers();

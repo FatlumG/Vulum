@@ -6,8 +6,8 @@ import { InjectRepository } from 'typeorm-typedi-extensions';
 import { PlanCreateRequest } from '@base/api/requests/Plans/PlanCreateRequest';
 import { BillingCycle } from '@base/api/models/Plans/PEnum';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
-import { UserRepository } from '@base/api/repositories/Users/UserRepository';
 import stripe from '@base/config/stripe';
+import { UserRepository } from '@base/api/repositories/Users/UserRepository';
 
 @Service()
 export class PlanService {
@@ -32,7 +32,6 @@ export class PlanService {
       name: data.PlanName,
       description: data.PlanDescription,
     });
-
     const price = await stripe.prices.create({
       unit_amount: Math.round(data.Price * 100),
       currency: 'usd',
@@ -41,17 +40,13 @@ export class PlanService {
       },
       product: product.id,
     });
-
     const planWithStripe = {
       ...data,
       StripeProductId: product.id,
       StripePriceId: price.id,
     };
-
     let plan = await this.planRepository.createPlan(planWithStripe);
-
     this.eventDispatcher.dispatch('onPlanCreate', plan);
-
     return plan;
   }
 
@@ -60,7 +55,6 @@ export class PlanService {
     if (!plan || !plan.StripePriceId) {
       throw new Error('Plan or Stripe price not found');
     }
-
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: plan.BillingCycle === 'none' ? 'payment' : 'subscription',
@@ -71,53 +65,40 @@ export class PlanService {
           quantity: 1,
         },
       ],
-      success_url: 'http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',
+      // success?session_id={CHECKOUT_SESSION_ID}
+      success_url: 'http://localhost:3000/docs/?session_id={CHECKOUT_SESSION_ID}',
       cancel_url: 'http://localhost:3000/cancel',
+      metadata: { userId: user.id, planId },
     });
-
     return { url: session.url };
   }
-
-  public async handleWebhook(req: any, res: any) {
-    const sig = req.headers['stripe-signature'] as string;
-    const endpointSecret = 'whsec_395e49200c08ca58c7c22cdeba47f3b2097053917f9bbc12ceb08dd97cebfcc9';
-
-    console.log(req.body, 'req.body');
-    console.log(sig, 'sig');
-    console.log(endpointSecret, 'endpointSecret');
-
-    let event;
-
+  public async handleWebhook(userId: number, planId: number, req: any, res: any) {
     try {
-      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+      const userRepository = this.userRepository;
+      const planRepository = this.planRepository;
 
-      switch (event.type) {
-        case 'checkout.session.completed':
-          const session = event.data.object;
-          console.log(session, 'session');
-          break;
-
-        case 'invoice.payment_succeeded':
-          const invoice = event.data.object;
-          console.log(invoice, 'invoice');
-          break;
-
-        case 'customer.subscription.created':
-          const subscription = event.data.object;
-          console.log(subscription, 'subscription');
-          break;
-
-        default:
-          console.log(`Unhandled event type ${event.type}`);
+      // Check if user exists
+      const user = await userRepository.findOne(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
       }
 
-      res.status(200).send('Event received');
-    } catch (err) {
-      console.error('Error occurred while verifying webhook signature:', err.message);
-      return res.status(400).send(`Webhook Error: ${err.message}`);
-    }
+      // Check if plan exists
+      const plan: any = await planRepository.findOne(planId);
+      if (!plan) {
+        return res.status(404).json({ message: 'Plan not found' });
+      }
 
-    res.status(200).send('Webhook received');
+      // Update the user's plan
+      user.PricingPlan = plan;
+      await userRepository.save(user);
+
+      // Return success response
+      res.json({ success: true, message: 'Plan updated successfully' });
+    } catch (error) {
+      console.error('Error handling webhook:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
   }
 
   public async updateOneById(id: number, data: object) {

@@ -6,6 +6,7 @@ import { HashService } from '@base/infrastructure/services/hash/HashService';
 import { Sale } from '../Sales/Sale';
 import { Product } from '../Products/Product';
 import { Pending } from '../Pendings/Pending';
+import { Plan } from '../Plans/Plan';
 
 @Entity({ name: 'users' })
 export class User extends EntityBase {
@@ -36,8 +37,9 @@ export class User extends EntityBase {
   @Column({ nullable: true })
   Phone?: string;
 
-  @Column()
-  PricingPlan: number;
+  @ManyToOne(() => Plan, { eager: true })
+  @JoinColumn({ name: 'PricingPlan' }) // explicitly specify the column name
+  PricingPlan: Plan;
 
   @Column({ default: 0 })
   Products: number;
