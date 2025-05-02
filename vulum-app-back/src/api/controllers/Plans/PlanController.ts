@@ -47,12 +47,6 @@ export class PlanController extends ControllerBase {
     return await this.planService.createCheckoutSession(data.planId, loggedUser);
   }
 
-  @Post('/webhook')
-  @HttpCode(200)
-  public async handleWebhook(@Req() req: any, @Res() res: any) {
-    // return await this.planService.handleWebhook(req, res);
-  }
-
   @Put('/:id')
   public async update(@Param('id') id: number, @Body() plan: PlanUpdateRequest) {
     return await this.planService.updateOneById(id, plan);

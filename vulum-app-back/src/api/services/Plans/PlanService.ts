@@ -32,6 +32,7 @@ export class PlanService {
       name: data.PlanName,
       description: data.PlanDescription,
     });
+
     const price = await stripe.prices.create({
       unit_amount: Math.round(data.Price * 100),
       currency: 'usd',
@@ -40,6 +41,7 @@ export class PlanService {
       },
       product: product.id,
     });
+
     const planWithStripe = {
       ...data,
       StripeProductId: product.id,
@@ -71,34 +73,6 @@ export class PlanService {
       metadata: { userId: user.id, planId },
     });
     return { url: session.url };
-  }
-  public async handleWebhook(userId: number, planId: number, req: any, res: any) {
-    try {
-      const userRepository = this.userRepository;
-      const planRepository = this.planRepository;
-
-      // Check if user exists
-      const user = await userRepository.findOne(userId);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-
-      // Check if plan exists
-      const plan: any = await planRepository.findOne(planId);
-      if (!plan) {
-        return res.status(404).json({ message: 'Plan not found' });
-      }
-
-      // Update the user's plan
-      user.PricingPlan = plan;
-      await userRepository.save(user);
-
-      // Return success response
-      res.json({ success: true, message: 'Plan updated successfully' });
-    } catch (error) {
-      console.error('Error handling webhook:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
   }
 
   public async updateOneById(id: number, data: object) {

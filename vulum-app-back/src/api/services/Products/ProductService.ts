@@ -5,6 +5,8 @@ import { EventDispatcher, EventDispatcherInterface } from '@base/decorators/Even
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import { UserRepository } from '@base/api/repositories/Users/UserRepository';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
+import { ProductCreateRequest } from '@base/api/requests/Products/ProductCreateRequest';
+import stripe from '@base/config/stripe';
 
 @Service()
 export class ProductService {
@@ -24,17 +26,52 @@ export class ProductService {
     return await this.getRequestedProductOrFail(id, resourceOptions);
   }
 
-  public async create(data: object, loggedUser: LoggedUserInterface) {
-    const newProduct = {
+  public async create(data: ProductCreateRequest, loggedUser: LoggedUserInterface) {
+    const productItem = await stripe.products.create({
+      name: data.ProductName,
+      description: data.ProductDescription,
+    });
+
+    const price = await stripe.prices.create({
+      unit_amount: Math.round(data.Price * 100),
+      currency: 'usd',
+      product: productItem.id,
+    });
+
+    const planWithStripe = {
       ...data,
-      createdBy: { id: loggedUser.id },
+      StripeProductId: productItem.id,
+      StripePriceId: price.id,
     };
 
-    const product = await this.productRepository.createproduct(newProduct);
-
+    let product = await this.productRepository.createproduct(planWithStripe);
     this.eventDispatcher.dispatch('onProductCreate', product);
+    return productItem;
+  }
 
-    return product;
+  public async createCheckoutSession(productId: number, user: any) {
+    const product = await this.productRepository.findOne(productId);
+    if (!product || !product.StripePriceId) {
+      throw new Error('Product or Stripe price not found');
+    }
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'payment',
+      customer_email: user.email,
+      line_items: [
+        {
+          price: product.StripePriceId,
+          quantity: 1,
+        },
+      ],
+      // success?session_id={CHECKOUT_SESSION_ID}
+      success_url: 'http://localhost:3000/docs/?session_id={CHECKOUT_SESSION_ID}&token={CHECKOUT_SESSION_ID}',
+      cancel_url: 'http://localhost:3000/cancel',
+      metadata: { userId: user.id, productId },
+    });
+    console.log('User ID:', user.id); // Log this before creating the session
+
+    return { url: session.url };
   }
 
   public async updateOneById(id: number, data: object) {
@@ -91,5 +128,9 @@ export class ProductService {
       throw new CategoryNotFoundException();
     }
     return products;
+  }
+
+  public async countProductsForUser(userId: number) {
+    return await this.productRepository.count({ where: { CreatedBy: userId } });
   }
 }

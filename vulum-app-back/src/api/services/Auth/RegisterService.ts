@@ -18,7 +18,7 @@ export class RegisterService {
     let user = await this.userRepository.createUser(data);
 
     user = await this.userRepository.findOne({
-      where: { UserId: user.id },
+      where: { id: user.id },
       relations: ['role'],
     });
 
@@ -26,12 +26,12 @@ export class RegisterService {
 
     return this.authService.sign(
       {
-        UserId: user.id,
-        email: user.Email,
+        id: user.id,
+        Email: user.Email,
         RoleId: user.RoleId,
-        role: user.role.RoleName,
+        RoleName: user.role.RoleName,
       },
-      { user: { UserId: user.id, email: user.Email, role: user.role.RoleName } },
+      { user: { id: user.id, Email: user.Email, role: user.role.RoleName } },
     );
   }
 }
