@@ -29,6 +29,12 @@ export class Product extends EntityBase {
   @Column()
   CreatedBy: number;
 
+  @Column()
+  StripeProductId: string;
+
+  @Column()
+  StripePriceId: string;
+
   @OneToMany(() => OrderItem, (orderItem) => orderItem.ProductId)
   orderItems: OrderItem[];
 

@@ -12,7 +12,7 @@ export class PlanRepository extends RepositoryBase<Plan> {
     return await this.save(entity);
   }
 
-  public async updatePlan(Plan: Plan, data: object) {
+  public async updatePlan(Plan: Plan, data: object) { //ts disable line
     Object.assign(Plan, data);
 
     return await Plan.save(data);

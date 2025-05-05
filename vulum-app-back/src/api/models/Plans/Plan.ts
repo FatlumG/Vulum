@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 import { BillingCycle } from './PEnum';
+import { User } from '../Users/User';
 
 @Entity({ name: 'pricing' })
 export class Plan extends EntityBase {
@@ -21,4 +22,13 @@ export class Plan extends EntityBase {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   CreatedAt: string;
+
+  @Column({ nullable: true })
+  StripePriceId: string;
+
+  @Column({ nullable: true })
+  StripeProductId: string;
+
+  @OneToMany(() => User, (user) => user.PricingPlan)
+  users: User[];
 }

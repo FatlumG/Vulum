@@ -19,6 +19,8 @@ export class LoginService {
     });
 
     if (!user) {
+      console.log('User not found');
+
       throw new InvalidCredentials();
     }
 
@@ -30,7 +32,7 @@ export class LoginService {
       {
         id: user.id,
         Email: user.Email,
-        RoleId: user.RoleId,
+        RoleId: user.role.id,
         RoleName: user.role.RoleName,
       },
       { user: { id: user.id, email: user.Email, role: user.role.RoleName } },

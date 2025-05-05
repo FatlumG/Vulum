@@ -6,7 +6,7 @@ import { loadEventDispatcher } from '@base/utils/load-event-dispatcher';
 import { useContainer as routingControllersUseContainer, useExpressServer, getMetadataArgsStorage } from 'routing-controllers';
 import { loadHelmet } from '@base/utils/load-helmet';
 import { Container } from 'typedi';
-import { createConnection, useContainer as typeormOrmUseContainer } from 'typeorm';
+import { createConnection, In, useContainer as typeormOrmUseContainer } from 'typeorm';
 import { Container as containerTypeorm } from 'typeorm-typedi-extensions';
 import { useSocketServer, useContainer as socketUseContainer } from 'socket-controllers';
 import { registerController as registerCronJobs, useContainer as cronUseContainer } from 'cron-decorators';
@@ -17,6 +17,14 @@ import { routingControllersToSpec } from 'routing-controllers-openapi';
 import * as swaggerUiExpress from 'swagger-ui-express';
 import { buildSchema } from 'type-graphql';
 import bodyParser from 'body-parser';
+import cors from 'cors';
+import stripe from './config/stripe';
+import { Plan } from './api/models/Plans/Plan';
+import { User } from './api/models/Users/User';
+import { Product } from './api/models/Products/Product';
+import { getRepository } from 'typeorm';
+import Stripe from 'stripe';
+import { generateInvoicePdf } from './utils/pdf-generator';
 
 export class App {
   private app: express.Application = express();
@@ -32,13 +40,139 @@ export class App {
     this.registerEvents();
     this.registerCronJobs();
     this.serveStaticFiles();
+    this.app.use(
+      cors({
+        origin: '*',
+        methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST'],
+        preflightContinue: false,
+        optionsSuccessStatus: 204,
+        allowedHeaders: ['Content-Type', 'Authorization', 'Stripe-Signature'],
+      }),
+    );
+    this.app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+      const sig = req.headers['stripe-signature'];
+      const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+      let event;
+
+      try {
+        event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+        console.log(event.data.object, 'event.data.object');
+      } catch (err) {
+        console.error('Webhook signature verification failed.', err.message);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+      }
+
+      try {
+        const eventType = event.type;
+        const session = event.data.object as Stripe.Checkout.Session;
+        console.log(`Received event: ${eventType}`);
+
+        switch (eventType) {
+          case 'checkout.session.completed':
+            if (!session.metadata) {
+              console.log('No metadata found');
+              return res.status(400).send('No metadata found');
+            }
+
+            console.log('Session Metadata:', session.metadata);
+
+            const { userId, planId, productId } = session.metadata;
+
+            if (!userId || (!planId && !productId)) {
+              console.log('Missing required metadata fields');
+              console.log({ userId, planId, productId });
+              return res.status(400).send('Missing required metadata fields');
+            }
+
+            const userRepository = getRepository(User);
+            const user = await userRepository.findOne({
+              where: { id: userId },
+              relations: ['PricingPlan'],
+            });
+
+            if (!user) return res.status(400).send('User not found');
+
+            if (planId) {
+              const planRepository = getRepository(Plan);
+              const plan: Plan = await planRepository.findOne({ where: { id: planId } });
+              if (!plan) return res.status(400).send('Plan not found');
+
+              user.PricingPlan = plan;
+              await userRepository.save(user);
+              console.log('User plan updated from checkout.session.completed');
+              return res.status(200).send('Plan updated');
+            }
+
+            if (productId) {
+              const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
+                limit: 1,
+              });
+
+              const productRepository = getRepository(Product);
+              const product: Product = await productRepository.findOne({ where: { id: productId } });
+              if (!product) return res.status(400).send('Product not found');
+              console.log(Number(lineItems.data[0].quantity), 'Number(lineItems.data[0].quantity)');
+
+              user.Orders += 1;
+              generateInvoicePdf({
+                customerName: user.FName,
+                customerAddress: user.Address,
+                invoiceNumber: String(user.Orders),
+                items: [
+                  {
+                    description: product.ProductName,
+                    quantity: Number(lineItems.data[0].quantity),
+                    price: product.Price,
+                  },
+                ],
+                stripePaymentId: String(session.payment_intent),
+                paymentDate: String(new Date()),
+                currency: 'USD',
+              });
+              await userRepository.save(user);
+              console.log('User order incremented from checkout.session.completed');
+              return res.status(200).send('Order incremented');
+            }
+
+            return res.status(400).send('No valid metadata found');
+
+          case 'invoice.payment_succeeded':
+            const invoice = event.data.object as Stripe.Invoice;
+            console.log('Invoice payment succeeded:', invoice);
+            return res.status(200).send('Invoice handled');
+
+          case 'customer.subscription.created':
+            const subscription = event.data.object as Stripe.Subscription;
+            console.log('Customer subscription created:', subscription);
+            return res.status(200).send('Subscription handled');
+
+          case 'charge.updated':
+            const charge = event.data.object as Stripe.Charge;
+            console.log('Charge updated:', charge);
+            return res.status(200).send('Charge handled');
+
+          case 'charge.succeeded':
+            const succeededCharge = event.data.object as Stripe.Charge;
+            console.log('Charge succeeded:', succeededCharge);
+            return res.status(200).send('Charge handled');
+
+          default:
+            console.log(`Unhandled event type: ${eventType}`);
+            return res.status(200).send('Unhandled event type');
+        }
+      } catch (err) {
+        console.error('Webhook handler failed:', err.message);
+        return res.status(500).send(`Internal error: ${err.message}`);
+      }
+    });
+
     this.setupMiddlewares();
     this.registerSocketControllers();
     this.registerRoutingControllers();
     this.registerDefaultHomePage();
     this.setupSwagger();
     await this.setupGraphQL();
-    // this.register404Page()
+    this.register404Page();
   }
 
   private useContainers() {

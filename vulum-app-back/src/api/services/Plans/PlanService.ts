@@ -3,10 +3,19 @@ import { PlanRepository } from '@api/repositories/Plans/PlanRepository';
 import { CategoryNotFoundException } from '@api/exceptions/Categories/CategoryNotFoundException';
 import { EventDispatcher, EventDispatcherInterface } from '@base/decorators/EventDispatcher';
 import { InjectRepository } from 'typeorm-typedi-extensions';
+import { PlanCreateRequest } from '@base/api/requests/Plans/PlanCreateRequest';
+import { BillingCycle } from '@base/api/models/Plans/PEnum';
+import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
+import stripe from '@base/config/stripe';
+import { UserRepository } from '@base/api/repositories/Users/UserRepository';
 
 @Service()
 export class PlanService {
-  constructor(@InjectRepository() private planRepository: PlanRepository, @EventDispatcher() private eventDispatcher: EventDispatcherInterface) {
+  constructor(
+    @InjectRepository() private planRepository: PlanRepository,
+    @InjectRepository() private userRepository: UserRepository,
+    @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
+  ) {
     //
   }
 
@@ -18,12 +27,52 @@ export class PlanService {
     return await this.getRequestedPlanOrFail(id, resourceOptions);
   }
 
-  public async create(data: object) {
-    let plan = await this.planRepository.createPlan(data);
+  public async create(data: PlanCreateRequest) {
+    const product = await stripe.products.create({
+      name: data.PlanName,
+      description: data.PlanDescription,
+    });
 
+    const price = await stripe.prices.create({
+      unit_amount: Math.round(data.Price * 100),
+      currency: 'usd',
+      recurring: {
+        interval: data.BillingCycle === BillingCycle.MONTHLY ? 'month' : 'year',
+      },
+      product: product.id,
+    });
+
+    const planWithStripe = {
+      ...data,
+      StripeProductId: product.id,
+      StripePriceId: price.id,
+    };
+    let plan = await this.planRepository.createPlan(planWithStripe);
     this.eventDispatcher.dispatch('onPlanCreate', plan);
-
     return plan;
+  }
+
+  public async createCheckoutSession(planId: number, user: LoggedUserInterface) {
+    const plan = await this.planRepository.findOne(planId);
+    if (!plan || !plan.StripePriceId) {
+      throw new Error('Plan or Stripe price not found');
+    }
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: plan.BillingCycle === 'none' ? 'payment' : 'subscription',
+      customer_email: user.email,
+      line_items: [
+        {
+          price: plan.StripePriceId,
+          quantity: 1,
+        },
+      ],
+      // success?session_id={CHECKOUT_SESSION_ID}
+      success_url: 'http://localhost:3000/docs/?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: 'http://localhost:3000/cancel',
+      metadata: { userId: user.id, planId },
+    });
+    return { url: session.url };
   }
 
   public async updateOneById(id: number, data: object) {

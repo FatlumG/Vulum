@@ -1,4 +1,4 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, OneToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, OneToOne, OneToMany, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 import { Exclude, Expose } from 'class-transformer';
 import { Role } from './Role';
@@ -6,6 +6,7 @@ import { HashService } from '@base/infrastructure/services/hash/HashService';
 import { Sale } from '../Sales/Sale';
 import { Product } from '../Products/Product';
 import { Pending } from '../Pendings/Pending';
+import { Plan } from '../Plans/Plan';
 
 @Entity({ name: 'users' })
 export class User extends EntityBase {
@@ -36,8 +37,9 @@ export class User extends EntityBase {
   @Column({ nullable: true })
   Phone?: string;
 
-  @Column({ default: 1 })
-  PricingPlan: number;
+  @ManyToOne(() => Plan, { eager: true })
+  @JoinColumn({ name: 'PricingPlan' })
+  PricingPlan: Plan;
 
   @Column({ default: 0 })
   Products: number;
