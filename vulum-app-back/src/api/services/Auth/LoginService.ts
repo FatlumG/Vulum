@@ -19,6 +19,8 @@ export class LoginService {
     });
 
     if (!user) {
+      console.log('User not found');
+
       throw new InvalidCredentials();
     }
 

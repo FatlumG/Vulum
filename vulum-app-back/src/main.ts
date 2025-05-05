@@ -22,9 +22,9 @@ import stripe from './config/stripe';
 import { Plan } from './api/models/Plans/Plan';
 import { User } from './api/models/Users/User';
 import { Product } from './api/models/Products/Product';
-import { Order } from './api/models/Orders/Order';
 import { getRepository } from 'typeorm';
 import Stripe from 'stripe';
+import { generateInvoicePdf } from './utils/pdf-generator';
 
 export class App {
   private app: express.Application = express();
@@ -56,7 +56,7 @@ export class App {
 
       try {
         event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-        console.log(event.data.object, 'event.data.object'); // Log full event data
+        console.log(event.data.object, 'event.data.object');
       } catch (err) {
         console.error('Webhook signature verification failed.', err.message);
         return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -104,11 +104,31 @@ export class App {
             }
 
             if (productId) {
+              const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
+                limit: 1,
+              });
+
               const productRepository = getRepository(Product);
               const product: Product = await productRepository.findOne({ where: { id: productId } });
               if (!product) return res.status(400).send('Product not found');
+              console.log(Number(lineItems.data[0].quantity), 'Number(lineItems.data[0].quantity)');
 
               user.Orders += 1;
+              generateInvoicePdf({
+                customerName: user.FName,
+                customerAddress: user.Address,
+                invoiceNumber: String(user.Orders),
+                items: [
+                  {
+                    description: product.ProductName,
+                    quantity: Number(lineItems.data[0].quantity),
+                    price: product.Price,
+                  },
+                ],
+                stripePaymentId: String(session.payment_intent),
+                paymentDate: String(new Date()),
+                currency: 'USD',
+              });
               await userRepository.save(user);
               console.log('User order incremented from checkout.session.completed');
               return res.status(200).send('Order incremented');

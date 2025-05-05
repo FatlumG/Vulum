@@ -38,7 +38,7 @@ export class User extends EntityBase {
   Phone?: string;
 
   @ManyToOne(() => Plan, { eager: true })
-  @JoinColumn({ name: 'PricingPlan' }) // explicitly specify the column name
+  @JoinColumn({ name: 'PricingPlan' })
   PricingPlan: Plan;
 
   @Column({ default: 0 })

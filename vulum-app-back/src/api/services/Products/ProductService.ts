@@ -64,12 +64,10 @@ export class ProductService {
           quantity: 1,
         },
       ],
-      // success?session_id={CHECKOUT_SESSION_ID}
-      success_url: 'http://localhost:3000/docs/?session_id={CHECKOUT_SESSION_ID}&token={CHECKOUT_SESSION_ID}',
+      success_url: 'http://localhost:3000/docs/?session_id={CHECKOUT_SESSION_ID}',
       cancel_url: 'http://localhost:3000/cancel',
       metadata: { userId: user.id, productId },
     });
-    console.log('User ID:', user.id); // Log this before creating the session
 
     return { url: session.url };
   }
