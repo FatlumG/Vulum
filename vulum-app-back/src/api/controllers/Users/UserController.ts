@@ -39,7 +39,7 @@ export class UserController extends ControllerBase {
   public async getMe(@QueryParams() parseResourceOptions: RequestQueryParser, @LoggedUser() loggedUser: LoggedUserInterface) {
     const resourceOptions = parseResourceOptions.getAll();
 
-    return await this.userService.findOneById(loggedUser.id, resourceOptions);
+    return await this.userService.findOneById(loggedUser.userId, resourceOptions);
   }
 
   @Get('/:username')

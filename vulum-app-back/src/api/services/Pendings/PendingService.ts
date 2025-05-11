@@ -25,7 +25,7 @@ export class PendingService {
   public async create(data: object, loggedUser: LoggedUserInterface) {
     const newProduct = {
       ...data,
-      UserId: { id: loggedUser.id },
+      UserId: { id: loggedUser.userId },
     };
 
     let pending = await this.pendingRepository.createPending(newProduct);

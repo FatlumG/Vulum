@@ -17,10 +17,10 @@ export class LoginService {
       where: { Email: data.Email },
       relations: ['role'],
     });
-
+    console.log(user, 'User Object');
+    
     if (!user) {
       console.log('User not found');
-
       throw new InvalidCredentials();
     }
 
@@ -30,10 +30,10 @@ export class LoginService {
 
     return this.authService.sign(
       {
-        id: user.id,
-        Email: user.Email,
-        RoleId: user.role.id,
-        RoleName: user.role.RoleName,
+        userId: user.id,
+        email: user.Email,
+        role_id: user.RoleId,
+        role: user.role.RoleName,
       },
       { user: { id: user.id, email: user.Email, role: user.role.RoleName } },
     );

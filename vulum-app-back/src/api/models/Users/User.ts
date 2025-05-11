@@ -7,6 +7,7 @@ import { Sale } from '../Sales/Sale';
 import { Product } from '../Products/Product';
 import { Pending } from '../Pendings/Pending';
 import { Plan } from '../Plans/Plan';
+import { Favorite } from '../Favorites/Favorite';
 
 @Entity({ name: 'users' })
 export class User extends EntityBase {

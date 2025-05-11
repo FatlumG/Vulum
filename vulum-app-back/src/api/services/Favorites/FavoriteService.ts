@@ -3,7 +3,10 @@ import { FavoriteRepository } from '@api/repositories/Favorites/FavoriteReposito
 import { CategoryNotFoundException } from '@api/exceptions/Categories/CategoryNotFoundException';
 import { EventDispatcher, EventDispatcherInterface } from '@base/decorators/EventDispatcher';
 import { InjectRepository } from 'typeorm-typedi-extensions';
-
+import { User } from '@base/api/models/Users/User';
+import { UserRepository } from '@base/api/repositories/Users/UserRepository';
+import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
+import { FavoriteCreateRequest } from '@base/api/requests/Favorites/FavoriteCreateRequest';
 @Service()
 export class FavoriteService {
   constructor(
@@ -21,13 +24,7 @@ export class FavoriteService {
     return await this.getRequestedFavoriteOrFail(id, resourceOptions);
   }
 
-  public async create(data: object, resourceOptions?: object) {
-    const existingFavorite = await this.favoriteRepository.getOne(data);
-
-    if (existingFavorite) {
-      throw new Error('This product is already saved from this user');
-    }
-
+  public async create(data: object) {
     let favorite = await this.favoriteRepository.createFavorite(data);
 
     this.eventDispatcher.dispatch('onFavoriteCreate', favorite);
@@ -54,4 +51,15 @@ export class FavoriteService {
 
     return favorite;
   }
+
+  // public async countFavoritesForUser(userId: number) {
+  //   return await this.favoriteRepository.count({ where: { UserId: userId } });
+  // }
+
+  // public async getMyFavorites(user: LoggedUserInterface, resourceOptions?: object) {
+  //   return await this.favoriteRepository.find({
+  //     where: { UserId: user.userId },
+  //     ...resourceOptions,
+  //   });
+  // }
 }
