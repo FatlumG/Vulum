@@ -3,11 +3,11 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 export class OrderCreateRequest {
   @IsNotEmpty()
   @IsString()
-  OName: string;
+  name: string;
 
   @IsNumber() 
   @IsNotEmpty()
-  UserId: number;
+  created_by: number;
 
   @IsNotEmpty()
   CreatedBy: number;

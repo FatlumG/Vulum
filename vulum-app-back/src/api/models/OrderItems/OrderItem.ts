@@ -9,25 +9,25 @@ export class OrderItem extends EntityBase {
   id: number;
 
   @Column()
-  OrderId: number;
+  order_id: number;
 
   @Column()
-  ProductId: number;
+  product_id: number;
 
   @Column()
-  Quantity: number;
+  quantity: number;
 
   @Column('decimal', { precision: 8, scale: 2, default: 0 })
-  Price: number;
+  total_amount: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  OrderedAt: string;
+  created_at: string;
 
   @ManyToOne(() => Order, (order) => order.orderItems, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'OrderId' })
+  @JoinColumn({ name: 'order_id' })
   order: Order;
 
   @ManyToOne(() => Product, (product) => product.orderItems, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'ProductId' })
+  @JoinColumn({ name: 'product_id' })
   product: Product;
 }
