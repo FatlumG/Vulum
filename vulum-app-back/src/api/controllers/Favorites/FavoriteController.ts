@@ -38,8 +38,8 @@ export class FavoriteController extends ControllerBase {
 
   @Post()
   @HttpCode(201)
-  public async create(@Body() favorite: FavoriteCreateRequest) {
-    return await this.favoriteService.create(favorite);
+  public async create(@Body() favorite: FavoriteCreateRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
+    return await this.favoriteService.create(favorite, loggedUser);
   }
 
   @Put('/:id')
@@ -53,10 +53,10 @@ export class FavoriteController extends ControllerBase {
     return await this.favoriteService.deleteOneById(id);
   }
 
-  // @Get('/getMyFavorites')
-  // public async getMyFavorites(@LoggedUser() loggedUser: LoggedUserInterface, @QueryParams() parseResourceOptions: RequestQueryParser) {
-  //   const resourceOptions = parseResourceOptions.getAll();
+  @Get('/getMyFavorites')
+  public async getMyFavorites(@LoggedUser() loggedUser: LoggedUserInterface, @QueryParams() parseResourceOptions: RequestQueryParser) {
+    const resourceOptions = parseResourceOptions.getAll();
 
-  //   return await this.favoriteService.getMyFavorites(loggedUser, resourceOptions);
-  // }
+    return await this.favoriteService.getMyFavorites(loggedUser, resourceOptions);
+  }
 }
