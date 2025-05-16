@@ -58,7 +58,7 @@ export class App {
         event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
         console.log(event.data.object, 'event.data.object');
       } catch (err) {
-        console.error('Webhook signature verification failed.', err.message);
+        // console.error('Webhook signature verification failed.', err.message);
         return res.status(400).send(`Webhook Error: ${err.message}`);
       }
 
@@ -74,13 +74,11 @@ export class App {
               return res.status(400).send('No metadata found');
             }
 
-            console.log('Session Metadata:', session.metadata);
+            const { userId, planId, orderId, productId: productIdsRaw } = session.metadata;
 
-            const { userId, planId, productId } = session.metadata;
-
-            if (!userId || (!planId && !productId)) {
+            if (!userId || (!planId && !orderId)) {
               console.log('Missing required metadata fields');
-              console.log({ userId, planId, productId });
+              console.log({ userId, planId, orderId });
               return res.status(400).send('Missing required metadata fields');
             }
 
@@ -103,34 +101,53 @@ export class App {
               return res.status(200).send('Plan updated');
             }
 
-            if (productId) {
-              const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
-                limit: 1,
-              });
+            if (orderId) {
+              const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { expand: ['data.price.product'] });
 
+              const products: any[] = [];
               const productRepository = getRepository(Product);
-              const product: Product = await productRepository.findOne({ where: { id: productId } });
-              if (!product) return res.status(400).send('Product not found');
-              console.log(Number(lineItems.data[0].quantity), 'Number(lineItems.data[0].quantity)');
+
+              if (productIdsRaw) {
+                const productIds = productIdsRaw
+                  .split(',')
+                  .map((id) => Number(id.trim()))
+                  .filter((id) => !isNaN(id));
+
+                for (let i = 0; i < productIds.length; i++) {
+                  const id = productIds[i];
+                  const item = lineItems.data[i];
+
+                  const product = await productRepository.findOne({ where: { id } });
+
+                  if (!product) {
+                    console.warn(`⚠️ Product not found for ID: ${id}`);
+                    continue;
+                  }
+
+                  products.push({
+                    product,
+                    quantity: item?.quantity ?? 1,
+                  });
+                }
+              }
 
               user.Orders += 1;
+
               generateInvoicePdf({
-                customerName: user.FName,
+                customerName: user.Username,
                 customerAddress: user.Address,
                 invoiceNumber: String(user.Orders),
-                items: [
-                  {
-                    description: product.ProductName,
-                    quantity: Number(lineItems.data[0].quantity),
-                    price: product.Price,
-                  },
-                ],
+                items: products.map((p) => ({
+                  description: p.product.ProductName,
+                  quantity: p.quantity,
+                  price: p.product.Price,
+                })),
                 stripePaymentId: String(session.payment_intent),
                 paymentDate: String(new Date()),
                 currency: 'USD',
               });
               await userRepository.save(user);
-              console.log('User order incremented from checkout.session.completed');
+              // console.log('User order incremented from checkout.session.completed');
               return res.status(200).send('Order incremented');
             }
 

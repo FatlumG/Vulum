@@ -3,10 +3,19 @@ import { OrderRepository } from '@api/repositories/Orders/OrderRepository';
 import { CategoryNotFoundException } from '@api/exceptions/Categories/CategoryNotFoundException';
 import { EventDispatcher, EventDispatcherInterface } from '@base/decorators/EventDispatcher';
 import { InjectRepository } from 'typeorm-typedi-extensions';
+import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
+import { ProductRepository } from '@base/api/repositories/Products/ProductRepository';
+import { OrderItemRepository } from '@base/api/repositories/OrderItems/OrderItemRepository';
+import stripe from '@base/config/stripe';
 
 @Service()
 export class OrderService {
-  constructor(@InjectRepository() private orderRepository: OrderRepository, @EventDispatcher() private eventDispatcher: EventDispatcherInterface) {
+  constructor(
+    @InjectRepository() private orderRepository: OrderRepository,
+    @InjectRepository() private orderItemRepository: OrderItemRepository,
+    @InjectRepository() private productRepository: ProductRepository,
+    @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
+  ) {
     //
   }
 
@@ -18,12 +27,155 @@ export class OrderService {
     return await this.getRequestedOrderOrFail(id, resourceOptions);
   }
 
-  public async create(data: object) {
-    let order = await this.orderRepository.createOrder(data);
+  //   public async create(data: { items: { product_id: number; quantity: number }[] }, user: LoggedUserInterface) {
+  //     const items = data.items;
+  //     if (!items || !Array.isArray(items) || items.length === 0) {
+  //       throw new Error('No items provided for the order.');
+  //     }
 
-    this.eventDispatcher.dispatch('onOrderCreate', order);
+  //     const productIds = items.map((item) => item.product_id);
+  //     const products = await this.productRepository.findByIds(productIds);
 
-    return order;
+  //     let total = 0;
+
+  //     for (const item of items) {
+  //       const product = products.find((product) => product.id === item.product_id);
+  //       if (!product) throw new Error(`Product with id ${item.product_id} not found.`);
+  //       if (item.quantity <= 0) throw new Error(`Invalid quantity for ${product.ProductName}`);
+  //       total += product.Price * item.quantity;
+  //     }
+
+  //     const order = await this.orderRepository.createOrder({
+  //       name: `Order-${Date.now()}`,
+  //       amount: total,
+  //       status: 'pending',
+  //       CreatedBy: user.userId,
+  //     });
+
+  //     for (const item of items) {
+  //       await this.orderItemRepository.createOrderItem({
+  //         order_id: order.id,
+  //         product_id: item.product_id,
+  //         quantity: item.quantity,
+  //       });
+  //     }
+
+  //     this.eventDispatcher.dispatch('onOrderCreate', order);
+
+  //     return order;
+  //   }
+
+  //   public async createCheckoutSession(productId: number, user: any) {
+  //   // Fetch product info to get Stripe price ID
+  //   const product = await this.productRepository.findOne(productId);
+  //   if (!product || !product.StripePriceId) {
+  //     throw new Error('Product or Stripe price not found');
+  //   }
+
+  //   // Create order in DB with status 'pending'
+  //   const order = await this.orderRepository.createOrder({
+  //     user_id: user.id,
+  //     status: 'pending',
+  //     total: product.Price,
+  //     createdAt: new Date(),
+  //   });
+  //   await this.orderRepository.save(order);
+
+  //   // Create Stripe checkout session
+  //   const session = await stripe.checkout.sessions.create({
+  //     payment_method_types: ['card'],
+  //     mode: 'payment',
+  //     customer_email: user.email,
+  //     line_items: [
+  //       {
+  //         price: product.StripePriceId,
+  //         quantity: 1,
+  //       },
+  //     ],
+  //     success_url: `http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
+  //     cancel_url: 'http://localhost:3000/cancel',
+  //     metadata: {
+  //       userId: user.id,
+  //       productId,
+  //       orderId: order.id,   // Pass order id in metadata for webhook later
+  //     },
+  //   });
+
+  //   return { url: session.url };
+  // }
+
+  public async createCheckoutSession(data: { items: { product_id: number; quantity: number }[] }, user: LoggedUserInterface) {
+    const items = data.items;
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      throw new Error('No items provided for the order.');
+    }
+
+    const productIds = items.map((item) => item.product_id);
+    const products = await this.productRepository.findByIds(productIds);
+
+    if (products.length !== productIds.length) {
+      throw new Error('One or more products not found.');
+    }
+
+    // Calculate total and build Stripe line items
+    let totalAmount = 0;
+    const stripeLineItems = [];
+
+    for (const item of items) {
+      const product = products.find((p) => p.id === item.product_id);
+      if (!product) {
+        throw new Error(`Product with id ${item.product_id} not found.`);
+      }
+      if (item.quantity <= 0) {
+        throw new Error(`Invalid quantity for ${product.ProductName}.`);
+      }
+
+      totalAmount += product.Price * item.quantity;
+
+      if (!product.StripePriceId) {
+        throw new Error(`Stripe Price ID missing for product ${product.ProductName}.`);
+      }
+
+      stripeLineItems.push({
+        price: product.StripePriceId,
+        quantity: item.quantity,
+      });
+    }
+
+    // Create the order in DB with status 'pending'
+    const order = await this.orderRepository.createOrder({
+      name: `Order-${Date.now()}`,
+      amount: totalAmount,
+      status: 'pending',
+      created_by: user.userId,
+    });
+
+    // Create order items in DB
+    for (const item of items) {
+      await this.orderItemRepository.createOrderItem({
+        order_id: order.id,
+        product_id: item.product_id,
+        quantity: item.quantity,
+        total_amount: products.find((p) => p.id === item.product_id).Price * item.quantity,
+      });
+    }
+
+    // Create Stripe checkout session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'payment',
+      customer_email: user.email,
+      line_items: stripeLineItems,
+      success_url: `http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
+      cancel_url: 'http://localhost:3000/cancel',
+      metadata: {
+        userId: user.userId,
+        orderId: order.id,
+        productId: productIds.join(','),
+      },
+    });
+
+    return { url: session.url };
   }
 
   public async updateOneById(id: number, data: object) {

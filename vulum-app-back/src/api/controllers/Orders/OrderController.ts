@@ -37,8 +37,8 @@ export class OrderController extends ControllerBase {
 
   @Post()
   @HttpCode(201)
-  public async create(@Body() order: OrderCreateRequest) {
-    return await this.orderService.create(order);
+  public async create(@Body() order: OrderCreateRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
+    return await this.orderService.createCheckoutSession(order, loggedUser);
   }
 
   @Put('/:id')

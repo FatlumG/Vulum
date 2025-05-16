@@ -55,13 +55,14 @@ export const generateInvoicePdf = (data: InvoiceData) => {
 
   doc.setFont('helvetica', 'normal');
   let totalAmount = 0;
+  console.log('Invoice items:', data.items);
   data.items.forEach((item) => {
     const total = item.quantity * item.price;
     totalAmount += total;
 
     doc.text(item.description, 10, y);
     doc.text(item.quantity.toString(), 100, y);
-    doc.text((item.price! / 100).toFixed(2), 130, y);
+    doc.text(Number(item.price).toFixed(2), 130, y);
     doc.text(total.toFixed(2), 160, y);
 
     y += lineHeight;
@@ -69,7 +70,7 @@ export const generateInvoicePdf = (data: InvoiceData) => {
 
   y += lineHeight;
   doc.setFont('helvetica', 'bold');
-  doc.text('Grand Total:', 130, y);
+  doc.text('Total Amount:', 130, y);
   doc.text(`${totalAmount.toFixed(2)} ${data.currency || ''}`, 160, y);
 
   doc.save(`invoice-${data.invoiceNumber}.pdf`);
