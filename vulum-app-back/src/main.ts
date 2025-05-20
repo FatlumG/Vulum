@@ -132,6 +132,7 @@ export class App {
               }
 
               user.Orders += 1;
+              // products.map((p) => (p.product.Stock -= p.quantity));
 
               generateInvoicePdf({
                 customerName: user.Username,
