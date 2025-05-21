@@ -22,10 +22,11 @@ import stripe from './config/stripe';
 import { Plan } from './api/models/Plans/Plan';
 import { User } from './api/models/Users/User';
 import { Product } from './api/models/Products/Product';
+import { Order } from './api/models/Orders/Order';
 import { getRepository } from 'typeorm';
 import Stripe from 'stripe';
 import { generateInvoicePdf } from './utils/pdf-generator';
-
+import { OrderStatus } from './api/models/Orders/OEnum';
 export class App {
   private app: express.Application = express();
   private port: Number = appConfig.port;
@@ -106,6 +107,7 @@ export class App {
 
               const products: any[] = [];
               const productRepository = getRepository(Product);
+              const orderRepository = getRepository(Order);
 
               if (productIdsRaw) {
                 const productIds = productIdsRaw
@@ -124,6 +126,9 @@ export class App {
                     continue;
                   }
 
+                  product.Stock -= item?.quantity ?? 1;
+                  await productRepository.save(product);
+
                   products.push({
                     product,
                     quantity: item?.quantity ?? 1,
@@ -131,8 +136,9 @@ export class App {
                 }
               }
 
+              const order = await orderRepository.findOne({ where: { id: orderId } });
+              order.status = OrderStatus.CONFIRMED;
               user.Orders += 1;
-              // products.map((p) => (p.product.Stock -= p.quantity));
 
               generateInvoicePdf({
                 customerName: user.Username,
@@ -148,7 +154,7 @@ export class App {
                 currency: 'USD',
               });
               await userRepository.save(user);
-              // console.log('User order incremented from checkout.session.completed');
+              await orderRepository.save(order);
               return res.status(200).send('Order incremented');
             }
 

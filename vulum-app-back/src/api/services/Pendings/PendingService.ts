@@ -4,18 +4,21 @@ import { CategoryNotFoundException } from '@api/exceptions/Categories/CategoryNo
 import { EventDispatcher, EventDispatcherInterface } from '@base/decorators/EventDispatcher';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
+import { OrderRepository } from '@base/api/repositories/Orders/OrderRepository';
 
 @Service()
 export class PendingService {
   constructor(
     @InjectRepository() private pendingRepository: PendingRepository,
+    @InjectRepository() private orderRepository: OrderRepository,
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
   ) {
     //
   }
 
   public async getAll(resourceOptions?: object) {
-    return await this.pendingRepository.getManyAndCount(resourceOptions);
+    // return await this.pendingRepository.getManyAndCount(resourceOptions);
+    return await this.orderRepository.find({ where: { status: 'pending' } });
   }
 
   public async findOneById(id: number, resourceOptions?: object) {
