@@ -48,6 +48,13 @@ export class PendingService {
     return await this.pendingRepository.delete(id);
   }
 
+  public async getMyPendings(loggedUser: LoggedUserInterface, resourceOptions?: object) {
+    return await this.orderRepository.find({
+      where: { created_by: loggedUser.userId, status: 'pending' },
+      ...resourceOptions,
+    });
+  }
+
   private async getRequestedPendingOrFail(id: number, resourceOptions?: object) {
     let pending = await this.pendingRepository.getOneById(id, resourceOptions);
 

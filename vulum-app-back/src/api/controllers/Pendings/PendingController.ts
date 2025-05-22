@@ -51,4 +51,11 @@ export class PendingController extends ControllerBase {
   public async delete(@Param('id') id: number) {
     return await this.pendingService.deleteOneById(id);
   }
+
+  @Get('/getMyPendings')
+  public async getMyPendings(@LoggedUser() loggedUser: LoggedUserInterface, @QueryParams() parseResourceOptions: RequestQueryParser) {
+    const resourceOptions = parseResourceOptions.getAll();
+
+    return await this.pendingService.getMyPendings(loggedUser, resourceOptions);
+  }
 }
