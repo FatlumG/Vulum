@@ -91,7 +91,7 @@ export class User extends EntityBase {
     this.RoleId = roleId;
   }
 
-  @OneToMany(() => Sale, (sale) => sale.UserId)
+  @OneToMany(() => Sale, (sale) => sale.user_id)
   sales: Sale[];
 
   @OneToMany(() => Product, (product) => product.CreatedBy)

@@ -23,10 +23,12 @@ import { Plan } from './api/models/Plans/Plan';
 import { User } from './api/models/Users/User';
 import { Product } from './api/models/Products/Product';
 import { Order } from './api/models/Orders/Order';
+import { Sale } from './api/models/Sales/Sale';
 import { getRepository } from 'typeorm';
 import Stripe from 'stripe';
 import { generateInvoicePdf } from './utils/pdf-generator';
 import { OrderStatus } from './api/models/Orders/OEnum';
+
 export class App {
   private app: express.Application = express();
   private port: Number = appConfig.port;
@@ -108,6 +110,7 @@ export class App {
               const products: any[] = [];
               const productRepository = getRepository(Product);
               const orderRepository = getRepository(Order);
+              const saleRepository = getRepository(Sale);
 
               if (productIdsRaw) {
                 const productIds = productIdsRaw
@@ -125,10 +128,23 @@ export class App {
                     console.warn(`⚠️ Product not found for ID: ${id}`);
                     continue;
                   }
-
                   product.Stock -= item?.quantity ?? 1;
                   await productRepository.save(product);
 
+                  if (!product.Price || !product.CreatedBy || !orderId) {
+                    throw new Error('Missing product data or orderId');
+                  }
+
+                  const sale = new Sale();
+                  const prodOwner = await userRepository.findOne({ where: { id: product.CreatedBy } });
+
+                  sale.order_id = Number(orderId);
+                  sale.total_price = product.Price;
+                  sale.user_id = product.CreatedBy;
+                  await saleRepository.save(sale);
+
+                  prodOwner.Sales += 1;
+                  await userRepository.save(prodOwner);
                   products.push({
                     product,
                     quantity: item?.quantity ?? 1,

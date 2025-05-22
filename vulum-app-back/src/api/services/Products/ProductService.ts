@@ -42,6 +42,7 @@ export class ProductService {
       ...data,
       StripeProductId: productItem.id,
       StripePriceId: price.id,
+      CreatedBy: loggedUser.userId,
     };
 
     let product = await this.productRepository.createproduct(planWithStripe);
