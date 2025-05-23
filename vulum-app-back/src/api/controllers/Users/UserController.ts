@@ -3,6 +3,7 @@ import { UserService } from '@api/services/Users/UserService';
 import { Service } from 'typedi';
 import { UserCreateRequest } from '@api/requests/Users/UserCreateRequest';
 import { AuthCheck } from '@base/infrastructure/middlewares/Auth/AuthCheck';
+import { HasRole } from '@base/infrastructure/middlewares/Auth/HasRole';
 import { ControllerBase } from '@base/infrastructure/abstracts/ControllerBase';
 import { UserUpdateRequest } from '@api/requests/Users/UserUpdateRequest';
 import { OpenAPI } from 'routing-controllers-openapi';
@@ -54,11 +55,13 @@ export class UserController extends ControllerBase {
   }
 
   @Put('/:id')
+  @UseBefore(HasRole('admin'))
   public async update(@Param('id') id: number, @Body() user: UserUpdateRequest) {
     return await this.userService.updateOneById(id, user);
   }
 
   @Delete('/:id')
+  @UseBefore(HasRole('admin'))
   @HttpCode(204)
   public async delete(@Param('id') id: number) {
     return await this.userService.deleteOneById(id);

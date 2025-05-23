@@ -7,6 +7,7 @@ import { ControllerBase } from '@base/infrastructure/abstracts/ControllerBase';
 import { CategoryUpdateRequest } from '@api/requests/Categories/CategoryUpdateRequest';
 import { OpenAPI } from 'routing-controllers-openapi';
 import { RequestQueryParser } from 'typeorm-simple-query-parser';
+import { HasRole } from '@base/infrastructure/middlewares/Auth/HasRole';
 
 @Service()
 @OpenAPI({
@@ -40,11 +41,13 @@ export class CategoryController extends ControllerBase {
   }
 
   @Put('/:id')
+  @UseBefore(HasRole('admin'))
   public async update(@Param('id') id: number, @Body() category: CategoryUpdateRequest) {
     return await this.categoryService.updateOneById(id, category);
   }
 
   @Delete('/:id')
+  @UseBefore(HasRole('admin'))
   @HttpCode(204)
   public async delete(@Param('id') id: number) {
     return await this.categoryService.deleteOneById(id);
