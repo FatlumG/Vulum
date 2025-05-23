@@ -61,7 +61,6 @@ export class App {
         event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
         console.log(event.data.object, 'event.data.object');
       } catch (err) {
-        // console.error('Webhook signature verification failed.', err.message);
         return res.status(400).send(`Webhook Error: ${err.message}`);
       }
 
@@ -159,7 +158,6 @@ export class App {
               generateInvoicePdf({
                 customerName: user.Username,
                 customerAddress: user.Address,
-                invoiceNumber: String(user.Orders),
                 items: products.map((p) => ({
                   description: p.product.ProductName,
                   quantity: p.quantity,

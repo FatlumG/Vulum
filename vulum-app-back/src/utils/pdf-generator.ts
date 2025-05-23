@@ -9,7 +9,7 @@ interface InvoiceItem {
 interface InvoiceData {
   customerName: string;
   customerAddress: string;
-  invoiceNumber: string;
+  // invoiceNumber: string;
   items: InvoiceItem[];
   stripePaymentId?: string;
   paymentDate?: string;
@@ -23,11 +23,11 @@ export const generateInvoicePdf = (data: InvoiceData) => {
   let y = 10;
 
   doc.setFontSize(16);
-  doc.text('INVOICE', 105, y, { align: 'center' });
+  doc.text('VULUM INVOICE', 105, y, { align: 'center' });
   y += lineHeight * 2;
 
   doc.setFontSize(12);
-  doc.text(`Invoice #: ${data.invoiceNumber}`, 10, y);
+  doc.text(`Invoice #: ${Date.now()}`, 10, y);
   y += lineHeight;
   doc.text(`Customer: ${data.customerName}`, 10, y);
   y += lineHeight;
@@ -73,5 +73,5 @@ export const generateInvoicePdf = (data: InvoiceData) => {
   doc.text('Total Amount:', 130, y);
   doc.text(`${totalAmount.toFixed(2)} ${data.currency || ''}`, 160, y);
 
-  doc.save(`invoice-${data.invoiceNumber}.pdf`);
+  doc.save(`invoice-${Date.now()}.pdf`);
 };

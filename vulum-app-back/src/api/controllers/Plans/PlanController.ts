@@ -9,6 +9,8 @@ import { OpenAPI } from 'routing-controllers-openapi';
 import { RequestQueryParser } from 'typeorm-simple-query-parser';
 import { LoggedUser } from '@base/decorators/LoggedUser';
 import { LoggedUserInterface } from '@api/interfaces/users/LoggedUserInterface';
+import { PlanSubscribeRequest } from '@base/api/requests/Plans/PlanSubscribeRequest';
+import { User } from '@base/api/models/Users/User';
 
 @Service()
 @OpenAPI({
@@ -43,7 +45,7 @@ export class PlanController extends ControllerBase {
 
   @Post('/checkout-session')
   @HttpCode(200)
-  public async createCheckoutSession(@Body() data: { planId: number }, @LoggedUser() loggedUser: LoggedUserInterface) {
+  public async createCheckoutSession(@Body() data: PlanSubscribeRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
     return await this.planService.createCheckoutSession(data.planId, loggedUser);
   }
 
@@ -56,5 +58,10 @@ export class PlanController extends ControllerBase {
   @HttpCode(204)
   public async delete(@Param('id') id: number) {
     return await this.planService.deleteOneById(id);
+  }
+
+  @Get('/myPlan')
+  public async getMyPlan(@LoggedUser() loggedUser: LoggedUserInterface) {
+    return await this.planService.getMyPlan(loggedUser);
   }
 }
