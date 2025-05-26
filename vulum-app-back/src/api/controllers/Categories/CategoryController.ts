@@ -41,13 +41,13 @@ export class CategoryController extends ControllerBase {
   }
 
   @Put('/:id')
-  @UseBefore(HasRole('admin'))
+  @UseBefore(HasRole(['Admin', 'Super Admin', 'Manager']))
   public async update(@Param('id') id: number, @Body() category: CategoryUpdateRequest) {
     return await this.categoryService.updateOneById(id, category);
   }
 
   @Delete('/:id')
-  @UseBefore(HasRole('admin'))
+  @UseBefore(HasRole(['Admin', 'Super Admin', 'Manager']))
   @HttpCode(204)
   public async delete(@Param('id') id: number) {
     return await this.categoryService.deleteOneById(id);

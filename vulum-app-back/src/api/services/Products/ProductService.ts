@@ -50,28 +50,28 @@ export class ProductService {
     return productItem;
   }
 
-  public async createCheckoutSession(productId: number, user: any) {
-    const product = await this.productRepository.findOne(productId);
-    if (!product || !product.StripePriceId) {
-      throw new Error('Product or Stripe price not found');
-    }
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      mode: 'payment',
-      customer_email: user.email,
-      line_items: [
-        {
-          price: product.StripePriceId,
-          quantity: 1,
-        },
-      ],
-      success_url: 'http://localhost:3000/docs/?session_id={CHECKOUT_SESSION_ID}',
-      cancel_url: 'http://localhost:3000/cancel',
-      metadata: { userId: user.id, productId },
-    });
+  // public async createCheckoutSession(productId: number, user: any) {
+  //   const product = await this.productRepository.findOne(productId);
+  //   if (!product || !product.StripePriceId) {
+  //     throw new Error('Product or Stripe price not found');
+  //   }
+  //   const session = await stripe.checkout.sessions.create({
+  //     payment_method_types: ['card'],
+  //     mode: 'payment',
+  //     customer_email: user.email,
+  //     line_items: [
+  //       {
+  //         price: product.StripePriceId,
+  //         quantity: 1,
+  //       },
+  //     ],
+  //     success_url: 'http://localhost:3000/docs/?session_id={CHECKOUT_SESSION_ID}',
+  //     cancel_url: 'http://localhost:3000/cancel',
+  //     metadata: { userId: user.id, productId },
+  //   });
 
-    return { url: session.url };
-  }
+  //   return { url: session.url };
+  // }
 
   public async updateOneById(id: number, data: object) {
     const product = await this.getRequestedProductOrFail(id);
