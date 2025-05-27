@@ -1,4 +1,3 @@
-import React from "react";
 import SignTable from "../../components/SignTable";
 import salyPhone from "../../assets/figures/salyPhone.svg";
 import salyMoto from "../../assets/figures/salyMoto.svg";
