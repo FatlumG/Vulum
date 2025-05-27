@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "../components/Header";
 import DashboardSidebar from "../components/DashboardSidebar";
-function ContactPage() {
+const ContactPage: React.FC = () => {
   return (
     <div>
       <Header />
@@ -13,6 +13,6 @@ function ContactPage() {
       </div>
     </div>
   );
-}
+};
 
 export default ContactPage;

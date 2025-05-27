@@ -4,10 +4,10 @@ import DashboardSidebar from "../components/DashboardSidebar";
 import TotalStats from "../components/TotalStats";
 import users from "../assets/figures/users.svg";
 import orders from "../assets/figures/orders.svg";
-import sales from "../assets/figures/sales.svg";
+import Sales from "../assets/figures/sales.svg";
 import pendings from "../assets/figures/pendings.svg";
 
-function DashboardPage() {
+const DashboardPage: React.FC = () => {
   return (
     <div>
       <Header />
@@ -35,14 +35,15 @@ function DashboardPage() {
               up={true}
             />
             <TotalStats
-              img={sales}
+              img={Sales}
               alt="sales"
               title="Total Sales"
               quantity="$89,000"
               percentage="4,3%"
               descr="Up from yesterday"
+              up={false}
             />
-            <TotalStats 
+            <TotalStats
               img={pendings}
               alt="pendings"
               title="Total Pendings"
@@ -56,6 +57,6 @@ function DashboardPage() {
       </div>
     </div>
   );
-}
+};
 
 export default DashboardPage;

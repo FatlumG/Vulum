@@ -3,7 +3,7 @@ import SignTable from "../../components/SignTable";
 import salyPhone from "../../assets/figures/salyPhone.svg";
 import salyMoto from "../../assets/figures/salyMoto.svg";
 import logo from "../../assets/logos/vulumBlue.png";
-function SignPage() {
+const SignPage: React.FC = () => {
   return (
     <div className="h-[100vh] w-[full] bg-secondary">
       <div className="h-[100vh] w-[50%] bg-primary absolute z-0">
@@ -26,6 +26,6 @@ function SignPage() {
       <SignTable SignIn={false} />
     </div>
   );
-}
+};
 
 export default SignPage;

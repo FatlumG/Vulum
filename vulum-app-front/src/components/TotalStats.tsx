@@ -1,15 +1,16 @@
-import React from "react";
 import { FaArrowTrendUp } from "react-icons/fa6";
 
-function TotalStats({
-  img,
-  alt,
-  title,
-  quantity,
-  percentage,
-  descr,
-  up,
-}) {
+interface TotalStatsProps {
+  img: string;
+  alt: string;
+  title: string;
+  quantity: string;
+  percentage: string;
+  descr: string;
+  up: boolean;
+}
+
+const TotalStats: React.FC<TotalStatsProps> = ({img, alt, title, quantity, percentage, descr, up}) =>  {
   return (
     <div className="h-[180px] w-[350px] flex flex-col justify-between py-5 px-6 mt-5 bg-white rounded-3xl relative">
       <img src={img} alt={alt} className="size-[65px] absolute right-5" />
@@ -17,9 +18,7 @@ function TotalStats({
       <p className="text-[30px] font-semibold">{quantity}</p>
       <div className="flex items-center gap-2 text-[14px]">
         <FaArrowTrendUp
-          className={`scale-105 ${
-            up ? "text-green-500" : "text-red-500"
-          }`}
+          className={`scale-105 ${up ? "text-green-500" : "text-red-500"}`}
         />
         <span className={`${up ? "text-green-500" : "text-red-500"}`}>
           {percentage}

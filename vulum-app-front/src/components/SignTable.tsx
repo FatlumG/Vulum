@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
-import google from "../assets/icons/google.svg";
-import facebook from "../assets/icons/facebook.svg";
-import apple from "../assets/icons/apple.svg";
+import Google from "../assets/icons/google.svg";
+import Facebook from "../assets/icons/facebook.svg";
+import Apple from "../assets/icons/apple.svg";
 import { RootState } from "../app/store";
 
 interface SignTableProps {
@@ -157,16 +157,16 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
             <span className="text-lightGray">OR</span>
             <div className="w-full flex justify-between items-center">
               <div className="flex justify-center items-center gap-5 bg-lightBlue py-3 px-8 rounded-xl cursor-pointer">
-                <img src={google} alt="Google Icon" />
+                <img src={Google} alt="" />
                 <p className="text-darkBlue text-[15px]">
                   Countinue with Google
                 </p>
               </div>
               <div className="bg-[#F6F6F6] py-3 px-5 rounded-xl cursor-pointer">
-                <img src={facebook} alt="Google Icon" />
+                <img src={Facebook} alt="" />
               </div>
               <div className="bg-[#F6F6F6] py-3 px-5 rounded-xl cursor-pointer">
-                <img src={apple} alt="Google Icon" />
+                <img src={Apple} alt="" />
               </div>
             </div>
           </>

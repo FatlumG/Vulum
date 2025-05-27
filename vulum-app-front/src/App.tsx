@@ -14,7 +14,7 @@ import ContactPage from "./pages/ContactPage";
 import InvoicesPage from "./pages/InvoicesPage";
 import SettingsPage from "./pages/SettingsPage";
 
-function App() {
+const App: React.FC = () => {
   return (
     <Router>
       <Routes>
@@ -35,6 +35,6 @@ function App() {
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;
