@@ -8,6 +8,7 @@ import { BillingCycle } from '@base/api/models/Plans/PEnum';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
 import stripe from '@base/config/stripe';
 import { UserRepository } from '@base/api/repositories/Users/UserRepository';
+import { User } from '@base/api/models/Users/User';
 
 @Service()
 export class PlanService {
@@ -83,6 +84,15 @@ export class PlanService {
 
   public async deleteOneById(id: number) {
     return await this.planRepository.delete(id);
+  }
+
+  public async getMyPlan(user: LoggedUserInterface) {
+    const fullUser = await this.userRepository.findOne({
+      where: { id: user.userId },
+      relations: ['PricingPlan'],
+    });
+
+    return fullUser?.PricingPlan ?? null;
   }
 
   private async getRequestedPlanOrFail(id: number, resourceOptions?: object) {

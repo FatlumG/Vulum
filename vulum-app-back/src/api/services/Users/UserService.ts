@@ -42,11 +42,12 @@ export class UserService {
   }
 
   private async getRequestedUserOrFail(id: number, resourceOptions?: object) {
-    // let user = await this.userRepository.getOneById(id, {
-    //   ...resourceOptions,
-    //   relations: ['PricingPlan'], // Add 'PricingPlan' to relations for eager loading
-    // });
-    let user = await this.userRepository.getOneById(id, resourceOptions);
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.PricingPlan', 'plan')
+      .select(['user', 'plan.id', 'plan.PlanName', 'plan.PlanDescription', 'plan.Price', 'plan.BillingCycle'])
+      .where('user.id = :id', { id })
+      .getOne();
 
     if (!user) {
       throw new UserNotFoundException();

@@ -79,9 +79,18 @@ export class User extends EntityBase {
   }
 
   @BeforeInsert()
+  async hashPasswordBeforeInsert() {
+    if (this.Password) {
+      this.Password = await new HashService().make(this.Password);
+    }
+  }
+
   @BeforeUpdate()
-  async setPassword() {
-    if (this.Password) this.Password = await new HashService().make(this.Password);
+  async hashPasswordBeforeUpdate() {
+    // Hash only if the password is not already hashed
+    if (this.Password && !this.Password.startsWith('$2b$')) {
+      this.Password = await new HashService().make(this.Password);
+    }
   }
 
   @BeforeInsert()
@@ -91,7 +100,7 @@ export class User extends EntityBase {
     this.RoleId = roleId;
   }
 
-  @OneToMany(() => Sale, (sale) => sale.UserId)
+  @OneToMany(() => Sale, (sale) => sale.user_id)
   sales: Sale[];
 
   @OneToMany(() => Product, (product) => product.CreatedBy)

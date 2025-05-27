@@ -8,19 +8,19 @@ export class Sale extends EntityBase {
   id: number;
 
   @Column()
-  OrderId: number;
+  order_id: number;
 
   @Column()
-  UserId: number;
+  user_id: number;
 
   @Column('decimal', { precision: 8, scale: 2, default: 0 })
-  TotalPrice: number;
+  total_price: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  SoldAt: string;
+  sold_at: string;
 
   @ManyToOne(() => User, (user) => user.Sales)
-  @JoinColumn({ name: 'UserId' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @OneToMany(() => Order, (order) => order.id)
