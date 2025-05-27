@@ -47,13 +47,6 @@ export class ProductController extends ControllerBase {
     return await this.productService.create(product, loggedUser);
   }
 
-  @Post('/checkout-session')
-  @HttpCode(201)
-  public async createCheckoutSession(@Body() data: { productId: number }, @LoggedUser() loggedUser: LoggedUserInterface) {
-    console.log('Logged user:', loggedUser);
-    return await this.productService.createCheckoutSession(data.productId, loggedUser);
-  }
-
   @Put('/:id')
   public async update(@Param('id') id: number, @Body() product: ProductUpdateRequest) {
     return await this.productService.updateOneById(id, product);

@@ -7,8 +7,6 @@ import { ControllerBase } from '@base/infrastructure/abstracts/ControllerBase';
 import { CategoryUpdateRequest } from '@api/requests/Categories/CategoryUpdateRequest';
 import { OpenAPI } from 'routing-controllers-openapi';
 import { RequestQueryParser } from 'typeorm-simple-query-parser';
-import { LoggedUser } from '@base/decorators/LoggedUser';
-import { LoggedUserInterface } from '@api/interfaces/users/LoggedUserInterface';
 
 @Service()
 @OpenAPI({

@@ -70,7 +70,7 @@ export class PlanService {
       // success?session_id={CHECKOUT_SESSION_ID}
       success_url: 'http://localhost:3000/docs/?session_id={CHECKOUT_SESSION_ID}',
       cancel_url: 'http://localhost:3000/cancel',
-      metadata: { userId: user.id, planId },
+      metadata: { userId: user.userId, planId },
     });
     return { url: session.url };
   }

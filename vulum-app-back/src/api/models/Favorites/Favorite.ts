@@ -7,11 +7,11 @@ export class Favorite extends EntityBase {
   id: number;
 
   @Column()
-  UserId: number;
+  user_id: number;
 
   @Column()
-  ProductId: number;
+  product_id: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  CreatedAt: string;
+  created_at: string;
 }

@@ -2,8 +2,8 @@ import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class FavoriteUpdateRequest {
   @IsNotEmpty()
-  UserId: number;
+  user_id: number;
 
   @IsNotEmpty()
-  ProductId: number;
+  product_id: number;
 }

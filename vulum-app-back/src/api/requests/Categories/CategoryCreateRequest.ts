@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, MinLength, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class CategoryCreateRequest {
   @MinLength(2)

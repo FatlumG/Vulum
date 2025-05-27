@@ -9,6 +9,7 @@ import { OpenAPI } from 'routing-controllers-openapi';
 import { RequestQueryParser } from 'typeorm-simple-query-parser';
 import { LoggedUser } from '@base/decorators/LoggedUser';
 import { LoggedUserInterface } from '@api/interfaces/users/LoggedUserInterface';
+import { UserService } from '@base/api/services/Users/UserService';
 
 @Service()
 @OpenAPI({
@@ -17,7 +18,7 @@ import { LoggedUserInterface } from '@api/interfaces/users/LoggedUserInterface';
 @JsonController('/favorites')
 @UseBefore(AuthCheck)
 export class FavoriteController extends ControllerBase {
-  public constructor(private favoriteService: FavoriteService) {
+  public constructor(private favoriteService: FavoriteService, private userService: UserService) {
     super();
   }
 
@@ -35,18 +36,10 @@ export class FavoriteController extends ControllerBase {
     return await this.favoriteService.findOneById(id, resourceOptions);
   }
 
-  // @Post()
-  // @HttpCode(201)
-  // public async create(@Body() favorite: FavoriteCreateRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
-  //   return await this.favoriteService.create(favorite, { UserId: loggedUser.id });
-  // }
-
   @Post()
   @HttpCode(201)
   public async create(@Body() favorite: FavoriteCreateRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
-    console.log('Logged user id:', loggedUser.id);
-    console.log('Checking for existing favorite:', favorite.ProductId, loggedUser.id);
-    return await this.favoriteService.create(favorite, { UserId: loggedUser.id });
+    return await this.favoriteService.create(favorite, loggedUser);
   }
 
   @Put('/:id')
@@ -58,5 +51,12 @@ export class FavoriteController extends ControllerBase {
   @HttpCode(204)
   public async delete(@Param('id') id: number) {
     return await this.favoriteService.deleteOneById(id);
+  }
+
+  @Get('/getMyFavorites')
+  public async getMyFavorites(@LoggedUser() loggedUser: LoggedUserInterface, @QueryParams() parseResourceOptions: RequestQueryParser) {
+    const resourceOptions = parseResourceOptions.getAll();
+
+    return await this.favoriteService.getMyFavorites(loggedUser, resourceOptions);
   }
 }

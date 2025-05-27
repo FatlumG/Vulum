@@ -35,7 +35,7 @@ export class Product extends EntityBase {
   @Column()
   StripePriceId: string;
 
-  @OneToMany(() => OrderItem, (orderItem) => orderItem.ProductId)
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.product_id)
   orderItems: OrderItem[];
 
   @ManyToOne(() => User, (user) => user.Products)

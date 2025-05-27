@@ -1,17 +1,19 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsArray, ValidateNested, IsNumber, Min } from 'class-validator';
+import { Type } from 'class-transformer';
+
+class OrderItem {
+  @IsNumber()
+  @Min(1)
+  product_id: number;
+
+  @IsNumber()
+  @Min(1)
+  quantity: number;
+}
 
 export class OrderCreateRequest {
-  @IsNotEmpty()
-  @IsString()
-  OName: string;
-
-  @IsNumber() 
-  @IsNotEmpty()
-  UserId: number;
-
-  @IsNotEmpty()
-  CreatedBy: number;
-
-  @IsNotEmpty()
-  TotalPrice: number;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => OrderItem)
+  items: OrderItem[];
 }

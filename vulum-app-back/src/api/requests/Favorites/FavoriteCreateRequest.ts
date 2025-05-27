@@ -2,5 +2,5 @@ import { IsNotEmpty } from 'class-validator';
 
 export class FavoriteCreateRequest {
   @IsNotEmpty()
-  ProductId: number;
+  product_id: number;
 }
