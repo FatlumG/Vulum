@@ -30,6 +30,10 @@ export class ProductService {
     return await this.productRepository.find({ where: { Status: 'pending' }, ...resourceOptions });
   }
 
+  public async getSoldProducts(resourceOptions?: object) {
+    return await this.productRepository.find({ where: { Status: 'sold' }, ...resourceOptions });
+  }
+
   public async findOneById(id: number, resourceOptions?: object) {
     return await this.getRequestedProductOrFail(id, resourceOptions);
   }
@@ -39,6 +43,8 @@ export class ProductService {
   }
 
   public async create(data: ProductCreateRequest, loggedUser: LoggedUserInterface) {
+    const user = await this.userRepository.findOne(loggedUser.userId);
+
     const productItem = await stripe.products.create({
       name: data.ProductName,
       description: data.ProductDescription,
@@ -56,6 +62,9 @@ export class ProductService {
       StripePriceId: price.id,
       CreatedBy: loggedUser.userId,
     };
+
+    user.Products += 1;
+    await this.userRepository.save(user);
 
     let product = await this.productRepository.createproduct(planWithStripe);
     this.eventDispatcher.dispatch('onProductCreate', product);

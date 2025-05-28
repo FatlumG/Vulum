@@ -126,7 +126,7 @@ export class OrderService {
 
       stripeLineItems.push({
         price: product.StripePriceId,
-        quantity: item.quantity,
+        quantity: item.quantity || 1,
       });
     }
 

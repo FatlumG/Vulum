@@ -48,7 +48,13 @@ export class ProductController extends ControllerBase {
   public async getPendingProducts(@QueryParams() parseResourceOptions: RequestQueryParser) {
     const resourceOptions = parseResourceOptions.getAll();
 
-    return await this.productService.getAvailableProducts(resourceOptions);
+    return await this.productService.getPendingProducts(resourceOptions);
+  }
+  @Get('/sold-products')
+  public async getSoldProducts(@QueryParams() parseResourceOptions: RequestQueryParser) {
+    const resourceOptions = parseResourceOptions.getAll();
+
+    return await this.productService.getSoldProducts(resourceOptions);
   }
 
   @Get('/my-products')
