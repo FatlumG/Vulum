@@ -22,8 +22,20 @@ export class ProductService {
     return await this.productRepository.getManyAndCount(resourceOptions);
   }
 
+  public async getAvailableProducts(resourceOptions?: object) {
+    return await this.productRepository.find({ where: { Status: 'available' }, ...resourceOptions });
+  }
+
+  public async getPendingProducts(resourceOptions?: object) {
+    return await this.productRepository.find({ where: { Status: 'pending' }, ...resourceOptions });
+  }
+
   public async findOneById(id: number, resourceOptions?: object) {
     return await this.getRequestedProductOrFail(id, resourceOptions);
+  }
+
+  public async getMyProducts(user: LoggedUserInterface, resourceOptions?: object) {
+    return await this.productRepository.find({ where: { CreatedBy: user.userId }, ...resourceOptions });
   }
 
   public async create(data: ProductCreateRequest, loggedUser: LoggedUserInterface) {

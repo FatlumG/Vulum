@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGe
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 import { OrderItem } from '../OrderItems/OrderItem';
 import { User } from '../Users/User';
+import { ProductStatus } from './PEnum';
 
 @Entity({ name: 'products' })
 export class Product extends EntityBase {
@@ -28,6 +29,9 @@ export class Product extends EntityBase {
 
   @Column()
   CreatedBy: number;
+
+  @Column({ default: ProductStatus.PENDING })
+  Status: ProductStatus;
 
   @Column()
   StripeProductId: string;
