@@ -12,7 +12,7 @@ class OrderItem {
 }
 
 export class OrderCreateRequest {
-  // @IsArray() 
+  // @IsArray()
   @ValidateNested({ each: true })
   @Type(() => OrderItem)
   items: OrderItem[];
