@@ -1,7 +1,7 @@
 import React from "react";
 import SignTable from "../../components/SignTable";
-import SalyPhone from "../../assets/figures/salyPhone.svg";
-import SalyMoto from "../../assets/figures/salyMoto.svg";
+import salyPhone from "../../assets/figures/salyPhone.svg";
+import salyMoto from "../../assets/figures/salyMoto.svg";
 import logo from "../../assets/logos/vulumBlue.png";
 const SignPage: React.FC = () => {
   return (
@@ -14,12 +14,12 @@ const SignPage: React.FC = () => {
         />
       </div>
       <img
-        src={SalyMoto}
+        src={salyMoto}
         alt="Saly in Motorcycle"
         className="absolute top-[140px] left-[10%] z-10"
       />
       <img
-        src={SalyPhone}
+        src={salyPhone}
         alt="Saly in Motorcycle"
         className="absolute top-[100px] right-[2%] z-10"
       />
