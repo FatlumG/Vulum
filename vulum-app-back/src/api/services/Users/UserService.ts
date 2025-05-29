@@ -3,6 +3,8 @@ import { UserRepository } from '@api/repositories/Users/UserRepository';
 import { UserNotFoundException } from '@api/exceptions/Users/UserNotFoundException';
 import { EventDispatcher, EventDispatcherInterface } from '@base/decorators/EventDispatcher';
 import { InjectRepository } from 'typeorm-typedi-extensions';
+import cloudinary from '@base/utils/cloudinary';
+import { UploadApiResponse } from 'cloudinary';
 
 @Service()
 export class UserService {
@@ -35,6 +37,23 @@ export class UserService {
     const user = await this.getRequestedUserOrFail(id);
 
     return await this.userRepository.updateUser(user, data);
+  }
+
+  public async updateProfilePicture(loggedUserId: number, image: any) {
+    const client = await this.getRequestedUserOrFail(loggedUserId);
+    if (!client) throw new Error('Client not Found!');
+    if (!image) throw new Error('Image is required!');
+
+    try {
+      const result = (await cloudinary.uploader.upload_large(image, {
+        folder: 'Profile Pictures',
+      })) as UploadApiResponse;
+
+      client.ProfilePhotoUrl = result.secure_url;
+      await client.save();
+    } catch (error) {
+      throw new Error(`Cloudinary upload failed: ${error.message}`);
+    }
   }
 
   public async deleteOneById(id: number) {
