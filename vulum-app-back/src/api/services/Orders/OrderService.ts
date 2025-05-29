@@ -108,6 +108,9 @@ export class OrderService {
       if (!product) {
         throw new Error(`Product with id ${item.product_id} not found.`);
       }
+      if (product.CreatedBy === user.userId) {
+        throw new Error(`You cannot buy your own product.`);
+      }
       if (item.quantity <= 0) {
         throw new Error(`Invalid quantity for ${product.ProductName}.`);
       }
@@ -117,14 +120,13 @@ export class OrderService {
       if (!product.StripePriceId) {
         throw new Error(`Stripe Price ID missing for product ${product.ProductName}.`);
       }
-
       if (product.Stock < item?.quantity) {
         throw new Error(`Not enough stock for ${product.ProductName}.`);
       }
 
       stripeLineItems.push({
         price: product.StripePriceId,
-        quantity: item.quantity,
+        quantity: item.quantity || 1,
       });
     }
 

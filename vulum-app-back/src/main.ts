@@ -28,6 +28,7 @@ import { getRepository } from 'typeorm';
 import Stripe from 'stripe';
 import { generateInvoicePdf } from './utils/pdf-generator';
 import { OrderStatus } from './api/models/Orders/OEnum';
+import { ProductStatus } from './api/models/Products/PEnum';
 
 export class App {
   private app: express.Application = express();
@@ -128,6 +129,7 @@ export class App {
                     continue;
                   }
                   product.Stock -= item?.quantity ?? 1;
+                  product.Status = ProductStatus.SOLD;
                   await productRepository.save(product);
 
                   if (!product.Price || !product.CreatedBy || !orderId) {

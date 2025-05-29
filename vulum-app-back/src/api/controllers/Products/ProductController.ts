@@ -3,6 +3,7 @@ import { ProductService } from '@api/services/Products/ProductService';
 import { Service } from 'typedi';
 import { ProductCreateRequest } from '@api/requests/Products/ProductCreateRequest';
 import { AuthCheck } from '@base/infrastructure/middlewares/Auth/AuthCheck';
+import { HasRole } from '@base/infrastructure/middlewares/Auth/HasRole';
 import { ControllerBase } from '@base/infrastructure/abstracts/ControllerBase';
 import { ProductUpdateRequest } from '@api/requests/Products/ProductUpdateRequest';
 import { OpenAPI } from 'routing-controllers-openapi';
@@ -36,6 +37,33 @@ export class ProductController extends ControllerBase {
     return await this.productService.findOneById(id, resourceOptions);
   }
 
+  @Get('/available-products')
+  public async getAvailableProducts(@QueryParams() parseResourceOptions: RequestQueryParser) {
+    const resourceOptions = parseResourceOptions.getAll();
+
+    return await this.productService.getAvailableProducts(resourceOptions);
+  }
+
+  @Get('/pending-products')
+  public async getPendingProducts(@QueryParams() parseResourceOptions: RequestQueryParser) {
+    const resourceOptions = parseResourceOptions.getAll();
+
+    return await this.productService.getPendingProducts(resourceOptions);
+  }
+  @Get('/sold-products')
+  public async getSoldProducts(@QueryParams() parseResourceOptions: RequestQueryParser) {
+    const resourceOptions = parseResourceOptions.getAll();
+
+    return await this.productService.getSoldProducts(resourceOptions);
+  }
+
+  @Get('/my-products')
+  public async getMyProducts(@LoggedUser() loggedUser: LoggedUserInterface, @QueryParams() parseResourceOptions: RequestQueryParser) {
+    const resourceOptions = parseResourceOptions.getAll();
+
+    return await this.productService.getMyProducts(loggedUser, resourceOptions);
+  }
+
   @Get('/:productName([a-zA-Z]+)')
   public async getByProductName(@Param('productName') productName: string, @QueryParams() parseResourceOptions: RequestQueryParser) {
     return this.productService.getProductsBySearch(productName);
@@ -48,11 +76,13 @@ export class ProductController extends ControllerBase {
   }
 
   @Put('/:id')
+  @UseBefore(HasRole(['Super Admin', 'Admin', 'Manager']))
   public async update(@Param('id') id: number, @Body() product: ProductUpdateRequest) {
     return await this.productService.updateOneById(id, product);
   }
 
   @Delete('/:id')
+  @UseBefore(HasRole(['Super Admin', 'Admin', 'Manager']))
   @HttpCode(204)
   public async delete(@Param('id') id: number) {
     return await this.productService.deleteOneById(id);
