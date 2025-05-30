@@ -44,6 +44,11 @@ export class UserController extends ControllerBase {
     return await this.userService.findOneById(loggedUser.userId, resourceOptions);
   }
 
+  @Get('/profile')
+  public async getProfile(@LoggedUser() loggedUser: LoggedUserInterface) {
+    return await this.userService.getProfile(loggedUser.userId);
+  }
+
   @Get('/:username')
   public async getBySearch(@Param('username') username: string, @QueryParams() parseResourceOptions: RequestQueryParser) {
     return this.userService.getUsersBySearch(username);
