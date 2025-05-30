@@ -1,2 +1,3 @@
-# Vulum
-Vulum is an e-commerce webapp where users can buy or sell different products
+# Vulum.
+
+<h1> Vulum ecom </h1>

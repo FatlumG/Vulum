@@ -1,8 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+interface ToggleState {
+  onSignIn: boolean;
+}
+
+const initialState: ToggleState = {
+  onSignIn: false,
+};
+
 const toggleSlice = createSlice({
   name: "signToggle",
-  initialState: { onSignIn: false },
+  initialState,
   reducers: {
     toggleState: (state) => {
       state.onSignIn = !state.onSignIn;

@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
-import Google from "../assets/icons/google.svg";
-import Facebook from "../assets/icons/facebook.svg";
-import Apple from "../assets/icons/apple.svg";
+import google from "../assets/icons/google.svg";
+import facebook from "../assets/icons/facebook.svg";
+import apple from "../assets/icons/apple.svg";
 import { RootState } from "../app/store";
+import api from "../auth/api";
 
 interface SignTableProps {
   SignIn: boolean;
@@ -13,10 +14,25 @@ interface SignTableProps {
 
 const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [signInData, setSignInData] = useState({ email: "", password: "" });
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
   const togglePassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await api.post("/api/v1/auth/login", signInData);
+      const token = res.data.token;
+
+      localStorage.setItem("token", token);
+      navigate("/");
+
+    } catch (error) {}
   };
 
   return (
@@ -49,16 +65,45 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
         {SignIn ? "Sign In" : "Sign Up"}
       </h1>
 
-      <div className="mt-7 w-full">
-        <label htmlFor="email" className="text-[14px]">
-          Enter your email address
-        </label>
-        <input
-          id="email"
-          type="email"
-          placeholder="Email Address"
-          className="w-full mt-2 p-4 border-[1px] border-gray-200 rounded-xl text-sm text-lightGray font-thin text-[13px] focus:outline-secondary focus:text-gray-900"
-        />
+      <div className="mt-7 flex gap-9">
+        {!SignIn ? (
+          <>
+            <div>
+              <label htmlFor="username" className="text-[14px]">
+                Enter your username
+              </label>
+              <input
+                id="username"
+                type="username"
+                placeholder="Username"
+                className="w-[110%] mt-2 p-4 border-[1px] border-gray-200 rounded-xl text-sm text-lightGray font-thin text-[13px] focus:outline-secondary focus:text-gray-900"
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="text-[14px]">
+                Enter your email address
+              </label>
+              <input
+                id="email"
+                type="email"
+                placeholder="Email Address"
+                className="w-full mt-2 p-4 border-[1px] border-gray-200 rounded-xl text-sm text-lightGray font-thin text-[13px] focus:outline-secondary focus:text-gray-900"
+              />
+            </div>
+          </>
+        ) : (
+          <div className="w-full">
+            <label htmlFor="email" className="text-[14px]">
+              Enter your email address
+            </label>
+            <input
+              id="email"
+              type="email"
+              placeholder="Email Address"
+              className="w-full mt-2 p-4 border-[1px] border-gray-200 rounded-xl text-sm text-lightGray font-thin text-[13px] focus:outline-secondary focus:text-gray-900"
+            />
+          </div>
+        )}
       </div>
 
       {SignIn ? (
@@ -157,16 +202,16 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
             <span className="text-lightGray">OR</span>
             <div className="w-full flex justify-between items-center">
               <div className="flex justify-center items-center gap-5 bg-lightBlue py-3 px-8 rounded-xl cursor-pointer">
-                <img src={Google} alt="" />
+                <img src={google} alt="" />
                 <p className="text-darkBlue text-[15px]">
                   Countinue with Google
                 </p>
               </div>
               <div className="bg-[#F6F6F6] py-3 px-5 rounded-xl cursor-pointer">
-                <img src={Facebook} alt="" />
+                <img src={facebook} alt="" />
               </div>
               <div className="bg-[#F6F6F6] py-3 px-5 rounded-xl cursor-pointer">
-                <img src={Apple} alt="" />
+                <img src={apple} alt="" />
               </div>
             </div>
           </>
