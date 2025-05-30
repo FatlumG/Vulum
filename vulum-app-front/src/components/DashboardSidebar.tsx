@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import SideItem from "./SideItem";
 import { AiOutlineDashboard } from "react-icons/ai";
 import { AiOutlineProduct } from "react-icons/ai";
@@ -13,6 +14,7 @@ import { IoPeopleOutline } from "react-icons/io5";
 import { LiaMoneyBillWaveSolid } from "react-icons/lia";
 import { CiSettings } from "react-icons/ci";
 import { AiOutlinePoweroff } from "react-icons/ai";
+import { logout } from "../features/store/authSlice";
 
 interface DashboardSidebarProps {
   classes?: string;
@@ -21,6 +23,12 @@ interface DashboardSidebarProps {
 const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   classes = "",
 }) => {
+  const dispatch = useDispatch();
+
+  const logoutUser = () => {
+    dispatch(logout());
+  };
+
   return (
     <div
       className={`bg-white py-4 w-[250px] flex flex-col items-center border-r-2 ${classes}`}
@@ -66,7 +74,12 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
       />
       <div className="h-[1px] w-full bg-gray-300 mt-2 mb-4" />
       <SideItem icon={<CiSettings />} title="Settings" path="/settings" />
-      <SideItem icon={<AiOutlinePoweroff />} title="Log Out" path="/" />
+      <SideItem
+        icon={<AiOutlinePoweroff />}
+        title="Log Out"
+        path="/"
+        onClick={() => logoutUser()}
+      />
     </div>
   );
 };
