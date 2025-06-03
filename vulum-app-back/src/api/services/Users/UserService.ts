@@ -20,6 +20,15 @@ export class UserService {
     return await this.getRequestedUserOrFail(id, resourceOptions);
   }
 
+  public async getProfile(id: number) {
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.role', 'role')
+      .select(['user.id', 'user.FName', 'user.LName', 'user.ProfilePhotoUrl', 'role.RoleName'])
+      .where('user.id = :id', { id })
+      .getOne();
+  }
+
   public async create(data: object) {
     const existingUser = await this.userRepository.findOne(data);
     if (existingUser) {
