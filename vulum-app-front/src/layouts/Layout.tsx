@@ -38,7 +38,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         RoleName={user?.role.RoleName}
       />
       <div className="grid grid-cols-12">
-        <DashboardSidebar />
+        <DashboardSidebar classes="col-span-2" />
         <div className="col-span-10 py-5 px-10 font-NunitoSans">{children}</div>
       </div>
     </>

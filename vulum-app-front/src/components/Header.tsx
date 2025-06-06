@@ -1,10 +1,8 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import vulum from "../assets/logos/vulumBlue.png";
 // import profile from "../assets/figures/profilep.png";
 import ukFlag from "../assets/figures/UK Flag.png";
 import { FaChevronDown } from "react-icons/fa6";
-import api from "../auth/api";
-import { userInterface } from "../interfaces/UserInterface";
 
 interface HeaderProps {
   userInitials: string;
