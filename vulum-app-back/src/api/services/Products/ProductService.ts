@@ -38,8 +38,8 @@ export class ProductService {
     return await this.getRequestedProductOrFail(id, resourceOptions);
   }
 
-  public async getMyProducts(user: LoggedUserInterface, resourceOptions?: object) {
-    return await this.productRepository.find({ where: { CreatedBy: user.userId }, ...resourceOptions });
+  public async getMyProducts(user: LoggedUserInterface) {
+    return await this.productRepository.find({ where: { CreatedBy: user.userId }, order: { CreatedAt: 'DESC' } });
   }
 
   public async create(data: ProductCreateRequest, loggedUser: LoggedUserInterface) {

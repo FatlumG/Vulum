@@ -58,10 +58,10 @@ export class ProductController extends ControllerBase {
   }
 
   @Get('/my-products')
-  public async getMyProducts(@LoggedUser() loggedUser: LoggedUserInterface, @QueryParams() parseResourceOptions: RequestQueryParser) {
-    const resourceOptions = parseResourceOptions.getAll();
+  public async getMyProducts(@LoggedUser() loggedUser: LoggedUserInterface) {
+    // const resourceOptions = parseResourceOptions.getAll();
 
-    return await this.productService.getMyProducts(loggedUser, resourceOptions);
+    return await this.productService.getMyProducts(loggedUser);
   }
 
   @Get('/:productName([a-zA-Z]+)')

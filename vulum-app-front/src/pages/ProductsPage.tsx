@@ -39,8 +39,9 @@ const ProductsPage: React.FC = () => {
             </button>
           </div>
           <div className="m-5 grid grid-cols-3 gap-5">
-            {products.map((prod) => (
+            {products.map((prod, idx) => (
               <ProductCard
+                key={idx}
                 image={google}
                 alt={prod.ProductName}
                 title={prod.ProductName}
