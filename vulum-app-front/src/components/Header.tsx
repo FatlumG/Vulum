@@ -14,7 +14,7 @@ const Header: FC = () => {
       try {
         const res = await api.get("/users/profile");
         setUser(res.data);
-        console.log(res.data, "res.data");
+        // console.log(res.data, "res.data");
       } catch (error) {
         console.error("Error fetching user data:", error);
       }

@@ -32,7 +32,10 @@ const DashboardPage: FC = () => {
       <div className="grid grid-cols-12">
         <DashboardSidebar classes="col-span-2" />
         <div className="col-span-10 py-5 px-10 font-NunitoSans">
-          <h1 className="text-[32px] font-bold">Your Dashboard</h1>
+          <h1 className="text-[25px] font-bold">
+            <span className="font-semibold">Welcome to dashboard </span>
+            {user?.FName}
+          </h1>
           <div className="flex items-center gap-10">
             <TotalStats
               img={users}
