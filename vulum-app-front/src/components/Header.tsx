@@ -6,27 +6,13 @@ import { FaChevronDown } from "react-icons/fa6";
 import api from "../auth/api";
 import { userInterface } from "../interfaces/UserInterface";
 
-const Header: FC = () => {
-  const [user, setUser] = useState<userInterface>();
+interface HeaderProps {
+  userInitials: string;
+  FullName: string;
+  RoleName: string;
+}
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await api.get("/users/profile");
-        setUser(res.data);
-        // console.log(res.data, "res.data");
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  const userInitials = `${user?.FName?.[0].toUpperCase() ?? ""}${
-    user?.LName?.[0].toUpperCase() ?? ""
-  }`;
-
+const Header: FC<HeaderProps> = ({ userInitials, FullName, RoleName }) => {
   return (
     <div className="h-[90px] px-12 w-full flex items-center justify-between bg-white relative shadow-md">
       <img src={vulum} alt="Vulum Logo" className="w-36 " />
@@ -42,9 +28,9 @@ const Header: FC = () => {
             {userInitials}
           </div>
           <div className="cursor-pointer">
-            <h3>{user?.FullName}</h3>
+            <h3>{FullName}</h3>
             <p className="text-[12px] text-grayText cursor-pointer">
-              {user?.role.RoleName}
+              {RoleName}
             </p>
           </div>
           <FaChevronDown className="size-[15px] text-grayText cursor-pointer" />
