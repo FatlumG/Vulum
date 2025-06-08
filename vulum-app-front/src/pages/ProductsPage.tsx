@@ -3,6 +3,7 @@ import google from "../assets/icons/google.svg";
 import ProductCard from "../components/ProductCard";
 import api from "../auth/api";
 import { productInterface } from "../interfaces/ProductInterface";
+import { Link } from "react-router-dom";
 
 const ProductsPage: FC = () => {
   const [products, setProducts] = useState<[productInterface]>();
@@ -22,15 +23,17 @@ const ProductsPage: FC = () => {
 
   return (
     <div className="col-span-10 py-5 px-10 font-NunitoSans">
-      <h1>This is products page</h1>
       <div className="flex flex-col gap-10 items-start h-80 w-full mt-5 ms-2 p-10 bg-blue-500 text-white rounded-md">
-        <h1 className="text-2xl font-semibold">Enjoy your online bussines</h1>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-        <button className="bg-orangeBtn py-3 px-5 rounded-lg">
+        <h1 className="text-2xl font-semibold">Enjoy your online bussines!</h1>
+        <p>Add your own products and start selling.</p>
+        <Link
+          to="/products/add-product"
+          className="bg-orangeBtn py-3 px-5 rounded-lg"
+        >
           Get Started
-        </button>
+        </Link>
       </div>
-      <div className="m-5 grid grid-cols-3 gap-5">
+      <div className="m-5 mt-10 grid grid-cols-3 gap-5">
         {products?.map((prod, idx) => (
           <ProductCard
             key={idx}

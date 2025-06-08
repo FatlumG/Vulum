@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ProtectedRoute from "./components/ProtectedRoute";
-import PublicRoute from "./components/PublicRoute";
+import ProtectedRoute from "./components/routes/ProtectedRoute";
+import PublicRoute from "./components/routes/PublicRoute";
 import SignInPage from "./pages/Auth/SignInPage";
 import SignUpPage from "./pages/Auth/SignUpPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -16,6 +16,7 @@ import ContactPage from "./pages/ContactPage";
 import InvoicesPage from "./pages/InvoicesPage";
 import SettingsPage from "./pages/SettingsPage";
 import Layout from "./layouts/Layout";
+import AddProductPage from "./pages/AddProductPage";
 
 const App: React.FC = () => {
   return (
@@ -55,6 +56,14 @@ const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <ProductsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/products/add-product"
+            element={
+              <ProtectedRoute>
+                <AddProductPage />
               </ProtectedRoute>
             }
           />

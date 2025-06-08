@@ -34,7 +34,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
     <>
       <Header
         userInitials={userInitials}
-        FullName={user?.FName ?? ""}
+        FullName={user?.FullName ?? ""}
         RoleName={user?.role.RoleName}
       />
       <div className="grid grid-cols-12">
