@@ -25,7 +25,7 @@ const DashboardPage: FC = () => {
   }, []);
 
   return (
-    <div>
+    <div className="w-[100vw]">
       <h1 className="text-[25px] font-bold">
         <span className="font-semibold">Welcome to dashboard </span>
         {user?.FName}

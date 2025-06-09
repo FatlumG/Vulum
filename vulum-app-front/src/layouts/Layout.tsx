@@ -28,7 +28,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
   const userInitials = `${user?.FName?.[0].toUpperCase() ?? ""}${
     user?.LName?.[0].toUpperCase() ?? ""
   }`;
-  console.log(userInitials, "userInitials");
+  // console.log(userInitials, "userInitials");
 
   return (
     <>

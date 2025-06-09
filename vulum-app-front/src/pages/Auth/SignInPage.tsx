@@ -5,7 +5,7 @@ import salyMoto from "../../assets/figures/salyMoto.svg";
 import logo from "../../assets/logos/vulumBlue.png";
 const SignPage: React.FC = () => {
   return (
-    <div className="h-[100vh] w-[full] bg-secondary">
+    <div className="h-[100vh] w-[full] bg-primaryBlue">
       <div className="h-[100vh] w-[50%] bg-primary absolute z-0">
         <img
           src={logo}

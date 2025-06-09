@@ -1,4 +1,5 @@
 import React, { FC, useState, useEffect } from "react";
+import { Button } from "../components/ui/button";
 import google from "../assets/icons/google.svg";
 import ProductCard from "../components/ProductCard";
 import api from "../auth/api";
@@ -26,12 +27,12 @@ const ProductsPage: FC = () => {
       <div className="flex flex-col gap-10 items-start h-80 w-full mt-5 ms-2 p-10 bg-blue-500 text-white rounded-md">
         <h1 className="text-2xl font-semibold">Enjoy your online bussines!</h1>
         <p>Add your own products and start selling.</p>
-        <Link
-          to="/products/add-product"
+        <Button
+          // to="/products/add-product"
           className="bg-orangeBtn py-3 px-5 rounded-lg"
         >
           Get Started
-        </Link>
+        </Button>
       </div>
       <div className="m-5 mt-10 grid grid-cols-3 gap-5">
         {products?.map((prod, idx) => (
