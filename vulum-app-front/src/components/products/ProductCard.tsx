@@ -1,5 +1,5 @@
 import { FC } from "react";
-import favourite from "../assets/figures/favourite.svg";
+import favourite from "../../assets/figures/favourite.svg";
 
 interface ProductCardProps {
   image: string;

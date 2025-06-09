@@ -36,8 +36,8 @@ export function AppSidebar() {
       icon: Home,
     },
     {
-      title: "Produts",
-      url: "/produts",
+      title: "Products",
+      url: "/products",
       icon: Package2,
     },
     {
