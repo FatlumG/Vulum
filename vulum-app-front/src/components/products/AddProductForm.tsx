@@ -10,6 +10,8 @@ import api from "../../auth/api";
 
 const AddProductForm = () => {
   const { price, onChange, onBlur } = usePriceInput("");
+  const [images, setImages] = useState<File[]>([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [product, setProduct] = useState({
     ProductName: "",
     ProductDescription: "",
@@ -19,23 +21,52 @@ const AddProductForm = () => {
     CreatedBy: 46,
   });
 
+  // const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files[0]) {
+  //     setImages((prev) => [...prev, e.target.files![0]]);
+  //     if (selectedImageIndex === null) {
+  //       setSelectedImageIndex(0); // select first by default
+  //     }
+  //   }
+  // };
+  const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      // Check for duplicates based on name, size, and lastModified
+      const isDuplicate = images.some(
+        (img) =>
+          img.name === file.name &&
+          img.size === file.size &&
+          img.lastModified === file.lastModified
+      );
+
+      if (isDuplicate) {
+        alert("This image has already been added.");
+        return;
+      }
+
+      const newImages = [...images, file];
+      setImages(newImages);
+
+      if (selectedImageIndex === null) {
+        setSelectedImageIndex(0);
+      }
+    }
+  };
+
   const addProduct = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    console.log(product, "product");
-    // const newProduct = {
-    //   ...product,
-    //   Price: Number(price),
-    // };
     try {
       const res = await api.post("/products", product);
       console.log(res.data, "res.data");
       console.log(product.Price, "product.Price");
     } catch (err: any) {
       if (err.response) {
+        console.error("Error data:", err.response.data);
         // Server responded with a status other than 2xx
         // console.error("Validation errors:", err.response.data.errors);
-        console.error("Error data:", err.response.data);
         // console.error("Error status:", err.response.status);
         // console.error("Error headers:", err.response.headers);
       } else if (err.request) {
@@ -86,11 +117,27 @@ const AddProductForm = () => {
         <span className="row-span-1 font-semibold text-lg">Upload Images</span>
         <div className="flex gap-2">
           <div className="flex flex-col gap-2">
-            <PicUploads />
-            <PicUploads />
-            <PicUploads />
+            {[...images].slice(-3).map((img, index) => {
+              if (!(img instanceof File)) return null;
+
+              return (
+                <PicUploads
+                  key={index}
+                  src={URL.createObjectURL(img)}
+                  onClick={() => setSelectedImageIndex(images.length - 3 + index)}
+                />
+              );
+            })}
           </div>
-          <div className="w-60 h-64 bg-white rounded-md cursor-pointer hover:scale-[1.03] transition"></div>
+          <div className="w-60 h-64 bg-white rounded-md cursor-pointer hover:scale-[1.03] transition overflow-hidden">
+            {images[selectedImageIndex] instanceof File && (
+              <img
+                src={URL.createObjectURL(images[selectedImageIndex])}
+                alt="Image"
+                className="w-full h-full object-cover"
+              />
+            )}
+          </div>
         </div>
         <div className="relative w-full h-20 bg-white rounded-md grid place-items-center cursor-pointer hover:scale-[1.03] transition">
           <Input
@@ -98,6 +145,7 @@ const AddProductForm = () => {
             id="pImage"
             placeholder="Product Images"
             className="h-full absolute inset-0 opacity-0 cursor-pointer"
+            onChange={handleAddImage}
           />
           <FaPlusCircle className="text-primaryBlue" />
         </div>
