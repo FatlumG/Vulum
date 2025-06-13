@@ -64,6 +64,7 @@ export class ProductService {
     };
 
     user.Products += 1;
+
     await this.userRepository.save(user);
 
     let product = await this.productRepository.createproduct(planWithStripe);

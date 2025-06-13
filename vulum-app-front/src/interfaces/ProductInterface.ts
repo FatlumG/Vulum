@@ -2,7 +2,7 @@ export interface productInterface {
   id: number;
   Category: string;
   CreatedAt: string;
-  CreatedBy: string;
+  CreatedBy: number;
   Price: number;
   ProductDescription: string;
   ProductName: string;
