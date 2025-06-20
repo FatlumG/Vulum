@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsArray, IsOptional } from 'class-validator';
 
 export class ProductCreateRequest {
   @IsNotEmpty()

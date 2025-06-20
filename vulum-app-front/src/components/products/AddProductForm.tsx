@@ -5,13 +5,16 @@ import { usePriceInput } from "../../hooks/price-handle";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { FaPlusCircle } from "react-icons/fa";
+import { IoTrashBin } from "react-icons/io5";
 import PicUploads from "./PicUploads";
 import api from "../../auth/api";
 
 const AddProductForm = () => {
   const { price, onChange, onBlur } = usePriceInput("");
   const [images, setImages] = useState<File[]>([]);
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
+    0
+  );
   const [product, setProduct] = useState({
     ProductName: "",
     ProductDescription: "",
@@ -20,15 +23,8 @@ const AddProductForm = () => {
     Category: 1,
     CreatedBy: 46,
   });
+      console.log(images, "images");
 
-  // const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files[0]) {
-  //     setImages((prev) => [...prev, e.target.files![0]]);
-  //     if (selectedImageIndex === null) {
-  //       setSelectedImageIndex(0); // select first by default
-  //     }
-  //   }
-  // };
   const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -55,11 +51,28 @@ const AddProductForm = () => {
     }
   };
 
+  const handleRemoveImage = (indexToRemove: number) => {
+    const updatedImages = images.filter((_, index) => index !== indexToRemove);
+    setImages(updatedImages);
+
+    // Adjust selected index if needed
+    if (selectedImageIndex === indexToRemove) {
+      setSelectedImageIndex(null);
+    } else if (
+      selectedImageIndex !== null &&
+      selectedImageIndex > indexToRemove
+    ) {
+      setSelectedImageIndex(selectedImageIndex - 1);
+    }
+  };
+
   const addProduct = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
       const res = await api.post("/products", product);
+      const imageRes = await api.post("/products/images", images);
+      
       console.log(res.data, "res.data");
       console.log(product.Price, "product.Price");
     } catch (err: any) {
@@ -115,27 +128,37 @@ const AddProductForm = () => {
       </div>
       <div className="col-span-2 row-span-2 flex flex-col gap-5 bg-gray-200 p-7 rounded-xl shadow-lg">
         <span className="row-span-1 font-semibold text-lg">Upload Images</span>
-        <div className="flex gap-2">
-          <div className="flex flex-col gap-2">
-            {[...images].slice(-3).map((img, index) => {
+        <div className="flex gap-3 w-80">
+          <div
+            className={`flex flex-col gap-2 w-[110px] h-[250px] overflow-x-hidden ${
+              images.length > 3 ? "overflow-y-scroll" : "overflow-y-hidden"
+            } `}
+          >
+            {images.map((img, index) => {
               if (!(img instanceof File)) return null;
 
               return (
                 <PicUploads
                   key={index}
                   src={URL.createObjectURL(img)}
-                  onClick={() => setSelectedImageIndex(images.length - 3 + index)}
+                  onClick={() => setSelectedImageIndex(index)}
                 />
               );
             })}
           </div>
-          <div className="w-60 h-64 bg-white rounded-md cursor-pointer hover:scale-[1.03] transition overflow-hidden">
-            {images[selectedImageIndex] instanceof File && (
-              <img
-                src={URL.createObjectURL(images[selectedImageIndex])}
-                alt="Image"
-                className="w-full h-full object-cover"
-              />
+          <div className="w-60 h-64 relative group bg-white rounded-md cursor-pointer hover:scale-[1.01] transition overflow-hidden">
+            {images[selectedImageIndex || 0] instanceof File && (
+              <>
+                <img
+                  src={URL.createObjectURL(images[selectedImageIndex || 0])}
+                  alt="Image"
+                  className="w-full h-full object-cover transition duration-200 group-hover:brightness-50"
+                />
+                <IoTrashBin
+                  onClick={() => handleRemoveImage(selectedImageIndex || 0)}
+                  className="w-6 h-6 p-1 absolute bottom-2 right-2 text-red-500 bg-white rounded-md cursor-pointer hover:transform hover:scale-110"
+                />
+              </>
             )}
           </div>
         </div>

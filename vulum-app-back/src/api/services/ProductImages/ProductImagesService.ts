@@ -4,6 +4,7 @@ import { CategoryNotFoundException } from '@api/exceptions/Categories/CategoryNo
 import { EventDispatcher, EventDispatcherInterface } from '@base/decorators/EventDispatcher';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
+import { ProductImagesCreateRequest } from '@base/api/requests/ProductImages/ProductImagesCreateRequest';
 
 @Service()
 export class ProductImagesService {
@@ -19,11 +20,11 @@ export class ProductImagesService {
     return await this.productImagesRepository.find({ ...resourceOptions });
   }
 
-  public async findOneById(id: number, resourceOptions?: object) {
+  public async getImagesByProductId(id: number, resourceOptions?: object) {
     return await this.getRequestedProductImagesOrFail(id, resourceOptions);
   }
 
-  public async create(data: object, loggedUser: LoggedUserInterface) {
+  public async create(data: ProductImagesCreateRequest[]) {
 
     let productImages = await this.productImagesRepository.createProductImages(data);
 

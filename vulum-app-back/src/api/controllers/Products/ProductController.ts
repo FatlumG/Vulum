@@ -2,6 +2,7 @@ import { Param, Get, JsonController, Post, Body, Put, Delete, HttpCode, UseBefor
 import { ProductService } from '@api/services/Products/ProductService';
 import { Service } from 'typedi';
 import { ProductCreateRequest } from '@api/requests/Products/ProductCreateRequest';
+import { CreateProductWithImagesRequest } from '@api/requests/Products/CreateProductWithImagesRequest';
 import { AuthCheck } from '@base/infrastructure/middlewares/Auth/AuthCheck';
 import { HasRole } from '@base/infrastructure/middlewares/Auth/HasRole';
 import { ControllerBase } from '@base/infrastructure/abstracts/ControllerBase';
@@ -10,7 +11,8 @@ import { OpenAPI } from 'routing-controllers-openapi';
 import { RequestQueryParser } from 'typeorm-simple-query-parser';
 import { LoggedUser } from '@base/decorators/LoggedUser';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
-import { UserService } from '@base/api/services/Users/UserService';
+import { ProductImagesService } from '@api/services/ProductImages/ProductImagesService';
+import { ProductImagesCreateRequest } from '@base/api/requests/ProductImages/ProductImagesCreateRequest';
 
 @Service()
 @OpenAPI({
@@ -19,7 +21,7 @@ import { UserService } from '@base/api/services/Users/UserService';
 @JsonController('/products')
 @UseBefore(AuthCheck)
 export class ProductController extends ControllerBase {
-  public constructor(private productService: ProductService, private userService: UserService) {
+  public constructor(private productService: ProductService, private productImagesService: ProductImagesService) {
     super();
   }
 
@@ -69,10 +71,32 @@ export class ProductController extends ControllerBase {
     return this.productService.getProductsBySearch(productName);
   }
 
+  // @Post()
+  // @HttpCode(201)
+  // public async create(@Body() product: ProductCreateRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
+  //   return await this.productService.create(product, loggedUser);
+  // }
+
   @Post()
   @HttpCode(201)
-  public async create(@Body() product: ProductCreateRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
-    return await this.productService.create(product, loggedUser);
+  public async create(@Body() body: CreateProductWithImagesRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
+    // 1) Create product and get created product entity (with id)
+    const createdProduct = await this.productService.create(body.product, loggedUser);
+
+    // 2) Prepare images with product_id set to createdProduct.id
+    const imagesWithProductId = body.images.map((img) => ({
+      ...img,
+      product_id: Number(createdProduct.id),
+    }));
+
+    // 3) Save product images
+    const createdImages = await this.productImagesService.create(imagesWithProductId);
+
+    // 4) Return both created product and images
+    return {
+      product: createdProduct,
+      images: createdImages,
+    };
   }
 
   @Put('/:id')
@@ -87,4 +111,19 @@ export class ProductController extends ControllerBase {
   public async delete(@Param('id') id: number) {
     return await this.productService.deleteOneById(id);
   }
+
+  @Get('/images')
+  public async getImages(resourceOptions: object) {
+    return await this.productImagesService.getAll(resourceOptions);
+  }
+
+  @Get('/:id([0-9]+)/images')
+  public async getImagesByProductId(@Param('id') id: number, resourceOptions: object) {
+    return await this.productImagesService.getImagesByProductId(id, resourceOptions);
+  }
+
+  // @Post('/images')
+  // public async addImages(@Body() images: ProductImagesCreateRequest) {
+  //   return await this.productImagesService.create(images);
+  // }
 }
