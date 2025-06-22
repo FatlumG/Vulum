@@ -1,18 +1,19 @@
-import React, { FC, useState, useEffect } from "react";
-import { Button } from "../components/ui/button";
+import React, { useState, useEffect } from "react";
+// import { Button } from "../components/ui/button";
 import google from "../assets/icons/google.svg";
 import ProductCard from "../components/products/ProductCard";
 import api from "../auth/api";
-import { productInterface } from "../interfaces/ProductInterface";
+import { ProductInterface } from "../interfaces/ProductInterface";
 import { Link } from "react-router-dom";
 
-const ProductsPage: FC = () => {
-  const [products, setProducts] = useState<[productInterface]>();
+const ProductsPage: React.FC = () => {
+  const [products, setProducts] = useState<[ProductInterface]>();
 
   useEffect(() => {
     async function fetchProducts() {
       try {
         const res = await api.get("/products/my-products");
+        // console.log(res.data, "res.data");
         setProducts(res.data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -21,6 +22,15 @@ const ProductsPage: FC = () => {
 
     fetchProducts();
   }, []);
+
+  products?.map((prod) => {
+    if (prod.productImages.length > 0) {
+      console.log(prod.productImages[0].image_url);
+    }
+    else {
+      console.log("no imamges found!!");
+    }
+  });
 
   return (
     <div className="col-span-10 py-5 font-NunitoSans">
@@ -38,7 +48,7 @@ const ProductsPage: FC = () => {
         {products?.map((prod, idx) => (
           <ProductCard
             key={idx}
-            image={google}
+            image={prod.productImages[0]?.image_url || 'fallback-image-url.jpg'}
             alt={prod.ProductName}
             title={prod.ProductName}
             price={prod.Price}

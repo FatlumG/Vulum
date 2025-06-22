@@ -44,6 +44,10 @@ export class App {
     this.registerEvents();
     this.registerCronJobs();
     this.serveStaticFiles();
+    // this.app.use('/api/products', (req, res) => {
+    //   console.log(req.body, 'req.body');
+    //   console.log('product data recieved');
+    // });
     this.app.use(
       cors({
         origin: '*',

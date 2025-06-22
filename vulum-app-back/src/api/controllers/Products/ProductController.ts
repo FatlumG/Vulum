@@ -13,6 +13,7 @@ import { LoggedUser } from '@base/decorators/LoggedUser';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
 import { ProductImagesService } from '@api/services/ProductImages/ProductImagesService';
 import { ProductImagesCreateRequest } from '@base/api/requests/ProductImages/ProductImagesCreateRequest';
+import { validate } from 'class-validator';
 
 @Service()
 @OpenAPI({
@@ -90,7 +91,10 @@ export class ProductController extends ControllerBase {
     }));
 
     // 3) Save product images
+    console.log('imagesWithProductId', imagesWithProductId);
     const createdImages = await this.productImagesService.create(imagesWithProductId);
+    console.log('createdImages', createdImages);
+    console.log('createdProduct', createdProduct);
 
     // 4) Return both created product and images
     return {

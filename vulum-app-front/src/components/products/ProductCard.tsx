@@ -12,7 +12,11 @@ const ProductCard: FC<ProductCardProps> = ({ image, alt, title, price }) => {
   return (
     <div className="h-[400px] w-[300px] bg-white rounded-xl grid grid-rows-3 shadow-xl">
       <div className="w-full h-full row-span-2">
-        <img src={image} alt={alt} className="w-full h-full" />
+        <img
+          src={image}
+          alt={alt}
+          className="p-2 w-full h-full object-cover rounded-2xl"
+        />
       </div>
       <div className="px-5 py-4 row-span-1 flex flex-col justify-between items-start">
         <div className="flex items-center justify-between w-full">
@@ -24,7 +28,9 @@ const ProductCard: FC<ProductCardProps> = ({ image, alt, title, price }) => {
           />
         </div>
         <p className="text-sm">${price}</p>
-        <button className="text-sm mt-2 px-3 py-2 bg-slate-200 rounded-xl cursor-pointer">Edit product</button>
+        <button className="text-sm mt-2 px-3 py-2 bg-slate-200 rounded-xl cursor-pointer">
+          Edit product
+        </button>
       </div>
     </div>
   );

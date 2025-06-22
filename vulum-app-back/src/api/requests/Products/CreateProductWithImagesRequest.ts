@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { ValidateNested, IsArray } from 'class-validator';
+import { ValidateNested, IsArray, IsNotEmpty } from 'class-validator';
 import { ProductCreateRequest } from './ProductCreateRequest';
 import { ProductImagesCreateRequest } from '../ProductImages/ProductImagesCreateRequest';
 

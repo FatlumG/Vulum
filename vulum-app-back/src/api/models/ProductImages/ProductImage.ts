@@ -1,13 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
-@Entity({ name: 'product_images' })
+import { Product } from '../Products/Product';
+
+@Entity({ name: 'Product_images' })
 export class ProductImages extends EntityBase {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
   @Column()
-  product_id: number;
+  image_url: string;
 
-  @Column()
-  image__url: string;
+  @ManyToOne(() => Product, (product) => product.productImages, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'product_id' })
+  product_id: Product;
 }

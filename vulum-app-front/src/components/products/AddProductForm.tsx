@@ -8,6 +8,7 @@ import { FaPlusCircle } from "react-icons/fa";
 import { IoTrashBin } from "react-icons/io5";
 import PicUploads from "./PicUploads";
 import api from "../../auth/api";
+import axios from "axios";
 
 const AddProductForm = () => {
   const { price, onChange, onBlur } = usePriceInput("");
@@ -23,8 +24,57 @@ const AddProductForm = () => {
     Category: 1,
     CreatedBy: 46,
   });
-      console.log(images, "images");
 
+  //   const requestBody = {
+  //   product,
+  //   images: images.map(file => ({
+  //     image_url: /* convert file to base64 or upload URL */,
+  //   })),
+  // };
+
+  async function uploadToCloudinary(file: File): Promise<void> {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "vulum_upload_preset"); // replace this
+    formData.append("folder", "products"); // to organize uploads
+    try {
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/dawa2plry/image/upload`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      return response.data.secure_url;
+    } catch (error: any) {
+      throw new Error(
+        error.response?.data?.error?.message || "Cloudinary upload failed"
+      );
+    }
+  }
+
+  async function buildRequestBody() {
+    const uploadedImageUrls = await Promise.all(
+      images.map((file) => uploadToCloudinary(file))
+    );
+
+    const imagesForRequest = uploadedImageUrls.map((url) => ({
+      image_url: url,
+    }));
+
+    const requestBody = {
+      product: {
+        ProductName: product.ProductName,
+        ProductDescription: product.ProductDescription,
+        Price: Number(product.Price),
+        Stock: Number(product.Stock),
+        Category: Number(product.Category),
+      },
+      images: imagesForRequest,
+    };
+
+    return requestBody;
+  }
   const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -70,15 +120,17 @@ const AddProductForm = () => {
     e.preventDefault();
 
     try {
-      const res = await api.post("/products", product);
-      const imageRes = await api.post("/products/images", images);
-      
-      console.log(res.data, "res.data");
-      console.log(product.Price, "product.Price");
+      const requestBody = await buildRequestBody();
+      console.log(requestBody, "requestBody");
+
+      await api.post("/products", requestBody);
+      // console.log(res.data, "res.data");
+
+      // console.log(res.data, "res.data");
+      // console.log(product.Price, "product.Price");
     } catch (err: any) {
       if (err.response) {
-        console.error("Error data:", err.response.data);
-        // Server responded with a status other than 2xx
+        // console.error("Error data:", err.response.data); // Server responded with a status other than 2xx
         // console.error("Validation errors:", err.response.data.errors);
         // console.error("Error status:", err.response.status);
         // console.error("Error headers:", err.response.headers);

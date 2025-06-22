@@ -4,12 +4,14 @@ import { RepositoryBase } from '@base/infrastructure/abstracts/RepositoryBase';
 
 @EntityRepository(ProductImages)
 export class ProductImagesRepository extends RepositoryBase<ProductImages> {
-  public async createProductImages(data: object) {
-    let entity = new ProductImages();
+  public async createProductImages(data: object[]) {
+    const entities = data.map((item) => {
+      const entity = new ProductImages();
+      Object.assign(entity, item);
+      return entity;
+    });
 
-    Object.assign(entity, data);
-
-    return await this.save(entity);
+    return await this.save(entities);
   }
 
   public async updateProductImages(productImages: ProductImages, data: object) {

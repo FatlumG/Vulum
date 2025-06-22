@@ -39,7 +39,7 @@ export class ProductService {
   }
 
   public async getMyProducts(user: LoggedUserInterface) {
-    return await this.productRepository.find({ where: { CreatedBy: user.userId }, order: { CreatedAt: 'DESC' } });
+    return await this.productRepository.find({ where: { CreatedBy: user.userId }, relations: ['productImages'], order: { CreatedAt: 'DESC' } });
   }
 
   public async create(data: ProductCreateRequest, loggedUser: LoggedUserInterface) {
@@ -69,7 +69,8 @@ export class ProductService {
 
     let product = await this.productRepository.createproduct(planWithStripe);
     this.eventDispatcher.dispatch('onProductCreate', product);
-    return productItem;
+
+    return product;
   }
 
   // public async createCheckoutSession(productId: number, user: any) {

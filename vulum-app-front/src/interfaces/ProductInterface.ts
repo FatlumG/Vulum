@@ -1,6 +1,11 @@
-export interface productInterface {
+export interface ProductImage {
   id: number;
-  Category: string;
+  image_url: string;
+}
+
+export interface ProductInterface {
+  id: number;
+  Category: number;
   CreatedAt: string;
   CreatedBy: number;
   Price: number;
@@ -10,4 +15,5 @@ export interface productInterface {
   Stock: number;
   StripePriceId: string;
   StripeProductId: string;
+  productImages: ProductImage[];
 }
