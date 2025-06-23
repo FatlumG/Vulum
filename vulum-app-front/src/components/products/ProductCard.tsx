@@ -10,7 +10,7 @@ interface ProductCardProps {
 
 const ProductCard: FC<ProductCardProps> = ({ image, alt, title, price }) => {
   return (
-    <div className="h-[400px] w-[300px] bg-white rounded-xl grid grid-rows-3 shadow-xl">
+    <div className="h-[400px] w-[300px] my-2 bg-white rounded-xl grid grid-rows-3 shadow-xl">
       <div className="w-full h-full row-span-2">
         <img
           src={image}

@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import { Button } from "../components/ui/button";
-import google from "../assets/icons/google.svg";
 import ProductCard from "../components/products/ProductCard";
 import api from "../auth/api";
 import { ProductInterface } from "../interfaces/ProductInterface";
@@ -23,18 +21,9 @@ const ProductsPage: React.FC = () => {
     fetchProducts();
   }, []);
 
-  products?.map((prod) => {
-    if (prod.productImages.length > 0) {
-      console.log(prod.productImages[0].image_url);
-    }
-    else {
-      console.log("no imamges found!!");
-    }
-  });
-
   return (
     <div className="col-span-10 py-5 font-NunitoSans">
-      <div className="flex flex-col gap-10 items-start h-80 w-full mt-5 ms-2 p-10 bg-blue-500 text-white rounded-md">
+      <div className="flex flex-col gap-10 items-start h-80 w-full mt-5 p-10 bg-blue-500 text-white rounded-md">
         <h1 className="text-2xl font-semibold">Enjoy your online bussines!</h1>
         <p>Add your own products and start selling.</p>
         <Link
@@ -44,11 +33,11 @@ const ProductsPage: React.FC = () => {
           Add your product
         </Link>
       </div>
-      <div className="m-5 mt-10 grid grid-cols-3 gap-5">
+      <div className="w-full mt-10 flex flex-wrap justify-between gap-5">
         {products?.map((prod, idx) => (
           <ProductCard
             key={idx}
-            image={prod.productImages[0]?.image_url || 'fallback-image-url.jpg'}
+            image={prod.productImages[0]?.image_url || "fallback-image-url.jpg"}
             alt={prod.ProductName}
             title={prod.ProductName}
             price={prod.Price}
