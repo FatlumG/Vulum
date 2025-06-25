@@ -1,16 +1,11 @@
 import React from "react";
 import { CategoryInterface } from "@/interfaces/CategoryInterface";
 
-interface Option {
-  value: string | number;
-  label: string;
-}
-
 interface SelectProps {
   label: string;
   options?: CategoryInterface[];
-  value: string | number;
-  onChange: (value: string) => void;
+  value: number | undefined;
+  onChange: (value: number) => void;
   disabled?: boolean;
 }
 
@@ -27,12 +22,12 @@ const Select: React.FC<SelectProps> = ({
       <select
         className="border border-gray-300 rounded-md px-3 py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange(Number(e.target.value))}
         disabled={disabled}
       >
         {Array.isArray(options) &&
           options.map((option) => (
-            <option key={option.id} value={option.CategoryName}>
+            <option key={option.id} value={option.id}>
               {option.CategoryName}
             </option>
           ))}

@@ -41,6 +41,7 @@ const ProductsPage: React.FC = () => {
             alt={prod.ProductName}
             title={prod.ProductName}
             price={prod.Price}
+            status={prod.Status}
           />
         ))}
       </div>

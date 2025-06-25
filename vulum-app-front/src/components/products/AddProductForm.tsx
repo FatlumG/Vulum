@@ -24,21 +24,22 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
       0
     );
     const [categories, setCategories] = useState<CategoryInterface[]>();
-    const [selectedCategory, setSelectedCategory] = useState<string>("");
-    const [product, setProduct] = useState({
+    const [selectedCategory, setSelectedCategory] = useState<number>();
+
+    const [product, setProduct] = useState(() => ({
       ProductName: "",
       ProductDescription: "",
       Price: 0,
       Stock: 1,
-      Category: categories?.length ? categories[0].id : 0,
-      CreatedBy: 46,
-    });
+      Category: categories?.length ? categories[0].id : null,
+      CreatedBy: getUserIdFromToken(),
+    }));
 
     useEffect(() => {
       const fetchCategories = async () => {
         try {
           const res = await api.get("/categories");
-          // console.log(res.data.rows, "res.data.rows");
+          console.log(res.data.rows, "res.data.rows");
           setCategories(res.data.rows);
         } catch (error) {
           console.error("Error fetching categories:", error);
@@ -47,11 +48,25 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
       fetchCategories();
     }, []);
 
-    useEffect(() => {
-      if (categories?.length && !selectedCategory) {
-        setSelectedCategory(categories[0].CategoryName);
+    // useEffect(() => {
+    //   if (categories?.length && !selectedCategory) {
+    //     setSelectedCategory(categories[0].id);
+    //   }
+    // }, []);
+
+    async function getUserIdFromToken(): Promise<number | null> {
+      const token = localStorage.getItem("token");
+
+      if (!token) return null;
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        console.log(payload.userId ?? null, "payload.userId ?? null");
+        return payload.userId ?? null;
+      } catch (error) {
+        console.error("Failed to decode token:", error);
+        return null;
       }
-    }, [categories]);
+    }
 
     async function uploadToCloudinary(file: File): Promise<void> {
       const formData = new FormData();
@@ -145,6 +160,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
       try {
         const requestBody = await buildRequestBody();
         console.log(requestBody, "requestBody");
+        console.log(product.Category, "product.Category");
 
         await api.post("/products", requestBody);
         // console.log(res.data, "res.data");
@@ -152,8 +168,8 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
         // console.log(product.Price, "product.Price");
       } catch (err: any) {
         if (err.response) {
-          // console.error("Error data:", err.response.data); // Server responded with a status other than 2xx
-          // console.error("Validation errors:", err.response.data.errors);
+          console.error("Error data:", err.response.data); // Server responded with a status other than 2xx
+          console.error("Validation errors:", err.response.data.errors);
           // console.error("Error status:", err.response.status);
           // console.error("Error headers:", err.response.headers);
         } else if (err.request) {
@@ -302,7 +318,10 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
             label="Product Category"
             options={categories ?? []}
             value={selectedCategory}
-            onChange={setSelectedCategory}
+            onChange={(id) => {
+              setSelectedCategory(id);
+              setProduct((prev) => ({ ...prev, Category: id }));
+            }}
           />
           <Button
             type="button"
