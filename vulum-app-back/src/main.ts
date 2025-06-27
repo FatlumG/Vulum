@@ -44,14 +44,10 @@ export class App {
     this.registerEvents();
     this.registerCronJobs();
     this.serveStaticFiles();
-    // this.app.use('/api/products', (req, res) => {
-    //   console.log(req.body, 'req.body');
-    //   console.log('product data recieved');
-    // });
     this.app.use(
       cors({
         origin: '*',
-        methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST'],
+        methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
         preflightContinue: false,
         optionsSuccessStatus: 204,
         allowedHeaders: ['Content-Type', 'Authorization', 'Stripe-Signature'],
