@@ -1,25 +1,29 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { addProduct } from "../features/products/productSlice";
+import { setProducts } from "../features/products/productSlice";
 import ProductCard from "../components/products/ProductCard";
-import api from "../auth/api";
 import { ProductInterface } from "../interfaces/ProductInterface";
 import { Link } from "react-router-dom";
+import api from "../auth/api";
 
 const ProductsPage: React.FC = () => {
-  const [products, setProducts] = useState<[ProductInterface]>();
+  const [products, setLocalProducts] = useState<ProductInterface[]>([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     async function fetchProducts() {
       try {
         const res = await api.get("/products/my-products");
         // console.log(res.data, "res.data");
-        setProducts(res.data);
+        setLocalProducts(res.data);
+        dispatch(setProducts(res.data));
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error(error);
       }
     }
-
     fetchProducts();
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="col-span-10 py-5 font-NunitoSans">
@@ -37,11 +41,13 @@ const ProductsPage: React.FC = () => {
         {products?.map((prod, idx) => (
           <ProductCard
             key={idx}
+            id={prod.id}
             image={prod.productImages[0]?.image_url || "fallback-image-url.jpg"}
             alt={prod.ProductName}
             title={prod.ProductName}
             price={prod.Price}
             status={prod.Status}
+            stock={prod.Stock}
           />
         ))}
       </div>

@@ -25,7 +25,6 @@ export class ProductImagesService {
   }
 
   public async create(data: ProductImagesCreateRequest[]) {
-
     let productImages = await this.productImagesRepository.createProductImages(data);
 
     this.eventDispatcher.dispatch('onProductImagesCreate', productImages);
@@ -33,10 +32,16 @@ export class ProductImagesService {
     return productImages;
   }
 
-  public async updateOneById(id: number, data: object) {
-    const productImages = await this.getRequestedProductImagesOrFail(id);
+  public async updateOneById(product_id: number, data: object) {
+    const productImages = await this.getAll({ where: { product_id } });
 
-    return await this.productImagesRepository.updateProductImages(productImages, data);
+    if (!productImages) {
+      throw new CategoryNotFoundException();
+    }
+
+    this.eventDispatcher.dispatch('onProductImagesUpdate', productImages);
+
+    return productImages;
   }
 
   public async deleteOneById(id: number) {

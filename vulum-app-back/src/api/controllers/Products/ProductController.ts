@@ -34,10 +34,8 @@ export class ProductController extends ControllerBase {
   }
 
   @Get('/:id([0-9]+)')
-  public async getOne(@Param('id') id: number, @QueryParams() parseResourceOptions: RequestQueryParser) {
-    const resourceOptions = parseResourceOptions.getAll();
-
-    return await this.productService.findOneById(id, resourceOptions);
+  public async getOne(@Param('id') id: number) {
+    return await this.productService.findOneById(id);
   }
 
   @Get('/available-products')

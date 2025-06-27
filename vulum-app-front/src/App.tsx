@@ -17,6 +17,7 @@ import InvoicesPage from "./pages/InvoicesPage";
 import SettingsPage from "./pages/SettingsPage";
 import NewLayout from "./layouts/NewLayout";
 import AddProductPage from "./pages/AddProductPage";
+import SingleProductPage from "./pages/SingleProductPage";
 
 const App: React.FC = () => {
   return (
@@ -47,6 +48,7 @@ const App: React.FC = () => {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/products/add-product" element={<AddProductPage />} />
+            <Route path="/products/:slug" element={<SingleProductPage />} />
             <Route path="/favorites" element={<FavoritePage />} />
             <Route path="/inbox" element={<InboxPage />} />
             <Route path="/order-lists" element={<OListPage />} />
