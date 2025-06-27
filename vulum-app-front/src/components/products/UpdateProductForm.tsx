@@ -12,6 +12,7 @@ import axios from "axios";
 import Select from "../ui/select";
 import { CategoryInterface } from "@/interfaces/CategoryInterface";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface UpdateProductFormProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
@@ -23,7 +24,6 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
   ({ onSubmit }, ref) => {
     const { price, onChange, onBlur } = usePriceInput("");
     const [images, setImages] = useState<ImageType[]>([]);
-    const [deletedImageIds, setDeletedImageIds] = useState<number[]>([]);
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
       0
     );
@@ -47,8 +47,6 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
           const res = await api.get(`/products/${id}`);
           setProduct(res.data);
           setImages(res.data.productImages);
-          // console.log(res.data, "res.data");
-          // console.log(images, "images");
         } catch (error: any) {
           console.error(error.message, "error.message");
         }
@@ -112,93 +110,18 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
       };
     }
 
-    // const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //   if (e.target.files && e.target.files[0]) {
-    //     const file = e.target.files[0];
-
-    //     // Check for duplicates based on name, size, and lastModified
-    //     const isDuplicate = images.some(
-    //       (img) =>
-    //         img.name === file.name &&
-    //         img.size === file.size &&
-    //         img.lastModified === file.lastModified
-    //     );
-
-    //     if (isDuplicate) {
-    //       alert("This image has already been added.");
-    //       return;
-    //     }
-
-    //     const newImages = [...images, file];
-    //     setImages(newImages);
-
-    //     if (selectedImageIndex === null) {
-    //       setSelectedImageIndex(0);
-    //     }
-    //   }
-    // };
-
-    // const handleRemoveImage = (indexToRemove: number) => {
-    //   const imageToRemove = images[indexToRemove];
-
-    //   // If it's an existing image, track its id for deletion
-    //   if (!(imageToRemove instanceof File) && imageToRemove.id) {
-    //     setDeletedImageIds((prev) => [...prev, imageToRemove.id]);
-    //   }
-
-    //   // Remove from images state
-    //   const updatedImages = images.filter(
-    //     (_, index) => index !== indexToRemove
-    //   );
-    //   setImages(updatedImages);
-
-    //   // Adjust selected image index
-    //   if (selectedImageIndex === indexToRemove) {
-    //     setSelectedImageIndex(null);
-    //   } else if (
-    //     selectedImageIndex !== null &&
-    //     selectedImageIndex > indexToRemove
-    //   ) {
-    //     setSelectedImageIndex(selectedImageIndex - 1);
-    //   }
-    // };
-
-    // const updateProduct = async (e: React.FormEvent<HTMLFormElement>) => {
-    //   e.preventDefault();
-
-    //   try {
-    //     const requestBody = await buildRequestBody();
-    //     console.log(requestBody, "requestBody");
-    //     console.log(product.Category, "product.Category");
-
-    //     await api.post("/products", requestBody);
-    //     // console.log(res.data, "res.data");
-    //     // console.log(res.data, "res.data");
-    //     // console.log(product.Price, "product.Price");
-    //   } catch (err: any) {
-    //     if (err.response) {
-    //       console.error("Error data:", err.response.data); // Server responded with a status other than 2xx
-    //       console.error("Validation errors:", err.response.data.errors);
-    //       // console.error("Error status:", err.response.status);
-    //       // console.error("Error headers:", err.response.headers);
-    //     } else if (err.request) {
-    //       // Request was made but no response received
-    //       console.error("No response received:", err.request);
-    //     } else {
-    //       // Something else happened
-    //       console.error("Error message:", err.message);
-    //     }
-    //   }
-    // };
     const updateProduct = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
+      const navigate = useNavigate();
+
       try {
         const requestBody = await buildRequestBody();
-        console.log(id, "id");
-        console.log(requestBody, "requestBody");
+        // console.log(id, "id");
+        // console.log(requestBody, "requestBody");
+        // console.log("Product updated successfully!");
         await api.put(`/products/${product.id}`, requestBody);
-        console.log("Product updated successfully!");
+        navigate("/products");
       } catch (error: any) {
         console.error(error);
         console.error("Validation errors:", error.response.data.errors);

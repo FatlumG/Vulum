@@ -60,9 +60,12 @@ const ProductCard: FC<ProductCardProps> = ({
           <p className="text-sm">{stock} left</p>
         </div>
         <div className="w-full flex justify-between items-center">
-          <button className="text-sm px-3 py-2 bg-slate-200 rounded-xl cursor-pointer">
+          <Link
+            to={`/products/${slug}`}
+            className="text-sm px-3 py-2 bg-slate-200 rounded-xl cursor-pointer"
+          >
             Edit product
-          </button>
+          </Link>
           <p
             className={`text-sm p-1 px-2 rounded-xl ${
               status === "available"
