@@ -3,6 +3,7 @@ import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 import { OrderItem } from '../OrderItems/OrderItem';
 import { User } from '../Users/User';
 import { ProductStatus } from './PEnum';
+import { ProductImages } from '../ProductImages/ProductImage';
 
 @Entity({ name: 'products' })
 export class Product extends EntityBase {
@@ -45,4 +46,7 @@ export class Product extends EntityBase {
   @ManyToOne(() => User, (user) => user.Products)
   @JoinColumn({ name: 'CreatedBy' })
   createdBy: User;
+
+  @OneToMany(() => ProductImages, (productImages) => productImages.product_id)
+  productImages: ProductImages[];
 }

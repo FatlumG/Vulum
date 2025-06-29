@@ -34,12 +34,27 @@ export class ProductService {
     return await this.productRepository.find({ where: { Status: 'sold' }, ...resourceOptions });
   }
 
-  public async findOneById(id: number, resourceOptions?: object) {
-    return await this.getRequestedProductOrFail(id, resourceOptions);
+  public async findOneById(id: number) {
+    const product = await this.productRepository
+      .createQueryBuilder('Product')
+      .leftJoinAndSelect('Product.productImages', 'productImages')
+      .select([
+        'Product.id',
+        'Product.ProductName',
+        'Product.ProductDescription',
+        'Product.Price',
+        'Product.Stock',
+        'Product.Category',
+        'productImages.image_url',
+      ])
+      .where('Product.id = :id', { id })
+      .getOne();
+
+    return product;
   }
 
-  public async getMyProducts(user: LoggedUserInterface, resourceOptions?: object) {
-    return await this.productRepository.find({ where: { CreatedBy: user.userId }, ...resourceOptions });
+  public async getMyProducts(user: LoggedUserInterface) {
+    return await this.productRepository.find({ where: { CreatedBy: user.userId }, relations: ['productImages'], order: { CreatedAt: 'DESC' } });
   }
 
   public async create(data: ProductCreateRequest, loggedUser: LoggedUserInterface) {
@@ -64,35 +79,14 @@ export class ProductService {
     };
 
     user.Products += 1;
+
     await this.userRepository.save(user);
 
     let product = await this.productRepository.createproduct(planWithStripe);
     this.eventDispatcher.dispatch('onProductCreate', product);
-    return productItem;
+
+    return product;
   }
-
-  // public async createCheckoutSession(productId: number, user: any) {
-  //   const product = await this.productRepository.findOne(productId);
-  //   if (!product || !product.StripePriceId) {
-  //     throw new Error('Product or Stripe price not found');
-  //   }
-  //   const session = await stripe.checkout.sessions.create({
-  //     payment_method_types: ['card'],
-  //     mode: 'payment',
-  //     customer_email: user.email,
-  //     line_items: [
-  //       {
-  //         price: product.StripePriceId,
-  //         quantity: 1,
-  //       },
-  //     ],
-  //     success_url: 'http://localhost:3000/docs/?session_id={CHECKOUT_SESSION_ID}',
-  //     cancel_url: 'http://localhost:3000/cancel',
-  //     metadata: { userId: user.id, productId },
-  //   });
-
-  //   return { url: session.url };
-  // }
 
   public async updateOneById(id: number, data: object) {
     const product = await this.getRequestedProductOrFail(id);

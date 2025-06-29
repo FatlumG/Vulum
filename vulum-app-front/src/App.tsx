@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ProtectedRoute from "./components/ProtectedRoute";
-import PublicRoute from "./components/PublicRoute";
+import ProtectedRoute from "./components/routes/ProtectedRoute";
+import PublicRoute from "./components/routes/PublicRoute";
 import SignInPage from "./pages/Auth/SignInPage";
 import SignUpPage from "./pages/Auth/SignUpPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -15,128 +15,68 @@ import TodoPage from "./pages/TodoPage";
 import ContactPage from "./pages/ContactPage";
 import InvoicesPage from "./pages/InvoicesPage";
 import SettingsPage from "./pages/SettingsPage";
+import NewLayout from "./layouts/NewLayout";
+import AddProductPage from "./pages/AddProductPage";
+import UpdateProductPage from "./pages/UpdateProductPage";
+import { useSelector, UseSelector } from "react-redux";
+import { HashLoader } from "react-spinners";
 
 const App: React.FC = () => {
-  return (
-    <Router>
-      <Routes>
-        {/* Public Routes  */}
-        <Route
-          path="/"
-          element={
-            <PublicRoute>
-              <SignInPage />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/sign-up"
-          element={
-            <PublicRoute>
-              <SignUpPage />
-            </PublicRoute>
-          }
-        />
+  const isLoading = useSelector((state: any) => state.loading.isLoading);
 
-        {/* Private Routes  */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/products"
-          element={
-            <ProtectedRoute>
-              <ProductsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/favorites"
-          element={
-            <ProtectedRoute>
-              <FavoritePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/inbox"
-          element={
-            <ProtectedRoute>
-              <InboxPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/order-lists"
-          element={
-            <ProtectedRoute>
-              <OListPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/products-stock"
-          element={
-            <ProtectedRoute>
-              <ProdStockPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/pricing"
-          element={
-            <ProtectedRoute>
-              <PricingPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/calendar"
-          element={
-            <ProtectedRoute>
-              <CalendarPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/todo"
-          element={
-            <ProtectedRoute>
-              <TodoPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/contact"
-          element={
-            <ProtectedRoute>
-              <ContactPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/invoices"
-          element={
-            <ProtectedRoute>
-              <InvoicesPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute>
-              <SettingsPage />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </Router>
+  return (
+    <>
+      {isLoading && (
+        <div className="w-full h-full flex justify-center items-center absolute z-50">
+          <HashLoader />
+        </div>
+      )}
+      <Router>
+        <Routes>
+          {/* Public Routes  */}
+          <Route
+            path="/"
+            element={
+              <PublicRoute>
+                <SignInPage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/sign-up"
+            element={
+              <PublicRoute>
+                <SignUpPage />
+              </PublicRoute>
+            }
+          />
+        </Routes>
+        <ProtectedRoute>
+          <NewLayout>
+            <Routes>
+              {/* Private Routes  */}
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/products" element={<ProductsPage />} />
+              <Route
+                path="/products/add-product"
+                element={<AddProductPage />}
+              />
+              <Route path="/products/:slug" element={<UpdateProductPage />} />
+              <Route path="/favorites" element={<FavoritePage />} />
+              <Route path="/inbox" element={<InboxPage />} />
+              <Route path="/order-lists" element={<OListPage />} />
+              <Route path="/products-stock" element={<ProdStockPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/calendar" element={<CalendarPage />} />
+              <Route path="/todo" element={<TodoPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/invoices" element={<InvoicesPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Routes>
+          </NewLayout>
+        </ProtectedRoute>
+      </Router>
+    </>
   );
 };
 

@@ -26,6 +26,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   const dispatch = useDispatch();
 
   const logoutUser = () => {
+    localStorage.removeItem("token");
     dispatch(logout());
   };
 
@@ -78,7 +79,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         icon={<AiOutlinePoweroff />}
         title="Log Out"
         path="/"
-        onClick={() => logoutUser()}
+        onClick={logoutUser}
       />
     </div>
   );

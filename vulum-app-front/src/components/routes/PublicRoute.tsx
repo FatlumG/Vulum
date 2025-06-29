@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector, UseSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-import { RootState } from "../app/store";
+import { RootState } from "../../app/store";
 4;
 interface PublicRouteProps {
   children: React.ReactNode;
