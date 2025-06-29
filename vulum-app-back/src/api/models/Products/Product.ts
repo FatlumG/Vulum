@@ -4,6 +4,7 @@ import { OrderItem } from '../OrderItems/OrderItem';
 import { User } from '../Users/User';
 import { ProductStatus } from './PEnum';
 import { ProductImages } from '../ProductImages/ProductImage';
+import { Favorite } from '../Favorites/Favorite';
 
 @Entity({ name: 'products' })
 export class Product extends EntityBase {
@@ -49,4 +50,7 @@ export class Product extends EntityBase {
 
   @OneToMany(() => ProductImages, (productImages) => productImages.product_id)
   productImages: ProductImages[];
+
+  @OneToMany(() => Favorite, (favorite) => favorite.product_id)
+  favorites: Favorite[];
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 interface SideItemProps {
   icon: React.ReactNode;
@@ -9,16 +9,20 @@ interface SideItemProps {
 }
 
 const SideItem: React.FC<SideItemProps> = ({ icon, title, path, onClick }) => {
-  const linkClass = ({ isActive }: { isActive: boolean }) =>
-    isActive
-      ? `bg-primaryBlue text-white flex items-center gap-3 w-[200px] h-[60px] px-3 rounded-[5px]`
-      : "bg-white flex items-center gap-3 w-[200px] h-[60px] px-3 rounded-[5px]";
+  // const linkClass = ({ isActive }: { isActive: boolean }) =>
+  //   isActive
+  //     ? `bg-primaryBlue text-white flex items-center gap-3 w-[200px] h-[60px] px-3 rounded-[5px]`
+  //     : "bg-white flex items-center gap-3 w-[200px] h-[60px] px-3 rounded-[5px]";
 
   return (
-    <NavLink className={linkClass} to={path} onClick={onClick}>
+    <Link
+      className={`bg-primaryBlue text-white flex items-center gap-3 w-[200px] h-[60px] px-3 rounded-[5px]`}
+      to={path}
+      onClick={onClick}
+    >
       <span className={`scale-125`}>{icon}</span>
       <p>{title}</p>
-    </NavLink>
+    </Link>
   );
 };
 

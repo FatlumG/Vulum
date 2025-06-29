@@ -52,7 +52,7 @@ const ProductCard: FC<ProductCardProps> = ({
             src={favourite}
             alt="Favourite Icon"
             className="bg-slate-100 p-2 w-9 h-9 rounded-[50%] cursor-pointer"
-            onClick={() => addFavourites(id)}
+            // onClick={() => addFavourites(id)}
           />
         </div>
         <div className="w-full flex justify-between items-center">

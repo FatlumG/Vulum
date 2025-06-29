@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { addProduct } from "../features/products/productSlice";
 import { setProducts } from "../features/products/productSlice";
 import ProductCard from "../components/products/ProductCard";
 import { ProductInterface } from "../interfaces/ProductInterface";

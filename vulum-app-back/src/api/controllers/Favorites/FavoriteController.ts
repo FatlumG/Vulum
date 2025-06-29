@@ -53,10 +53,8 @@ export class FavoriteController extends ControllerBase {
     return await this.favoriteService.deleteOneById(id);
   }
 
-  @Get('/getMyFavorites')
-  public async getMyFavorites(@LoggedUser() loggedUser: LoggedUserInterface, @QueryParams() parseResourceOptions: RequestQueryParser) {
-    const resourceOptions = parseResourceOptions.getAll();
-
-    return await this.favoriteService.getMyFavorites(loggedUser, resourceOptions);
+  @Get('/get-my-favorites')
+  public async getMyFavorites(@LoggedUser() loggedUser: LoggedUserInterface) {
+    return await this.favoriteService.getMyFavorites(loggedUser);
   }
 }
