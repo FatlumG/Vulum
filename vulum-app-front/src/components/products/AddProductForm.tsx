@@ -10,14 +10,21 @@ import PicUploads from "./PicUploads";
 import api from "../../auth/api";
 import axios from "axios";
 import Select from "../ui/select";
-import { CategoryInterface } from "@/interfaces/CategoryInterface";
-
+import { CategoryInterface } from "../../interfaces/CategoryInterface";
+import { useNavigate } from "react-router-dom";
+import { startLoading, stopLoading } from "../../features/loading/loadingSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { HashLoader } from "react-spinners";
+import { RootState } from "../../app/store";
 interface AddProductFormProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }
 
 const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
   ({ onSubmit }, ref) => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const { price, onChange, onBlur } = usePriceInput("");
     const [images, setImages] = useState<File[]>([]);
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
@@ -25,7 +32,6 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
     );
     const [categories, setCategories] = useState<CategoryInterface[]>();
     const [selectedCategory, setSelectedCategory] = useState<number>();
-
     const [product, setProduct] = useState(() => ({
       ProductName: "",
       ProductDescription: "",
@@ -38,9 +44,10 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
     useEffect(() => {
       const fetchCategories = async () => {
         try {
+          dispatch(startLoading());
           const res = await api.get("/categories");
-          // console.log(res.data.rows, "res.data.rows");
           setCategories(res.data.rows);
+          dispatch(stopLoading());
         } catch (error) {
           console.error("Error fetching categories:", error);
         }
@@ -153,9 +160,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
 
       try {
         const requestBody = await buildRequestBody();
-        console.log(requestBody, "requestBody");
-        console.log(product.Category, "product.Category");
-
+        dispatch(startLoading());
         await api.post("/products", requestBody);
 
         setProduct({
@@ -169,11 +174,12 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
 
         setImages([]);
         setSelectedImageIndex(null);
-        console.log(product.Price, "product.Price");
-        
+        navigate("/products");
+        dispatch(stopLoading());
       } catch (err: any) {
+        dispatch(stopLoading());
         if (err.response) {
-          console.error("Error data:", err.response.data); 
+          console.error("Error data:", err.response.data);
           console.error("Validation errors:", err.response.data.errors);
         } else if (err.request) {
           console.error("No response received:", err.request);
@@ -183,6 +189,14 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
       }
     };
 
+    const isLoading = useSelector((state: any) => state.loading.isLoading);
+
+    if (isLoading)
+      return (
+        <div className="w-full h-full flex justify-center items-center">
+          <HashLoader color="#000" size={50} />
+        </div>
+      );
     return (
       <form
         className="mt-5 grid grid-cols-5 grid-rows-3 gap-5"
