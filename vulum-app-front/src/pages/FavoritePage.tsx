@@ -27,7 +27,7 @@ const FavoritePage: React.FC = () => {
     <div className="">
       <h1 className="text-2xl font-semibold">Favorites</h1>
       <div className="w-full mt-10 flex flex-wrap justify-between gap-5">
-        {products?.map((prod, idx) => (
+        {products?.items?.map((prod, idx) => (
           <ProductCard
             key={idx}
             id={prod.id}

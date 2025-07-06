@@ -1,7 +1,13 @@
 import { FC, useEffect, useState } from "react";
-import favourite from "../../assets/figures/favourite.svg";
 import { Link } from "react-router-dom";
 import api from "../../auth/api";
+import { MdOutlineFavoriteBorder } from "react-icons/md";
+import { MdOutlineFavorite } from "react-icons/md";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addFavorite,
+  removeFavorite,
+} from "../../features/products/favoriteSlice";
 
 interface ProductCardProps {
   id: number;
@@ -22,19 +28,43 @@ const ProductCard: FC<ProductCardProps> = ({
   status,
   stock,
 }) => {
-  const [favProduct, setFavProduct] = useState<number>();
+  // const [favProduct, setFavProduct] = useState<number>();
 
-  async function addFavourites(id: number) {
+  const dispatch = useDispatch();
+
+  async function addFavoriteProduct(id: number) {
     try {
-      setFavProduct(id);
-      console.log(favProduct, "favProduct");
+      dispatch(addFavorite(id));
+      console.log(id, "id");
       await api.post("/favorites", { product_id: id });
     } catch (error: any) {
       console.error("error.response.data", error.response.data);
     }
   }
 
-  const slug = `${title.toLowerCase().replace(/\s+/g, "-")}-${id}`;
+  async function removeFavoriteProduct(id: number) {
+    try {
+      await api.delete(`/favorites/${id}`);
+      dispatch(removeFavorite(id));
+      console.log("Product deleted successfully!", id);
+    } catch (error: any) {
+      console.error("error.response.data.errors", error.response.data.errors);
+    }
+  }
+
+  const favorites = useSelector((state: any) => state.favorites || []);
+  const isFavorited = favorites.some((fav: any) => fav.id === id);
+  const slug = `${(title ?? "product")
+    .toLowerCase()
+    .replace(/\s+/g, "-")}-${id}`;
+
+  function toggleFavoriteProduct(id: number) {
+    if (isFavorited) {
+      removeFavoriteProduct(id);
+    } else {
+      addFavoriteProduct(id);
+    }
+  }
 
   return (
     <div className="h-[400px] w-[300px] my-2 bg-white rounded-xl grid grid-rows-3 shadow-xl">
@@ -48,12 +78,17 @@ const ProductCard: FC<ProductCardProps> = ({
       <div className="px-5 py-4 pt-1 row-span-1 flex flex-col justify-between items-start">
         <div className="flex items-center justify-between w-full">
           <h2>{title}</h2>
-          <img
-            src={favourite}
-            alt="Favourite Icon"
-            className="bg-slate-100 p-2 w-9 h-9 rounded-[50%] cursor-pointer"
-            // onClick={() => addFavourites(id)}
-          />
+          {isFavorited ? (
+            <MdOutlineFavorite
+              className="text-2xl cursor-pointer text-red-500 hover:scale-150 transition-all"
+              onClick={() => toggleFavoriteProduct(id)}
+            />
+          ) : (
+            <MdOutlineFavoriteBorder
+              className="text-2xl cursor-pointer hover:scale-105 transition-all"
+              onClick={() => toggleFavoriteProduct(id)}
+            />
+          )}
         </div>
         <div className="w-full flex justify-between items-center">
           <p className="text-sm">${price}</p>
