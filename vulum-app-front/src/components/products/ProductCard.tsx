@@ -1,8 +1,7 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../auth/api";
-import { MdOutlineFavoriteBorder } from "react-icons/md";
-import { MdOutlineFavorite } from "react-icons/md";
+import { MdOutlineFavorite, MdOutlineFavoriteBorder } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addFavorite,
@@ -28,20 +27,36 @@ const ProductCard: FC<ProductCardProps> = ({
   status,
   stock,
 }) => {
-  // const [favProduct, setFavProduct] = useState<number>();
-
   const dispatch = useDispatch();
+  const slug = `${(title ?? "product")
+    .toLowerCase()
+    .replace(/\s+/g, "-")}-${id}`;
+
+  // const favoriteItems = useSelector(
+  //   (state: any) => state.favorites.favoriteItems
+  // );
+  const favoriteIds = useSelector((state: any) => state.favorites.favoriteIds);
+  const isFavorited = favoriteIds.includes(id);
+
+  // useEffect(() => {
+  //   console.log(favoriteItems, "favoriteItems");
+  //   console.log(favoriteIds, "favoriteIds");
+  // }, [favoriteItems, favoriteIds]);
 
   async function addFavoriteProduct(id: number) {
     try {
-      dispatch(addFavorite(id));
       console.log(id, "id");
       await api.post("/favorites", { product_id: id });
+      dispatch(addFavorite(id));
     } catch (error: any) {
-      console.error("error.response.data", error.response.data);
+      if (error.response?.data?.message === "This Product is already saved!") {
+        // Product is already favorited, so remove it instead
+        removeFavoriteProduct(id);
+      } else {
+        console.error("Add favorite error:", error.response?.data);
+      }
     }
   }
-
   async function removeFavoriteProduct(id: number) {
     try {
       await api.delete(`/favorites/${id}`);
@@ -51,20 +66,15 @@ const ProductCard: FC<ProductCardProps> = ({
       console.error("error.response.data.errors", error.response.data.errors);
     }
   }
-
-  const favorites = useSelector((state: any) => state.favorites || []);
-  const isFavorited = favorites.some((fav: any) => fav.id === id);
-  const slug = `${(title ?? "product")
-    .toLowerCase()
-    .replace(/\s+/g, "-")}-${id}`;
-
-  function toggleFavoriteProduct(id: number) {
+  const toggleFavorite = () => {
     if (isFavorited) {
-      removeFavoriteProduct(id);
+      // removeFavorite(id);
+      removeFavoriteProduct(id); // your API call to delete
     } else {
-      addFavoriteProduct(id);
+      // addFavorite(id);
+      addFavoriteProduct(id); // your API call to add
     }
-  }
+  };
 
   return (
     <div className="h-[400px] w-[300px] my-2 bg-white rounded-xl grid grid-rows-3 shadow-xl">
@@ -81,12 +91,12 @@ const ProductCard: FC<ProductCardProps> = ({
           {isFavorited ? (
             <MdOutlineFavorite
               className="text-2xl cursor-pointer text-red-500 hover:scale-150 transition-all"
-              onClick={() => toggleFavoriteProduct(id)}
+              onClick={toggleFavorite}
             />
           ) : (
             <MdOutlineFavoriteBorder
               className="text-2xl cursor-pointer hover:scale-105 transition-all"
-              onClick={() => toggleFavoriteProduct(id)}
+              onClick={toggleFavorite}
             />
           )}
         </div>

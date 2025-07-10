@@ -1,28 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { setProducts } from "../features/products/productSlice";
+import React from "react";
 import ProductCard from "../components/products/ProductCard";
-import { ProductInterface } from "../interfaces/ProductInterface";
 import { Link } from "react-router-dom";
-import api from "../auth/api";
+import { getMyProducts } from "../hooks/getMyProductsHook";
+import { getMyFavorites } from "../hooks/getMyFavoritesHook";
 
 const ProductsPage: React.FC = () => {
-  const [products, setLocalProducts] = useState<ProductInterface[]>([]);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const res = await api.get("/products/my-products");
-        // console.log(res.data, "res.data");
-        setLocalProducts(res.data);
-        dispatch(setProducts(res.data));
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchProducts();
-  }, [dispatch]);
+  const products = getMyProducts();
+  const favorites = getMyFavorites();
 
   return (
     <div className="col-span-10 py-5 font-NunitoSans">

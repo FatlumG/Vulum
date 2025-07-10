@@ -3,6 +3,7 @@ import toggleState from "../features/toggle/toggleSlice";
 import authSlice from "../features/store/authSlice";
 import productSlice from "../features/products/productSlice";
 import loadingSlice from "../features/products/productSlice";
+import favoriteSlice from "../features/products/favoriteSlice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     auth: authSlice,
     loading: loadingSlice,
     products: productSlice,
+    favorites: favoriteSlice, 
   },
 });
 

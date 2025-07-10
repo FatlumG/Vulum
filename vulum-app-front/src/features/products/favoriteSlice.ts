@@ -2,21 +2,24 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ProductInterface } from "../../interfaces/ProductInterface";
 
 interface FavoriteState {
-  favorites: ProductInterface[];
+  favoriteItems: ProductInterface[];
   favoriteIds: number[];
 }
 
 const initialState: FavoriteState = {
-  favorites: [],
+  favoriteItems: [],
   favoriteIds: [],
 };
 
 const favoriteSlice = createSlice({
-  name: "favorite",
+  name: "favorites",
   initialState,
   reducers: {
     setFavorites: (state, action: PayloadAction<ProductInterface[]>) => {
-      state.favorites = action.payload; // update property, don't return
+      state.favoriteItems = action.payload; // update property, don't return
+    },
+    setFavoriteIds: (state, action: PayloadAction<number[]>) => {
+      state.favoriteIds = action.payload;
     },
 
     // Add a favorite ID (only if not exists)
@@ -35,6 +38,6 @@ const favoriteSlice = createSlice({
   },
 });
 
-export const { setFavorites, addFavorite, removeFavorite } =
+export const { setFavorites, setFavoriteIds, addFavorite, removeFavorite } =
   favoriteSlice.actions;
 export default favoriteSlice.reducer;
