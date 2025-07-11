@@ -29,6 +29,11 @@ import { logout } from "../../features/store/authSlice";
 import { FaChevronDown } from "react-icons/fa6";
 
 export function AppSidebar() {
+  const dispatch = useDispatch();
+  const logoutUser = () => {
+    dispatch(logout());
+  };
+  const [user, setUser] = useState<userInterface>();
   const items = [
     {
       title: "Dashboard",
@@ -72,17 +77,11 @@ export function AppSidebar() {
     },
     {
       title: "Log out",
-      url: "#",
+      url: "/",
       icon: LogOut,
-      onclick: () => logoutUser,
+      onclick: () => logoutUser(),
     },
   ];
-  const dispatch = useDispatch();
-  const logoutUser = () => {
-    dispatch(logout());
-  };
-
-  const [user, setUser] = useState<userInterface>();
 
   useEffect(() => {
     const fetchUser = async () => {

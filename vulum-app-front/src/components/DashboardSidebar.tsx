@@ -15,6 +15,7 @@ import { LiaMoneyBillWaveSolid } from "react-icons/lia";
 import { CiSettings } from "react-icons/ci";
 import { AiOutlinePoweroff } from "react-icons/ai";
 import { logout } from "../features/store/authSlice";
+import { useNavigate } from "react-router-dom";
 
 interface DashboardSidebarProps {
   classes?: string;
@@ -24,10 +25,13 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   classes = "",
 }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const logoutUser = () => {
-    localStorage.removeItem("token");
+    console.log("User logged out successfully!");
     dispatch(logout());
+    navigate("/");
+    
   };
 
   return (
@@ -78,7 +82,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
       <SideItem
         icon={<AiOutlinePoweroff />}
         title="Log Out"
-        path="/"
+        path="/dashboard"
         onClick={logoutUser}
       />
     </div>

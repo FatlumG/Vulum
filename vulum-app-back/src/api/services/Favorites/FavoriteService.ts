@@ -87,10 +87,23 @@ export class FavoriteService {
     return await this.favoriteRepository.count({ where: { user_id: userId } });
   }
 
-  public async getMyFavorites(user: LoggedUserInterface, resourceOptions?: object) {
-    return await this.favoriteRepository.find({
-      where: { user_id: user.userId },
-      ...resourceOptions,
-    });
+  public async getMyFavorites(user: LoggedUserInterface, page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+
+    const [items, total] = await this.favoriteRepository
+      .createQueryBuilder('favorite')
+      .leftJoinAndSelect('favorite.product', 'product')
+      .leftJoinAndSelect('product.productImages', 'productImages')
+      .where('favorite.user_id = :userId', { userId: user.userId })
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      items,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 }
