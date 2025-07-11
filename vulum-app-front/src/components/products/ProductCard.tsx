@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { Link } from "react-router-dom";
 import api from "../../auth/api";
 import { MdOutlineFavorite, MdOutlineFavoriteBorder } from "react-icons/md";
@@ -31,17 +31,8 @@ const ProductCard: FC<ProductCardProps> = ({
   const slug = `${(title ?? "product")
     .toLowerCase()
     .replace(/\s+/g, "-")}-${id}`;
-
-  // const favoriteItems = useSelector(
-  //   (state: any) => state.favorites.favoriteItems
-  // );
   const favoriteIds = useSelector((state: any) => state.favorites.favoriteIds);
   const isFavorited = favoriteIds.includes(id);
-
-  // useEffect(() => {
-  //   console.log(favoriteItems, "favoriteItems");
-  //   console.log(favoriteIds, "favoriteIds");
-  // }, [favoriteItems, favoriteIds]);
 
   async function addFavoriteProduct(id: number) {
     try {
@@ -53,7 +44,9 @@ const ProductCard: FC<ProductCardProps> = ({
         // Product is already favorited, so remove it instead
         removeFavoriteProduct(id);
       } else {
+        console.error("error.response.data.errors", error.response.data.errors);
         console.error("Add favorite error:", error.response?.data);
+
       }
     }
   }
@@ -91,12 +84,12 @@ const ProductCard: FC<ProductCardProps> = ({
           {isFavorited ? (
             <MdOutlineFavorite
               className="text-2xl cursor-pointer text-red-500 hover:scale-150 transition-all"
-              onClick={toggleFavorite}
+              onClick={() => removeFavoriteProduct(id)}
             />
           ) : (
             <MdOutlineFavoriteBorder
               className="text-2xl cursor-pointer hover:scale-105 transition-all"
-              onClick={toggleFavorite}
+              onClick={() => addFavoriteProduct(id)}
             />
           )}
         </div>
