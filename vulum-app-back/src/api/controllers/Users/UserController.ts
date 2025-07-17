@@ -66,11 +66,6 @@ export class UserController extends ControllerBase {
     return await this.userService.updateOneById(id, user);
   }
 
-  // @Put('/update-my-profile-picture')
-  // public async updateMyProfilePicture(@LoggedUser() LoggedUser: LoggedUserInterface, @Body() image: Express.Multer.File) {
-  //   return await this.userService.updateProfilePicture(LoggedUser.userId, image);
-  // }
-
   @Put('/update-my-profile-picture')
   @UseBefore(upload.single('image')) // Multer middleware to handle 'image' field
   public async updateMyProfilePicture(@LoggedUser() loggedUser: LoggedUserInterface, @Req() req: any, @Body() image: any) {

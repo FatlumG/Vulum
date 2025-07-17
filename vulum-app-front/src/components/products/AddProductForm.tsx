@@ -20,6 +20,15 @@ interface AddProductFormProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }
 
+interface AddProductInterface {
+  ProductName: string;
+  ProductDescription: string;
+  Price: number;
+  Stock: number;
+  Category: number | null;
+  CreatedBy: number | null;
+}
+
 const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
   ({ onSubmit }, ref) => {
     const navigate = useNavigate();
@@ -32,13 +41,13 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
     );
     const [categories, setCategories] = useState<CategoryInterface[]>();
     const [selectedCategory, setSelectedCategory] = useState<number>();
-    const [product, setProduct] = useState(() => ({
+    const [product, setProduct] = useState<AddProductInterface>(() => ({
       ProductName: "",
       ProductDescription: "",
       Price: 0,
       Stock: 1,
       Category: categories?.length ? categories[0].id : null,
-      CreatedBy: getUserIdFromToken(),
+      CreatedBy: null,
     }));
 
     useEffect(() => {
@@ -52,6 +61,16 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
           console.error("Error fetching categories:", error);
         }
       };
+
+      const initialize = async () => {
+        const id = await getUserIdFromToken();
+        setProduct((prev) => ({
+          ...prev,
+          CreatedBy: id,
+        }));
+      };
+
+      initialize();
       fetchCategories();
     }, []);
 
@@ -91,6 +110,8 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
     }
 
     async function buildRequestBody() {
+      const userId = await getUserIdFromToken();
+
       const uploadedImageUrls = await Promise.all(
         images.map((file) => uploadToCloudinary(file))
       );
@@ -106,6 +127,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
           Price: Number(product.Price),
           Stock: Number(product.Stock),
           Category: Number(product.Category),
+          CreatedBy: userId,
         },
         images: imagesForRequest,
       };
@@ -157,11 +179,13 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
 
     const addProduct = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+      dispatch(startLoading());
 
       try {
         const requestBody = await buildRequestBody();
-        dispatch(startLoading());
         await api.post("/products", requestBody);
+
+        // const userId = await getUserIdFromToken();
 
         setProduct({
           ProductName: "",
@@ -169,13 +193,13 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
           Price: 0,
           Stock: 1,
           Category: categories?.length ? categories[0].id : null,
-          CreatedBy: getUserIdFromToken(),
+          CreatedBy: null,
         });
 
         setImages([]);
         setSelectedImageIndex(null);
+
         navigate("/products");
-        dispatch(stopLoading());
       } catch (err: any) {
         dispatch(stopLoading());
         if (err.response) {
@@ -186,17 +210,19 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
         } else {
           console.error("Error message:", err.message);
         }
+      } finally {
+        dispatch(stopLoading());
       }
     };
 
-    const isLoading = useSelector((state: any) => state.loading.isLoading);
+    // const isLoading = useSelector((state: any) => state.loading.isLoading);
 
-    if (isLoading)
-      return (
-        <div className="w-full h-full flex justify-center items-center">
-          <HashLoader color="#000" size={50} />
-        </div>
-      );
+    // if (isLoading)
+    //   return (
+    //     <div className="w-full h-full flex justify-center items-center">
+    //       <HashLoader color="#000" size={50} />
+    //     </div>
+    //   );
     return (
       <form
         className="mt-5 grid grid-cols-5 grid-rows-3 gap-5"

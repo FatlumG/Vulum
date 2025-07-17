@@ -24,13 +24,12 @@ export class UserUpdateRequest {
   @IsNotEmpty()
   Email: string;
 
-  @MaxLength(20)
-  @MinLength(6)
-  @IsString()
-  @IsNotEmpty()
-  Password: string;
+  @MinLength(9)
+  Phone: string;
 
-  @IsNotEmpty()
-  @IsNumber()
-  RoleId: number;
+  @IsString()
+  Address: string;
+
+  @IsString()
+  Bio: string;
 }

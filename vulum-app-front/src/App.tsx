@@ -20,6 +20,7 @@ import AddProductPage from "./pages/AddProductPage";
 import UpdateProductPage from "./pages/UpdateProductPage";
 import { useSelector, UseSelector } from "react-redux";
 import { HashLoader } from "react-spinners";
+import NotFoundPage from "./pages/NotFoundPage";
 
 const App: React.FC = () => {
   const isLoading = useSelector((state: any) => state.loading.isLoading);
@@ -72,6 +73,7 @@ const App: React.FC = () => {
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/invoices" element={<InvoicesPage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </NewLayout>
         </ProtectedRoute>
