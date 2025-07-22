@@ -1,5 +1,6 @@
 export interface userInterface {
   Address: string;
+  Bio: string;
   Email: string;
   FName: string;
   Favorites: number;

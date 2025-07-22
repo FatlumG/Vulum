@@ -27,13 +27,14 @@ import vulum from "../../assets/logos/vulumBlue.png";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/store/authSlice";
 import { FaChevronDown } from "react-icons/fa6";
+import { getPfp } from "../../hooks/getPfpHook";
 
 export function AppSidebar() {
   const dispatch = useDispatch();
   const logoutUser = () => {
     dispatch(logout());
   };
-  const [user, setUser] = useState<userInterface>();
+  // const [user, setUser] = useState<userInterface>();
   const items = [
     {
       title: "Dashboard",
@@ -83,23 +84,25 @@ export function AppSidebar() {
     },
   ];
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await api.get("/users/profile");
-        setUser(res.data);
-        // console.log(res.data, "res.data");
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     try {
+  //       const res = await api.get("/users/profile");
+  //       setUser(res.data);
+  //       // console.log(res.data, "res.data");
+  //     } catch (error) {
+  //       console.error("Error fetching user data:", error);
+  //     }
+  //   };
 
-    fetchUser();
-  }, []);
+  //   fetchUser();
+  // }, []);
 
-  const userInitials = `${user?.FName?.[0].toUpperCase() ?? ""}${
-    user?.LName?.[0].toUpperCase() ?? ""
-  }`;
+  // const userInitials = `${user?.FName?.[0].toUpperCase() ?? ""}${
+  //   user?.LName?.[0].toUpperCase() ?? ""
+  // }`;
+
+  const user = getPfp();
 
   return (
     <Sidebar>
@@ -124,12 +127,12 @@ export function AppSidebar() {
             <SidebarMenu className="flex flex-row items-center justify-start gap-4">
               {/* <img src={profile} alt="Profile Photo" /> */}
               <div className="bg-sky-700 text-white w-10 h-10 grid place-items-center rounded-[50%] cursor-pointer">
-                {userInitials}
+                {user.userInitials}
               </div>
               <div className="cursor-pointer">
-                <h3>{user?.FullName}</h3>
+                <h3>{user?.user?.FullName}</h3>
                 <p className="text-[12px] text-grayText cursor-pointer">
-                  {user?.role.RoleName}
+                  {user?.user?.role.RoleName}
                 </p>
               </div>
             </SidebarMenu>

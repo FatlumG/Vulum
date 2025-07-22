@@ -37,7 +37,8 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
       Stock: 1,
       Category: selectedCategory as number | null,
     });
-
+    
+    const navigate = useNavigate();
     const { slug } = useParams();
     const id = slug?.split("-").pop();
 
@@ -112,8 +113,6 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
 
     const updateProduct = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-
-      const navigate = useNavigate();
 
       try {
         const requestBody = await buildRequestBody();

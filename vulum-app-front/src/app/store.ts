@@ -2,8 +2,9 @@ import { configureStore } from "@reduxjs/toolkit";
 import toggleState from "../features/toggle/toggleSlice";
 import authSlice from "../features/store/authSlice";
 import productSlice from "../features/products/productSlice";
-import loadingSlice from "../features/products/productSlice";
+import loadingSlice from "../features/loading/loadingSlice";
 import favoriteSlice from "../features/products/favoriteSlice";
+import userSlice from "../features/user/userSlice";
 
 const store = configureStore({
   reducer: {
@@ -11,7 +12,8 @@ const store = configureStore({
     auth: authSlice,
     loading: loadingSlice,
     products: productSlice,
-    favorites: favoriteSlice, 
+    favorites: favoriteSlice,
+    user: userSlice,
   },
 });
 

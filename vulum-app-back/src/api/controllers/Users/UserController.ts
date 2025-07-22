@@ -1,4 +1,4 @@
-import { Param, Req, Get, JsonController, Post, Body, Put, Delete, HttpCode, UseBefore, QueryParams, UseInterceptor } from 'routing-controllers';
+import { Param, Req, Get, JsonController, Post, Body, Put, Delete, HttpCode, UseBefore, QueryParams, Patch } from 'routing-controllers';
 import { UserService } from '@api/services/Users/UserService';
 import { Service } from 'typedi';
 import { UserCreateRequest } from '@api/requests/Users/UserCreateRequest';
@@ -60,16 +60,10 @@ export class UserController extends ControllerBase {
     return await this.userService.create(user);
   }
 
-  @Put('/:id')
-  @UseBefore(HasRole('admin'))
+  @Patch('/:id')
   public async update(@Param('id') id: number, @Body() user: UserUpdateRequest) {
     return await this.userService.updateOneById(id, user);
   }
-
-  // @Put('/update-my-profile-picture')
-  // public async updateMyProfilePicture(@LoggedUser() LoggedUser: LoggedUserInterface, @Body() image: Express.Multer.File) {
-  //   return await this.userService.updateProfilePicture(LoggedUser.userId, image);
-  // }
 
   @Put('/update-my-profile-picture')
   @UseBefore(upload.single('image')) // Multer middleware to handle 'image' field
