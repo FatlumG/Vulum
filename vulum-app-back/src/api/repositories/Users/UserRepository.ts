@@ -15,6 +15,6 @@ export class UserRepository extends RepositoryBase<User> {
   public async updateUser(user: User, data: object) {
     Object.assign(user, data);
 
-    return await user.save(data);
+    return await this.save(user);
   }
 }

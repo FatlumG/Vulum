@@ -5,21 +5,35 @@ import { getPfp } from "../../hooks/getPfpHook";
 import { CiCamera } from "react-icons/ci";
 import { Button } from "../ui/button";
 import { UserUpdateInterface } from "../../interfaces/UserUpdateInterface";
+import api from "../../auth/api";
 
 const UserUpdateForm: FC = () => {
   const userpfp = getPfp();
   const [user, setUser] = useState<UserUpdateInterface>({
-    Username: userpfp?.user?.Username ?? "",
-    FName: userpfp?.user?.FName ?? "",
-    LName: userpfp?.user?.LName ?? "",
-    Email: userpfp?.user?.Email ?? "",
-    Phone: userpfp?.user?.Phone ?? "",
-    Address: userpfp?.user?.Address ?? "",
-    Bio: userpfp?.user?.Bio ?? "",
+    Username: userpfp?.user?.Username,
+    FName: userpfp?.user?.FName,
+    LName: userpfp?.user?.LName,
+    Email: userpfp?.user?.Email,
+    Phone: userpfp?.user?.Phone,
+    Address: userpfp?.user?.Address,
+    Bio: userpfp?.user?.Bio,
   });
 
+  const userId = userpfp?.user?.id;
+
+  const updateUser = async (e: React.ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault(); 
+    try {
+      await api.patch(`/users/${userId}`, user);
+      console.log("user updated successfully:", user);
+      
+    } catch (error: any) {
+      console.error(error.response.data, "error.message");
+    }
+  };
+
   return (
-    <div className="w-full my-5 py-14 flex flex-col items-center gap-10 bg-gray-200 rounded-xl shadow-lg">
+    <form className="w-full my-5 py-14 flex flex-col items-center gap-10 bg-gray-200 rounded-xl shadow-lg" onSubmit={updateUser}>
       <div className="flex flex-col items-center gap-2">
         <div className="relative w-24 h-24 bg-gray-300 rounded-full grid place-items-center text-3xl font-semibold cursor-pointer brightness-[0.7] group transition">
           <Input
@@ -44,6 +58,10 @@ const UserUpdateForm: FC = () => {
               type="text"
               placeholder="Username"
               className="w-[330px] h-12"
+              value={user.Username}
+              onChange={(e) => {
+                setUser({ ...user, Username: e.target.value });
+              }}
             />
           </div>
           <div>
@@ -53,6 +71,10 @@ const UserUpdateForm: FC = () => {
               type="text"
               placeholder="First Name"
               className="w-[330px] h-12"
+              value={user.FName}
+              onChange={(e) => {
+                setUser({ ...user, FName: e.target.value });
+              }}
             />
           </div>
           <div>
@@ -62,6 +84,10 @@ const UserUpdateForm: FC = () => {
               type="text"
               placeholder="Last Name"
               className="w-[330px] h-12"
+              value={user.LName}
+              onChange={(e) => {
+                setUser({ ...user, LName: e.target.value });
+              }}
             />
           </div>
           <Button type="submit" className="w-full h-11 bg-primaryBlue mt-6">
@@ -76,6 +102,10 @@ const UserUpdateForm: FC = () => {
               type="text"
               placeholder="Phone Number"
               className="w-[330px] h-12"
+              value={user.Phone}
+              onChange={(e) => {
+                setUser({ ...user, Phone: e.target.value });
+              }}
             />
           </div>
           <div>
@@ -85,6 +115,10 @@ const UserUpdateForm: FC = () => {
               type="text"
               placeholder="Address"
               className="w-[330px] h-12"
+              value={user.Address}
+              onChange={(e) => {
+                setUser({ ...user, Address: e.target.value });
+              }}
             />
           </div>
           <div>
@@ -93,11 +127,15 @@ const UserUpdateForm: FC = () => {
               id="bio"
               placeholder="Bio"
               className="flex h-24 w-[330px] rounded-lg border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm resize-none"
+              value={user.Bio}
+              onChange={(e) => {
+                setUser({ ...user, Bio: e.target.value });
+              }}
             />
           </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 

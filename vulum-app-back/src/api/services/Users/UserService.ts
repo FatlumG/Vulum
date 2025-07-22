@@ -5,6 +5,7 @@ import { EventDispatcher, EventDispatcherInterface } from '@base/decorators/Even
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import cloudinary from '@base/utils/cloudinary';
 import { UploadApiResponse } from 'cloudinary';
+import { UserUpdateRequest } from '@base/api/requests/Users/UserUpdateRequest';
 
 @Service()
 export class UserService {
@@ -42,7 +43,7 @@ export class UserService {
     return user;
   }
 
-  public async updateOneById(id: number, data: object) {
+  public async updateOneById(id: number, data: UserUpdateRequest) {
     const user = await this.getRequestedUserOrFail(id);
 
     return await this.userRepository.updateUser(user, data);
