@@ -1,6 +1,3 @@
-import { useState, useEffect } from "react";
-import api from "../../auth/api";
-import { userInterface } from "../../interfaces/UserInterface";
 import {
   Home,
   Calendar,
@@ -9,9 +6,9 @@ import {
   Heart,
   Package,
   Sheet,
-  Power,
   LogOut,
   Package2,
+  Tag,
 } from "lucide-react";
 import {
   Sidebar,
@@ -26,8 +23,8 @@ import {
 import vulum from "../../assets/logos/vulumBlue.png";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/store/authSlice";
-import { FaChevronDown } from "react-icons/fa6";
 import { getPfp } from "../../hooks/getPfpHook";
+import { Link } from "react-router-dom";
 
 export function AppSidebar() {
   const dispatch = useDispatch();
@@ -72,6 +69,11 @@ export function AppSidebar() {
       icon: Sheet,
     },
     {
+      title: "Pricing",
+      url: "/pricing",
+      icon: Tag,
+    },
+    {
       title: "Settings",
       url: "/settings",
       icon: Settings,
@@ -83,24 +85,6 @@ export function AppSidebar() {
       onclick: () => logoutUser(),
     },
   ];
-
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       const res = await api.get("/users/profile");
-  //       setUser(res.data);
-  //       // console.log(res.data, "res.data");
-  //     } catch (error) {
-  //       console.error("Error fetching user data:", error);
-  //     }
-  //   };
-
-  //   fetchUser();
-  // }, []);
-
-  // const userInitials = `${user?.FName?.[0].toUpperCase() ?? ""}${
-  //   user?.LName?.[0].toUpperCase() ?? ""
-  // }`;
 
   const user = getPfp();
 
@@ -124,17 +108,22 @@ export function AppSidebar() {
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
-            <SidebarMenu className="flex flex-row items-center justify-start gap-4">
-              {/* <img src={profile} alt="Profile Photo" /> */}
-              <div className="bg-sky-700 text-white w-10 h-10 grid place-items-center rounded-[50%] cursor-pointer">
-                {user.userInitials}
-              </div>
-              <div className="cursor-pointer">
-                <h3>{user?.user?.FullName}</h3>
-                <p className="text-[12px] text-grayText cursor-pointer">
-                  {user?.user?.role.RoleName}
-                </p>
-              </div>
+            <SidebarMenu>
+              <Link
+                to="/settings"
+                className="flex flex-row items-center justify-start gap-4"
+              >
+                {/* <img src={profile} alt="Profile Photo" /> */}
+                <div className="bg-sky-700 text-white w-10 h-10 grid place-items-center rounded-[50%] cursor-pointer">
+                  {user.userInitials}
+                </div>
+                <div className="cursor-pointer">
+                  <h3>{user?.user?.FullName}</h3>
+                  <p className="text-[12px] text-grayText cursor-pointer">
+                    {user?.user?.role.RoleName}
+                  </p>
+                </div>
+              </Link>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

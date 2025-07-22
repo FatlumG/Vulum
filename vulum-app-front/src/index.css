@@ -100,4 +100,8 @@ body {
   input[type="number"] {
     -moz-appearance: textfield;
   }
+
+  .pricing-card{
+    background:url('./assets//backgrounds/pattern.svg') ;
+  }
 }

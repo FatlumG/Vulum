@@ -1,8 +1,9 @@
 import React, { FC } from "react";
+import PricingCards from "../components/pricing/PricingCards";
 const PricingPage: FC = () => {
   return (
-    <div className="col-span-10 py-5 px-10 font-NunitoSans">
-      <h1>This is pricing page</h1>
+    <div className="w-full h-full col-span-10 p-12 font-NunitoSans">
+      <PricingCards />
     </div>
   );
 };
