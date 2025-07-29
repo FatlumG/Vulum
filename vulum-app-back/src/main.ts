@@ -98,6 +98,9 @@ export class App {
               const plan: Plan = await planRepository.findOne({ where: { id: planId } });
               if (!plan) return res.status(400).send('Plan not found');
 
+              console.log(user, 'user');
+              console.log(plan, 'plan');
+              
               user.PricingPlan = plan;
               await userRepository.save(user);
               console.log('User plan updated from checkout.session.completed');
@@ -205,8 +208,8 @@ export class App {
         return res.status(500).send(`Internal error: ${err.message}`);
       }
     });
-
     this.setupMiddlewares();
+
     this.registerSocketControllers();
     this.registerRoutingControllers();
     this.registerDefaultHomePage();

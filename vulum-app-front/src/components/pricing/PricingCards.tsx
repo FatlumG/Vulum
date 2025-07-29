@@ -1,9 +1,11 @@
 import React from "react";
 import PricingCard from "./PricingCard";
 import { getPricingPlans } from "../../hooks/getPricingPlans";
+import { useSubscribePlan } from "../../hooks/subscribePlanHook";
 
 const PricingCards: React.FC = () => {
   const plans = getPricingPlans({});
+  const { subscribePlan } = useSubscribePlan();
 
   if (!Array.isArray(plans)) return null;
   const pricingPlans = plans.slice(1);
@@ -18,6 +20,7 @@ const PricingCards: React.FC = () => {
             PlanDescription={plan.PlanDescription}
             BillingCycle={plan.BillingCycle}
             Price={plan.Price}
+            link={() => subscribePlan(plan.id)}
           />
         ))}
     </div>

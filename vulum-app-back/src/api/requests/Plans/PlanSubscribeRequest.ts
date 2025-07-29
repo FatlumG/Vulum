@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class PlanSubscribeRequest {
-  @IsNotEmpty()
   @IsNumber()
+  @IsNotEmpty()
   planId: number;
 }

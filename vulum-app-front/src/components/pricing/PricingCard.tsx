@@ -7,6 +7,7 @@ interface PricingPlanProps {
   PlanDescription: string;
   PlanName: string;
   Price: string;
+  link: () => void;
 }
 
 const PricingCard: FC<PricingPlanProps> = ({
@@ -14,6 +15,7 @@ const PricingCard: FC<PricingPlanProps> = ({
   PlanDescription,
   PlanName,
   Price,
+  link
 }) => {
   return (
     <div className="pricing-card relative p-6 h-[82vh] w-[300px] flex flex-col justify-evenly rounded-[15px] bg-white">
@@ -30,7 +32,7 @@ const PricingCard: FC<PricingPlanProps> = ({
       </div>
       <div className="!h-[1px] w-full bg-gray-200"></div>
       <div className="py-5 flex flex-col gap-3">
-        <Button className="border border-blue-500 bg-transparent h-12 rounded-full text-blue-500 hover:bg-blue-500 hover:text-white">
+        <Button onClick={link} className="border grid place-items-center border-blue-500 bg-transparent h-12 rounded-full text-[15px] font-semibold text-blue-500 hover:bg-blue-500 hover:text-white transition">
           Get Started
         </Button>
       </div>
