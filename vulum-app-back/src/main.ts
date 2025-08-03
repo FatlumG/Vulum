@@ -29,6 +29,7 @@ import Stripe from 'stripe';
 import { generateInvoicePdf } from './utils/pdf-generator';
 import { OrderStatus } from './api/models/Orders/OEnum';
 import { ProductStatus } from './api/models/Products/PEnum';
+import { UserSubscription } from './api/models/Subscriptions/UserSubscription';
 
 export class App {
   private app: express.Application = express();
@@ -60,7 +61,7 @@ export class App {
 
       try {
         event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-        console.log(event.data.object, 'event.data.object');
+        // console.log(event.data.object, 'event.data.object');
       } catch (err) {
         return res.status(400).send(`Webhook Error: ${err.message}`);
       }
@@ -98,8 +99,47 @@ export class App {
               const plan: Plan = await planRepository.findOne({ where: { id: planId } });
               if (!plan) return res.status(400).send('Plan not found');
 
+              // console.log(user, 'user');
+              // console.log(plan, 'plan');
+              const subscriptionRepository = getRepository(UserSubscription);
+
+              if (!session.subscription) {
+                throw new Error('No subscription ID found in session.');
+              }
+
+              const stripeSubscription = (await stripe.subscriptions.retrieve(session.subscription as string)) as Stripe.Subscription;
+              const subscriptionItem = stripeSubscription.items.data[0];
+              const current_period_end = new Date(subscriptionItem.current_period_end * 1000).toISOString();
+
+              const start_date =
+                typeof stripeSubscription.start_date === 'number' && stripeSubscription.start_date > 0
+                  ? new Date(stripeSubscription.start_date * 1000).toISOString()
+                  : null;
+
+              const trial_ends_at =
+                typeof stripeSubscription.trial_end === 'number' && stripeSubscription.trial_end > 0
+                  ? new Date(stripeSubscription.trial_end * 1000).toISOString()
+                  : null;
+
+              const subscriptionData = {
+                user_id: user.id,
+                plan_id: plan.id,
+                stripe_subscription_id: stripeSubscription.id,
+                status: stripeSubscription.status,
+                start_date,
+                current_period_end,
+                trial_ends_at,
+                cancel_at_period_end: stripeSubscription.cancel_at_period_end || false,
+              };
+
+              const subscription = subscriptionRepository.create(subscriptionData);
+              await subscriptionRepository.save(subscription);
+
+              console.log(subscriptionData, 'subscriptionData');
+
               user.PricingPlan = plan;
               await userRepository.save(user);
+
               console.log('User plan updated from checkout.session.completed');
               return res.status(200).send('Plan updated');
             }
@@ -176,15 +216,133 @@ export class App {
 
             return res.status(400).send('No valid metadata found');
 
-          case 'invoice.payment_succeeded':
-            const invoice = event.data.object as Stripe.Invoice;
-            console.log('Invoice payment succeeded:', invoice);
-            return res.status(200).send('Invoice handled');
+          // case 'invoice.payment_succeeded':
+          //   const invoice = event.data.object as Stripe.Invoice;
+          //   console.log('Invoice payment succeeded:', invoice);
+          //   return res.status(200).send('Invoice handled');
 
+          case 'invoice.created':
+          case 'invoice.finalized':
+          case 'invoice.paid':
+          case 'invoice.payment_succeeded': {
+            const invoice = event.data.object as Stripe.Invoice;
+
+            // Safely parse date fields, if any
+            const periodEnd = invoice.period_end ? new Date(invoice.period_end * 1000).toISOString() : null;
+            const periodStart = invoice.period_start ? new Date(invoice.period_start * 1000).toISOString() : null;
+
+            // You can add your logic here to update invoice status in DB or send notifications
+            console.log(`Invoice event: ${event.type}, Invoice ID: ${invoice.id}`);
+            console.log('Period start:', periodStart);
+            console.log('Period end:', periodEnd);
+
+            return res.status(200).send(`Handled ${event.type}`);
+          }
+
+          case 'payment_intent.created': {
+            const paymentIntent = event.data.object as Stripe.PaymentIntent;
+            console.log('Payment Intent created:', paymentIntent.id);
+            // Optional: update DB or notify user here
+            return res.status(200).send('Payment Intent created handled');
+          }
+
+          //needs to be fixed
+          case 'invoice.payment_failed': {
+            const invoice = event.data.object as any;
+            // Stripe.Invoice
+            console.log('Invoice payment failed:', invoice);
+
+            // Example: update subscription status to 'past_due' in your DB
+            const subscriptionRepository = getRepository(UserSubscription);
+            const subscription = await subscriptionRepository.findOne({
+              where: { stripe_subscription_id: invoice.subscription as string },
+            });
+            if (subscription) {
+              subscription.status = 'past_due';
+              await subscriptionRepository.save(subscription);
+              console.log(`Subscription ${subscription.id} marked as past_due.`);
+            }
+
+            // TODO: Notify user by email or other means
+
+            return res.status(200).send('Invoice payment failed handled');
+          }
           case 'customer.subscription.created':
             const subscription = event.data.object as Stripe.Subscription;
             console.log('Customer subscription created:', subscription);
             return res.status(200).send('Subscription handled');
+
+          //needs to be fixed
+          case 'customer.subscription.updated': {
+            const subscription = event.data.object as Stripe.Subscription;
+            console.log('Subscription updated:', subscription);
+
+            const subscriptionRepository = getRepository(UserSubscription);
+            const existingSub = await subscriptionRepository.findOne({
+              where: { stripe_subscription_id: subscription.id },
+            });
+
+            //@ts-ignore
+            // const currentPeriodEndTimestamp = stripeSubscription.current_period_end;
+            // if (!currentPeriodEndTimestamp) {
+            //   throw new Error('Stripe subscription missing current_period_end');
+            // }
+            // const current_period_end = new Date(currentPeriodEndTimestamp * 1000).toISOString();
+
+            // if (existingSub) {
+            //   existingSub.status = subscription.status;
+            //   existingSub.current_period_end = current_period_end;
+            //   existingSub.cancel_at_period_end = subscription.cancel_at_period_end;
+            //   existingSub.trial_ends_at = subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null;
+            //   await subscriptionRepository.save(existingSub);
+            //   console.log(`Subscription ${existingSub.id} updated.`);
+            // }
+
+            // return res.status(200).send('Subscription updated handled');
+            const currentPeriodEndTimestamp = stripeSubscription.current_period_end;
+            if (!currentPeriodEndTimestamp || isNaN(currentPeriodEndTimestamp)) {
+              throw new Error('Stripe subscription missing or invalid current_period_end');
+            }
+            const current_period_end = new Date(currentPeriodEndTimestamp * 1000).toISOString();
+
+            if (existingSub) {
+              existingSub.status = subscription.status;
+
+              existingSub.current_period_end = current_period_end;
+
+              existingSub.cancel_at_period_end = !!subscription.cancel_at_period_end;
+
+              if (subscription.trial_end && !isNaN(subscription.trial_end)) {
+                existingSub.trial_ends_at = new Date(subscription.trial_end * 1000).toISOString();
+              } else {
+                existingSub.trial_ends_at = null;
+              }
+
+              await subscriptionRepository.save(existingSub);
+              console.log(`Subscription ${existingSub.id} updated.`);
+            }
+
+            return res.status(200).send('Subscription update handled');
+          }
+
+          //needs to be fixed
+          case 'customer.subscription.deleted': {
+            const subscription = event.data.object as Stripe.Subscription;
+            console.log('Subscription deleted:', subscription);
+
+            const subscriptionRepository = getRepository(UserSubscription);
+            const existingSub = await subscriptionRepository.findOne({
+              where: { stripe_subscription_id: subscription.id },
+            });
+
+            if (existingSub) {
+              existingSub.status = 'canceled';
+              await subscriptionRepository.save(existingSub);
+              console.log(`Subscription ${existingSub.id} marked as canceled.`);
+            }
+
+            return res.status(200).send('Subscription deleted handled');
+          }
 
           case 'charge.updated':
             const charge = event.data.object as Stripe.Charge;
@@ -205,8 +363,8 @@ export class App {
         return res.status(500).send(`Internal error: ${err.message}`);
       }
     });
-
     this.setupMiddlewares();
+
     this.registerSocketControllers();
     this.registerRoutingControllers();
     this.registerDefaultHomePage();
