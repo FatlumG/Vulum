@@ -6,8 +6,11 @@ import { EventDispatcher, EventDispatcherInterface } from '@base/decorators/Even
 import { InjectRepository } from 'typeorm-typedi-extensions';
 
 @Service()
-export class SubscriptionsService {
-  constructor(@InjectRepository() private userSubscriptionRepository: UserSubscriptionRepository, @EventDispatcher() private eventDispatcher: EventDispatcherInterface) {
+export class UserSubscriptionService {
+  constructor(
+    @InjectRepository() private userSubscriptionRepository: UserSubscriptionRepository,
+    @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
+  ) {
     //
   }
 
@@ -17,6 +20,17 @@ export class SubscriptionsService {
 
   public async findOneById(id: number, resourceOptions?: object) {
     return await this.getRequestedSubscriptionsOrFail(id, resourceOptions);
+  }
+
+  public async getMySubscription(user_id: number) {
+    return await this.userSubscriptionRepository
+      .createQueryBuilder('subscription')
+      .leftJoinAndSelect('subscription.plan', 'plan')
+      .leftJoin('subscription.user', 'user')
+      .where('user.id = :userId', { userId: user_id })
+      .orderBy('subscription.id', 'DESC')
+      .select(['subscription.plan_id'])
+      .getOne();
   }
 
   public async create(data: UserSubscriptionCreateRequest) {

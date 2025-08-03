@@ -1,9 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PricingCard from "./PricingCard";
 import { getPricingPlans } from "../../hooks/getPricingPlans";
 import { useSubscribePlan } from "../../hooks/subscribePlanHook";
+import api from "../../auth/api";
 
 const PricingCards: React.FC = () => {
+  const [subscribedPlan, setSubscribedPlan] = useState<number>();
+
+  useEffect(() => {
+    const getSubscribedPlan = async () => {
+      try {
+        const res = await api.get("/user-subscription/my-subscription");
+        setSubscribedPlan(res.data.plan_id);
+      } catch (error: any) {
+        console.error(error.message);
+      }
+    };
+
+    getSubscribedPlan();
+  }, []);
+
+  
+
   const plans = getPricingPlans({});
   const { subscribePlan } = useSubscribePlan();
 
@@ -20,6 +38,7 @@ const PricingCards: React.FC = () => {
             PlanDescription={plan.PlanDescription}
             BillingCycle={plan.BillingCycle}
             Price={plan.Price}
+            isSubscribed={subscribedPlan === plan.id}
             link={() => subscribePlan(plan.id)}
           />
         ))}
