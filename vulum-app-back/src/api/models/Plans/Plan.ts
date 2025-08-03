@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 import { BillingCycle } from './PEnum';
 import { User } from '../Users/User';
+import { UserSubscription } from '../Subscriptions/UserSubscription';
 
 @Entity({ name: 'pricing' })
 export class Plan extends EntityBase {
@@ -31,4 +32,7 @@ export class Plan extends EntityBase {
 
   @OneToMany(() => User, (user) => user.PricingPlan)
   users: User[];
+
+  @OneToMany(() => UserSubscription, (subscription) => subscription.plan)
+  subscriptions: UserSubscription[];
 }

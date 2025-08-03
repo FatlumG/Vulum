@@ -8,6 +8,7 @@ import { Product } from '../Products/Product';
 import { Pending } from '../Pendings/Pending';
 import { Plan } from '../Plans/Plan';
 import { Favorite } from '../Favorites/Favorite';
+import { UserSubscription } from '../Subscriptions/UserSubscription';
 
 @Entity({ name: 'users' })
 export class User extends EntityBase {
@@ -111,4 +112,10 @@ export class User extends EntityBase {
 
   @OneToMany(() => Pending, (pending) => pending.UserId)
   pendings: Pending[];
+
+  @OneToMany(() => Favorite, (favorite) => favorite.user_id)
+  favorites: Favorite[];
+  
+  @OneToMany(() => UserSubscription, (UserSubscription) => UserSubscription.user)
+  subscriptions: UserSubscription[];
 }
