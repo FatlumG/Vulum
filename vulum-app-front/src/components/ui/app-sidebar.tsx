@@ -43,6 +43,11 @@ export function AppSidebar() {
       url: "/products",
       icon: Package2,
     },
+    // {
+    //   title: "My Products",
+    //   url: "/my-products",
+    //   icon: Package2,
+    // },
     {
       title: "Favorites",
       url: "/favorites",
