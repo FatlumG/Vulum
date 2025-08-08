@@ -1,4 +1,4 @@
-import { Param, Get, JsonController, Post, Body, Put, Delete, HttpCode, UseBefore, QueryParams } from 'routing-controllers';
+import { Param, Get, JsonController, Post, Body, Put, Delete, HttpCode, UseBefore, QueryParams, Authorized } from 'routing-controllers';
 import { ProductService } from '@api/services/Products/ProductService';
 import { Service } from 'typedi';
 import { ProductCreateRequest } from '@api/requests/Products/ProductCreateRequest';
@@ -13,7 +13,6 @@ import { LoggedUser } from '@base/decorators/LoggedUser';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
 import { ProductImagesService } from '@api/services/ProductImages/ProductImagesService';
 import { ProductImagesCreateRequest } from '@base/api/requests/ProductImages/ProductImagesCreateRequest';
-import { validate } from 'class-validator';
 
 @Service()
 @OpenAPI({
@@ -26,6 +25,7 @@ export class ProductController extends ControllerBase {
     super();
   }
 
+  @UseBefore(HasRole(['Super Admin', 'Admin', 'Manager']))
   @Get()
   public async getAll(@QueryParams() parseResourceOptions: RequestQueryParser) {
     const resourceOptions = parseResourceOptions.getAll();

@@ -4,7 +4,7 @@ import PublicRoute from "./components/routes/PublicRoute";
 import SignInPage from "./pages/Auth/SignInPage";
 import SignUpPage from "./pages/Auth/SignUpPage";
 import DashboardPage from "./pages/DashboardPage";
-import ProductsPage from "./pages/ProductsPage";
+import MyProductsPage from "./pages/MyProductsPage";
 import FavoritePage from "./pages/FavoritePage";
 import InboxPage from "./pages/InboxPage";
 import OListPage from "./pages/OListPage";
@@ -21,6 +21,7 @@ import UpdateProductPage from "./pages/UpdateProductPage";
 import { useSelector, UseSelector } from "react-redux";
 import { HashLoader } from "react-spinners";
 import NotFoundPage from "./pages/NotFoundPage";
+import AllProductsPage from "./pages/AllProductsPage";
 
 const App: React.FC = () => {
   const isLoading = useSelector((state: any) => state.loading.isLoading);
@@ -69,7 +70,8 @@ const App: React.FC = () => {
           >
             {/* Private Routes */}
             <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/products" element={<AllProductsPage />} />
+            <Route path="/my-products" element={<MyProductsPage />} />
             <Route path="/products/add-product" element={<AddProductPage />} />
             <Route path="/products/:slug" element={<UpdateProductPage />} />
             <Route path="/favorites" element={<FavoritePage />} />

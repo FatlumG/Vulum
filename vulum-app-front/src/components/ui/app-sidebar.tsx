@@ -9,6 +9,8 @@ import {
   LogOut,
   Package2,
   Tag,
+  Boxes,
+  ShoppingBag,
 } from "lucide-react";
 import {
   Sidebar,
@@ -41,13 +43,13 @@ export function AppSidebar() {
     {
       title: "Products",
       url: "/products",
+      icon: Boxes,
+    },
+    {
+      title: "My Products",
+      url: "/my-products",
       icon: Package2,
     },
-    // {
-    //   title: "My Products",
-    //   url: "/my-products",
-    //   icon: Package2,
-    // },
     {
       title: "Favorites",
       url: "/favorites",

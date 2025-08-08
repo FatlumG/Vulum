@@ -19,7 +19,10 @@ export class ProductService {
   }
 
   public async getAll(resourceOptions?: object) {
-    return await this.productRepository.getManyAndCount(resourceOptions);
+    return await this.productRepository.findAndCount({
+      ...resourceOptions,
+      relations: ['productImages'],
+    });
   }
 
   public async getAvailableProducts(resourceOptions?: object) {
