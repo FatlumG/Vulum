@@ -70,7 +70,7 @@ export class User extends EntityBase {
   @Column({ nullable: true })
   Address?: string;
 
-  @Column()
+  @Column({default: 5})
   RoleId: number;
 
   @OneToOne(() => Role)

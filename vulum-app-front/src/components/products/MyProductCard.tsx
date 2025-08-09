@@ -7,6 +7,8 @@ import {
   addFavorite,
   removeFavorite,
 } from "../../features/products/favoriteSlice";
+import { updateProdStatus } from "../../features/products/productSlice";
+import { Button } from "../ui/button";
 
 interface ProductCardProps {
   id: number;
@@ -16,9 +18,10 @@ interface ProductCardProps {
   price: number;
   status: string;
   stock: number;
+  page?: string;
 }
 
-const ProductCard: FC<ProductCardProps> = ({
+const MyProductCard: FC<ProductCardProps> = ({
   id,
   image,
   alt,
@@ -26,6 +29,7 @@ const ProductCard: FC<ProductCardProps> = ({
   price,
   status,
   stock,
+  page,
 }) => {
   const dispatch = useDispatch();
   const slug = `${(title ?? "product")
@@ -33,6 +37,9 @@ const ProductCard: FC<ProductCardProps> = ({
     .replace(/\s+/g, "-")}-${id}`;
   const favoriteIds = useSelector((state: any) => state.favorites.favoriteIds);
   const isFavorited = favoriteIds.includes(id);
+  const product = useSelector((state: any) =>
+    state.products.find((p: any) => p.id === id)
+  );
 
   async function addFavoriteProduct(id: number) {
     try {
@@ -41,12 +48,10 @@ const ProductCard: FC<ProductCardProps> = ({
       dispatch(addFavorite(id));
     } catch (error: any) {
       if (error.response?.data?.message === "This Product is already saved!") {
-        // Product is already favorited, so remove it instead
         removeFavoriteProduct(id);
       } else {
         console.error("error.response.data.errors", error.response.data.errors);
         console.error("Add favorite error:", error.response?.data);
-
       }
     }
   }
@@ -54,20 +59,19 @@ const ProductCard: FC<ProductCardProps> = ({
     try {
       await api.delete(`/favorites/${id}`);
       dispatch(removeFavorite(id));
-      console.log("Product deleted successfully!", id);
     } catch (error: any) {
       console.error("error.response.data.errors", error.response.data.errors);
     }
   }
-  const toggleFavorite = () => {
-    if (isFavorited) {
-      // removeFavorite(id);
-      removeFavoriteProduct(id); // your API call to delete
-    } else {
-      // addFavorite(id);
-      addFavoriteProduct(id); // your API call to add
+
+  async function allowOnSale(id: number) {
+    try {
+      await api.patch(`/products/${id}`);
+      dispatch(updateProdStatus({ id, status: "available" }));
+    } catch (error) {
+      console.error(error);
     }
-  };
+  }
 
   return (
     <div className="h-[400px] w-[300px] my-2 bg-white rounded-xl grid grid-rows-3 shadow-xl">
@@ -98,12 +102,28 @@ const ProductCard: FC<ProductCardProps> = ({
           <p className="text-sm">{stock} left</p>
         </div>
         <div className="w-full flex justify-between items-center">
-          <Link
-            to={`/products/${slug}`}
-            className="text-sm px-3 py-2 bg-slate-200 rounded-xl cursor-pointer"
-          >
-            Edit product
-          </Link>
+          {page === "myProducts" ? (
+            <Link
+              to={`/products/${slug}`}
+              className="text-sm px-3 py-2 bg-slate-200 rounded-xl cursor-pointer"
+            >
+              Edit product
+            </Link>
+          ) : page === "pendings" ? (
+            <Button
+              className="text-sm px-3 py-2 bg-slate-500 rounded-xl cursor-pointer"
+              onClick={() => allowOnSale(id)}
+            >
+              Allow on Sale
+            </Button>
+          ) : (
+            <Link
+              to={`/products/${slug}`}
+              className="text-sm px-3 py-2 bg-slate-200 rounded-xl cursor-pointer"
+            >
+              View Product
+            </Link>
+          )}
           <p
             className={`text-sm p-1 px-2 rounded-xl ${
               status === "available"
@@ -115,7 +135,7 @@ const ProductCard: FC<ProductCardProps> = ({
                 : "bg-yellow-200"
             }`}
           >
-            {status}
+            {product?.status || status}
           </p>
         </div>
       </div>
@@ -123,4 +143,4 @@ const ProductCard: FC<ProductCardProps> = ({
   );
 };
 
-export default ProductCard;
+export default MyProductCard;

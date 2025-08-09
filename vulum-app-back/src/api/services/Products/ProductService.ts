@@ -6,6 +6,7 @@ import { InjectRepository } from 'typeorm-typedi-extensions';
 import { UserRepository } from '@base/api/repositories/Users/UserRepository';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
 import { ProductCreateRequest } from '@base/api/requests/Products/ProductCreateRequest';
+import {ProductStatus} from '@api/models/Products/PEnum';
 import stripe from '@base/config/stripe';
 
 @Service()
@@ -26,11 +27,11 @@ export class ProductService {
   }
 
   public async getAvailableProducts(resourceOptions?: object) {
-    return await this.productRepository.find({ where: { Status: 'available' }, ...resourceOptions });
+    return await this.productRepository.find({ where: { Status: 'available' }, ...resourceOptions, relations: ['productImages'] });
   }
 
   public async getPendingProducts(resourceOptions?: object) {
-    return await this.productRepository.find({ where: { Status: 'pending' }, ...resourceOptions });
+    return await this.productRepository.find({ where: { Status: 'pending' }, ...resourceOptions, relations: ['productImages'] });
   }
 
   public async getSoldProducts(resourceOptions?: object) {
@@ -96,6 +97,11 @@ export class ProductService {
 
     return await this.productRepository.updateproduct(product, data);
   }
+
+ public async updateStatusById(id: number) {
+  await this.productRepository.update(id, { Status: ProductStatus.AVAILABLE });
+  return { message: 'Status updated to AVAILABLE' };
+}
 
   public async deleteOneById(id: number) {
     return await this.productRepository.delete(id);

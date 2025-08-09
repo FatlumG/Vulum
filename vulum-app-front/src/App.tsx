@@ -22,13 +22,14 @@ import { useSelector, UseSelector } from "react-redux";
 import { HashLoader } from "react-spinners";
 import NotFoundPage from "./pages/NotFoundPage";
 import AllProductsPage from "./pages/AllProductsPage";
+import PendingProductsPage from "./pages/PendingProductsPage";
 
 const App: React.FC = () => {
   const isLoading = useSelector((state: any) => state.loading.isLoading);
 
   if (isLoading)
     return (
-      <div className="w-full h-full flex justify-center items-center">
+      <div className="w-full h-[100vh] flex justify-center items-center">
         <HashLoader color="#000" size={50} />
       </div>
     );
@@ -73,6 +74,7 @@ const App: React.FC = () => {
             <Route path="/products" element={<AllProductsPage />} />
             <Route path="/my-products" element={<MyProductsPage />} />
             <Route path="/products/add-product" element={<AddProductPage />} />
+            <Route path="/pending-products" element={<PendingProductsPage />} />
             <Route path="/products/:slug" element={<UpdateProductPage />} />
             <Route path="/favorites" element={<FavoritePage />} />
             <Route path="/inbox" element={<InboxPage />} />
@@ -85,8 +87,6 @@ const App: React.FC = () => {
             <Route path="/invoices" element={<InvoicesPage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
-
-          {/* Fallback Route */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>

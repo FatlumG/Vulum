@@ -11,6 +11,7 @@ import {
   Tag,
   Boxes,
   ShoppingBag,
+  Hourglass
 } from "lucide-react";
 import {
   Sidebar,
@@ -49,6 +50,11 @@ export function AppSidebar() {
       title: "My Products",
       url: "/my-products",
       icon: Package2,
+    },
+    {
+      title: "Pending Products",
+      url: "/pending-products",
+      icon: Hourglass,
     },
     {
       title: "Favorites",

@@ -15,7 +15,6 @@ import { useNavigate } from "react-router-dom";
 import { startLoading, stopLoading } from "../../features/loading/loadingSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { HashLoader } from "react-spinners";
-import { RootState } from "../../app/store";
 interface AddProductFormProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }

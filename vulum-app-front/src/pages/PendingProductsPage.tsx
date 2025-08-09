@@ -1,10 +1,12 @@
 import React from "react";
 import MyProductCard from "../components/products/MyProductCard";
 import { Link } from "react-router-dom";
-import { useAllProducts } from "../hooks/getAllProductsHook";
+import { getMyProducts } from "../hooks/getMyProductsHook";
+import { getMyFavorites } from "../hooks/getMyFavoritesHook";
+import { usePendingProducts } from "../hooks/getAllPendingProducts";
 
-const AllProductsPage: React.FC = () => {
-  const products = useAllProducts();
+const PendingProductsPage: React.FC = () => {
+  const products = usePendingProducts();
 
   return (
     <div className="col-span-10 py-5 font-NunitoSans">
@@ -31,6 +33,7 @@ const AllProductsPage: React.FC = () => {
             price={prod.Price}
             status={prod.Status}
             stock={prod.Stock}
+            page="pendings"
           />
         ))}
       </div>
@@ -38,4 +41,4 @@ const AllProductsPage: React.FC = () => {
   );
 };
 
-export default AllProductsPage;
+export default PendingProductsPage;
