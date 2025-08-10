@@ -48,7 +48,6 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
       Category: null,
       CreatedBy: null,
     }));
-    
 
     useEffect(() => {
       const fetchCategories = async () => {

@@ -23,6 +23,7 @@ import { HashLoader } from "react-spinners";
 import NotFoundPage from "./pages/NotFoundPage";
 import AllProductsPage from "./pages/AllProductsPage";
 import PendingProductsPage from "./pages/PendingProductsPage";
+import ViewProductPage from "./pages/ViewProductPage";
 
 const App: React.FC = () => {
   const isLoading = useSelector((state: any) => state.loading.isLoading);
@@ -76,6 +77,7 @@ const App: React.FC = () => {
             <Route path="/products/add-product" element={<AddProductPage />} />
             <Route path="/pending-products" element={<PendingProductsPage />} />
             <Route path="/products/:slug" element={<UpdateProductPage />} />
+            <Route path="/products/view/:slug" element={<ViewProductPage />} />
             <Route path="/favorites" element={<FavoritePage />} />
             <Route path="/inbox" element={<InboxPage />} />
             <Route path="/order-lists" element={<OListPage />} />

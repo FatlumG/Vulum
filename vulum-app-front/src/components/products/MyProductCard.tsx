@@ -75,7 +75,12 @@ const MyProductCard: FC<ProductCardProps> = ({
 
   return (
     <div className="h-[400px] w-[300px] my-2 bg-white rounded-xl grid grid-rows-3 shadow-xl">
-      <Link to={`/products/${slug}`} className="w-full h-full row-span-2">
+      <Link
+        to={`${
+          page === "myProducts" ? `/products/${slug}` : `/products/view/${slug}`
+        }`}
+        className="w-full h-full row-span-2"
+      >
         <img
           src={image}
           alt={alt}
@@ -110,15 +115,16 @@ const MyProductCard: FC<ProductCardProps> = ({
               Edit product
             </Link>
           ) : page === "pendings" ? (
-            <Button
+            <Link
+              to="/products"
               className="text-sm px-3 py-2 bg-slate-500 rounded-xl cursor-pointer"
               onClick={() => allowOnSale(id)}
             >
               Allow on Sale
-            </Button>
+            </Link>
           ) : (
             <Link
-              to={`/products/${slug}`}
+              to={`/products/view/${slug}`}
               className="text-sm px-3 py-2 bg-slate-200 rounded-xl cursor-pointer"
             >
               View Product
