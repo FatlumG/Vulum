@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import { getProduct } from "../hooks/getProduct";
 import { useParams } from "react-router-dom";
-import { IoTrashBin } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
+import { useOrderProduct } from "../hooks/orderProduct";
+import { Link } from "react-router-dom";
 
 const ViewProductPage: React.FC = () => {
   const { slug } = useParams();
@@ -59,10 +59,15 @@ const ViewProductPage: React.FC = () => {
             <span className="font-semibold">Stock:</span> {product?.Stock}
           </p>
           <p>
-            <span className="font-semibold">Category:</span>{" "}
+            <span className="font-semibold">Category:</span> {/* @ts-ignore */}
             {product?.category.CategoryName}
           </p>
-          <Button>Send Order</Button>
+          <Button
+            className="rounded-3xl bg-primaryBlue"
+            onClick={() => product?.id && useOrderProduct(Number(product.id))}
+          >
+            Send Order
+          </Button>
         </div>
       </div>
     </>
