@@ -99,7 +99,7 @@ export class User extends EntityBase {
 
   @BeforeInsert()
   async setDefaultRole() {
-    const roleId = this.RoleId ? this.RoleId : 2;
+    const roleId = this.RoleId ? this.RoleId : 5;
 
     this.RoleId = roleId;
   }

@@ -9,6 +9,7 @@ import { RootState } from "../app/store";
 import api from "../auth/api";
 import { useDispatch } from "react-redux";
 import { login } from "../features/store/authSlice";
+import { toast } from "sonner";
 
 interface SignTableProps {
   SignIn: boolean;
@@ -43,11 +44,15 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
       const token = res.data.access_token;
       localStorage.setItem("token", token);
       dispatch(login({ token, user: res.data.user }));
+      toast("Login successful!");
       if (token) {
-        navigate("/dashboard");
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 3000);
       }
-    } catch (err) {
-      console.error("Login Error:", err);
+    } catch (err: any) {
+      toast(err.response.data.message);
+      // console.error("Login Error:", err);
       setError("Invalid credentials. Please try again.");
     }
   };
@@ -61,8 +66,8 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
       localStorage.setItem("token", token);
       dispatch(login({ token, user: res.data.user }));
       navigate("/dashboard");
-    } catch (err) {
-      console.error("Sign up Error:", err);
+    } catch (err: any) {
+      toast(err.response.data.message);
       setError("Invalid credentials. Please try again.");
     }
   };
@@ -198,7 +203,7 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
                   type="text"
                   placeholder="Email Address"
                   className="w-[110%] mt-2 p-4 border-[1px] border-gray-200 rounded-xl text-sm text-lightGray font-thin text-[13px] focus:outline-secondary focus:text-gray-900"
-                  value={signUpData.FName}  
+                  value={signUpData.FName}
                   name="firstName"
                   onChange={(e) =>
                     setSignUpData({ ...signUpData, FName: e.target.value })

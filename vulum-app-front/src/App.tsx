@@ -24,20 +24,15 @@ import NotFoundPage from "./pages/NotFoundPage";
 import AllProductsPage from "./pages/AllProductsPage";
 import PendingProductsPage from "./pages/PendingProductsPage";
 import ViewProductPage from "./pages/ViewProductPage";
+import { Toaster } from "sonner";
 
 const App: React.FC = () => {
   const isLoading = useSelector((state: any) => state.loading.isLoading);
 
-  if (isLoading)
-    return (
-      <div className="w-full h-[100vh] flex justify-center items-center">
-        <HashLoader color="#000" size={50} />
-      </div>
-    );
   return (
     <>
       {isLoading && (
-        <div className="w-full h-full flex justify-center items-center absolute z-50">
+        <div className="w-full h-full bg-white flex justify-center items-center absolute z-50">
           <HashLoader />
         </div>
       )}
@@ -92,6 +87,9 @@ const App: React.FC = () => {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>
+
+      {/* Toasts */}
+      <Toaster richColors position="top-center" />
     </>
   );
 };

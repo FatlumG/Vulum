@@ -117,7 +117,7 @@ const MyProductCard: FC<ProductCardProps> = ({
           ) : page === "pendings" ? (
             <Link
               to="/products"
-              className="text-sm px-3 py-2 bg-slate-500 rounded-xl cursor-pointer"
+              className="text-sm px-3 py-2 bg-slate-500 rounded-xl text-white cursor-pointer hover:"
               onClick={() => allowOnSale(id)}
             >
               Allow on Sale
