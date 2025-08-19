@@ -6,6 +6,7 @@ import { InjectRepository } from 'typeorm-typedi-extensions';
 import { UserRepository } from '@base/api/repositories/Users/UserRepository';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
 import { ProductCreateRequest } from '@base/api/requests/Products/ProductCreateRequest';
+import { ProductStatus } from '@api/models/Products/PEnum';
 import stripe from '@base/config/stripe';
 
 @Service()
@@ -14,20 +15,21 @@ export class ProductService {
     @InjectRepository() private productRepository: ProductRepository,
     @InjectRepository() private userRepository: UserRepository,
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
-  ) {
-    //
-  }
+  ) {}
 
   public async getAll(resourceOptions?: object) {
-    return await this.productRepository.getManyAndCount(resourceOptions);
+    return await this.productRepository.findAndCount({
+      ...resourceOptions,
+      relations: ['productImages'],
+    });
   }
 
   public async getAvailableProducts(resourceOptions?: object) {
-    return await this.productRepository.find({ where: { Status: 'available' }, ...resourceOptions });
+    return await this.productRepository.find({ where: { Status: 'available' }, ...resourceOptions, relations: ['productImages'] });
   }
 
   public async getPendingProducts(resourceOptions?: object) {
-    return await this.productRepository.find({ where: { Status: 'pending' }, ...resourceOptions });
+    return await this.productRepository.find({ where: { Status: 'pending' }, ...resourceOptions, relations: ['productImages'] });
   }
 
   public async getSoldProducts(resourceOptions?: object) {
@@ -36,18 +38,19 @@ export class ProductService {
 
   public async findOneById(id: number) {
     const product = await this.productRepository
-      .createQueryBuilder('Product')
-      .leftJoinAndSelect('Product.productImages', 'productImages')
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.productImages', 'productImages')
+      .leftJoinAndSelect('product.category', 'category')
       .select([
-        'Product.id',
-        'Product.ProductName',
-        'Product.ProductDescription',
-        'Product.Price',
-        'Product.Stock',
-        'Product.Category',
+        'product.id',
+        'product.ProductName',
+        'product.ProductDescription',
+        'product.Price',
+        'product.Stock',
+        'category.CategoryName',
         'productImages.image_url',
       ])
-      .where('Product.id = :id', { id })
+      .where('product.id = :id', { id })
       .getOne();
 
     return product;
@@ -92,6 +95,11 @@ export class ProductService {
     const product = await this.getRequestedProductOrFail(id);
 
     return await this.productRepository.updateproduct(product, data);
+  }
+
+  public async updateStatusById(id: number) {
+    await this.productRepository.update(id, { Status: ProductStatus.AVAILABLE });
+    return { message: 'Status updated to AVAILABLE' };
   }
 
   public async deleteOneById(id: number) {

@@ -15,7 +15,6 @@ import { useNavigate } from "react-router-dom";
 import { startLoading, stopLoading } from "../../features/loading/loadingSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { HashLoader } from "react-spinners";
-import { RootState } from "../../app/store";
 interface AddProductFormProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }
@@ -39,26 +38,29 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
       0
     );
-    const [categories, setCategories] = useState<CategoryInterface[]>();
+    const [categories, setCategories] = useState<CategoryInterface[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<number>();
     const [product, setProduct] = useState<AddProductInterface>(() => ({
       ProductName: "",
       ProductDescription: "",
       Price: 0,
       Stock: 1,
-      Category: categories?.length ? categories[0].id : null,
+      Category: null,
       CreatedBy: null,
     }));
 
     useEffect(() => {
       const fetchCategories = async () => {
         try {
-          dispatch(startLoading());
+          // dispatch(startLoading());
+          console.log("Fetching categories");
           const res = await api.get("/categories");
           setCategories(res.data.rows);
-          dispatch(stopLoading());
+          // dispatch(stopLoading());
         } catch (error) {
           console.error("Error fetching categories:", error);
+        } finally {
+          // dispatch(stopLoading());
         }
       };
 
@@ -73,6 +75,16 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
       initialize();
       fetchCategories();
     }, []);
+
+    useEffect(() => {
+      if (categories.length > 0 && product.Category === null) {
+        setProduct((prev) => ({
+          ...prev,
+          Category: categories[0].id,
+        }));
+        setSelectedCategory(categories[0].id);
+      }
+    }, [categories]);
 
     async function getUserIdFromToken(): Promise<number | null> {
       const token = localStorage.getItem("token");
@@ -215,14 +227,15 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
       }
     };
 
-    // const isLoading = useSelector((state: any) => state.loading.isLoading);
+    const isLoading = useSelector((state: any) => state.loading.isLoading);
 
-    // if (isLoading)
-    //   return (
-    //     <div className="w-full h-full flex justify-center items-center">
-    //       <HashLoader color="#000" size={50} />
-    //     </div>
-    //   );
+    if (isLoading)
+      return (
+        <div className="w-full h-full flex justify-center items-center">
+          <HashLoader color="#000" size={50} />
+        </div>
+      );
+
     return (
       <form
         className="mt-5 grid grid-cols-5 grid-rows-3 gap-5"

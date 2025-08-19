@@ -5,6 +5,7 @@ import { User } from '../Users/User';
 import { ProductStatus } from './PEnum';
 import { ProductImages } from '../ProductImages/ProductImage';
 import { Favorite } from '../Favorites/Favorite';
+import { Category } from '../Categories/Category';
 
 @Entity({ name: 'products' })
 export class Product extends EntityBase {
@@ -53,4 +54,8 @@ export class Product extends EntityBase {
 
   @OneToMany(() => Favorite, (favorite) => favorite.product_id)
   favorites: Favorite[];
+
+  @ManyToOne(() => Category, (category) => category.products)
+  @JoinColumn({ name: 'Category' })
+  category: Category;
 }

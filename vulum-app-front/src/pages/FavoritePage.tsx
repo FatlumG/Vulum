@@ -1,5 +1,5 @@
 import React from "react";
-import ProductCard from "../components/products/ProductCard";
+import ProductCard from "../components/products/MyProductCard";
 import { getMyFavorites } from "../hooks/getMyFavoritesHook";
 
 const FavoritePage: React.FC = () => {

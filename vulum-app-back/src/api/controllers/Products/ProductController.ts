@@ -1,4 +1,4 @@
-import { Param, Get, JsonController, Post, Body, Put, Delete, HttpCode, UseBefore, QueryParams } from 'routing-controllers';
+import { Param, Get, JsonController, Post, Body, Put, Delete, HttpCode, UseBefore, QueryParams, Patch } from 'routing-controllers';
 import { ProductService } from '@api/services/Products/ProductService';
 import { Service } from 'typedi';
 import { ProductCreateRequest } from '@api/requests/Products/ProductCreateRequest';
@@ -13,7 +13,7 @@ import { LoggedUser } from '@base/decorators/LoggedUser';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
 import { ProductImagesService } from '@api/services/ProductImages/ProductImagesService';
 import { ProductImagesCreateRequest } from '@base/api/requests/ProductImages/ProductImagesCreateRequest';
-import { validate } from 'class-validator';
+import { StatusUpdateRequest } from '@base/api/requests/Products/StatusUpdateRequest';
 
 @Service()
 @OpenAPI({
@@ -26,6 +26,7 @@ export class ProductController extends ControllerBase {
     super();
   }
 
+  @UseBefore(HasRole(['Super Admin', 'Admin', 'Manager']))
   @Get()
   public async getAll(@QueryParams() parseResourceOptions: RequestQueryParser) {
     const resourceOptions = parseResourceOptions.getAll();
@@ -70,31 +71,21 @@ export class ProductController extends ControllerBase {
     return this.productService.getProductsBySearch(productName);
   }
 
-  // @Post()
-  // @HttpCode(201)
-  // public async create(@Body() product: ProductCreateRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
-  //   return await this.productService.create(product, loggedUser);
-  // }
-
   @Post()
   @HttpCode(201)
   public async create(@Body() body: CreateProductWithImagesRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
-    // 1) Create product and get created product entity (with id)
     const createdProduct = await this.productService.create(body.product, loggedUser);
 
-    // 2) Prepare images with product_id set to createdProduct.id
     const imagesWithProductId = body.images.map((img) => ({
       ...img,
       product_id: Number(createdProduct.id),
     }));
 
-    // 3) Save product images
     console.log('imagesWithProductId', imagesWithProductId);
     const createdImages = await this.productImagesService.create(imagesWithProductId);
     console.log('createdImages', createdImages);
     console.log('createdProduct', createdProduct);
 
-    // 4) Return both created product and images
     return {
       product: createdProduct,
       images: createdImages,
@@ -106,6 +97,13 @@ export class ProductController extends ControllerBase {
   public async update(@Param('id') id: number, @Body() product: ProductUpdateRequest) {
     return await this.productService.updateOneById(id, product);
   }
+
+@Patch('/:id')
+@UseBefore(HasRole(['Super Admin', 'Admin', 'Manager']))
+public async patch(@Param('id') id: number) {
+  return await this.productService.updateStatusById(id);
+}
+
 
   @Delete('/:id')
   @UseBefore(HasRole(['Super Admin', 'Admin', 'Manager']))
@@ -123,9 +121,4 @@ export class ProductController extends ControllerBase {
   public async getImagesByProductId(@Param('id') id: number, resourceOptions: object) {
     return await this.productImagesService.getImagesByProductId(id, resourceOptions);
   }
-
-  // @Post('/images')
-  // public async addImages(@Body() images: ProductImagesCreateRequest) {
-  //   return await this.productImagesService.create(images);
-  // }
 }

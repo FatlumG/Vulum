@@ -1,12 +1,10 @@
 import React from "react";
-import ProductCard from "../components/products/ProductCard";
+import MyProductCard from "../components/products/MyProductCard";
 import { Link } from "react-router-dom";
-import { getMyProducts } from "../hooks/getMyProductsHook";
-import { getMyFavorites } from "../hooks/getMyFavoritesHook";
+import { useAllProducts } from "../hooks/getAllProductsHook";
 
-const ProductsPage: React.FC = () => {
-  const products = getMyProducts();
-  const favorites = getMyFavorites();
+const AllProductsPage: React.FC = () => {
+  const products = useAllProducts();
 
   return (
     <div className="col-span-10 py-5 font-NunitoSans">
@@ -22,10 +20,12 @@ const ProductsPage: React.FC = () => {
       </div>
       <div className="w-full mt-10 flex flex-wrap justify-between gap-5">
         {products?.map((prod, idx) => (
-          <ProductCard
+          <MyProductCard
             key={idx}
             id={prod.id}
-            image={prod.productImages[0]?.image_url || "fallback-image-url.jpg"}
+            image={
+              prod.productImages?.[0]?.image_url || "fallback-image-url.jpg"
+            }
             alt={prod.ProductName}
             title={prod.ProductName}
             price={prod.Price}
@@ -38,4 +38,4 @@ const ProductsPage: React.FC = () => {
   );
 };
 
-export default ProductsPage;
+export default AllProductsPage;

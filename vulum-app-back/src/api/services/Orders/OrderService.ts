@@ -27,66 +27,6 @@ export class OrderService {
     return await this.getRequestedOrderOrFail(id, resourceOptions);
   }
 
-  // public async create(data: { items: { product_id: number; quantity: number }[] }, user: LoggedUserInterface) {
-  //   const items = data.items;
-  //   if (!items || !Array.isArray(items) || items.length === 0) {
-  //     throw new Error('No items provided for the order.');
-  //   }
-
-  //   const productIds = items.map((item) => item.product_id);
-  //   const products = await this.productRepository.findByIds(productIds);
-
-  //   if (products.length !== productIds.length) {
-  //     throw new Error('One or more products not found.');
-  //   }
-
-  //   let totalAmount = 0;
-  //   const stripeLineItems = [];
-
-  //   for (const item of items) {
-  //     const product = products.find((p) => p.id === item.product_id);
-  //     if (!product) {
-  //       throw new Error(`Product with id ${item.product_id} not found.`);
-  //     }
-  //     if (item.quantity <= 0) {
-  //       throw new Error(`Invalid quantity for ${product.ProductName}.`);
-  //     }
-
-  //     totalAmount += product.Price * item.quantity;
-
-  //     if (!product.StripePriceId) {
-  //       throw new Error(`Stripe Price ID missing for product ${product.ProductName}.`);
-  //     }
-
-  //     stripeLineItems.push({
-  //       price: product.StripePriceId,
-  //       quantity: item.quantity,
-  //     });
-  //   }
-
-  //   // Create the order in DB with status 'pending'
-  //   const order = await this.orderRepository.createOrder({
-  //     name: `Order-${Date.now()}`,
-  //     amount: totalAmount,
-  //     status: 'completed',
-  //     created_by: user.userId,
-  //   });
-
-  //   // Create order items in DB
-  //   for (const item of items) {
-  //     await this.orderItemRepository.createOrderItem({
-  //       order_id: order.id,
-  //       product_id: item.product_id,
-  //       quantity: item.quantity,
-  //       total_amount: products.find((p) => p.id === item.product_id).Price * item.quantity,
-  //     });
-  //   }
-
-  //   this.eventDispatcher.dispatch('onOrderCreate', order);
-
-  //   return order;
-  // }
-
   public async createCheckoutSession(data: { items: { product_id: number; quantity: number }[] }, user: LoggedUserInterface) {
     const items = data.items;
     if (!items || !Array.isArray(items) || items.length === 0) {
@@ -95,6 +35,10 @@ export class OrderService {
 
     const productIds = items.map((item) => item.product_id);
     const products = await this.productRepository.findByIds(productIds);
+
+    console.log('Incoming items:', data.items);
+    console.log('Product IDs:', productIds);
+    console.log('Found products:', products);
 
     if (products.length !== productIds.length) {
       throw new Error('One or more products not found.');

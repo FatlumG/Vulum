@@ -81,26 +81,26 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
         return null;
       }
     }
-    async function uploadToCloudinary(file: ImageType): Promise<void> {
-      const formData = new FormData();
-      if (file instanceof File) formData.append("file", file);
-      formData.append("upload_preset", "vulum_upload_preset"); // replace this
-      formData.append("folder", "products"); // to organize uploads
-      try {
-        const response = await axios.post(
-          `https://api.cloudinary.com/v1_1/dawa2plry/image/upload`,
-          formData,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          }
-        );
-        return response.data.secure_url;
-      } catch (error: any) {
-        throw new Error(
-          error.response?.data?.error?.message || "Cloudinary upload failed"
-        );
-      }
-    }
+    // async function uploadToCloudinary(file: ImageType): Promise<void> {
+    //   const formData = new FormData();
+    //   if (file instanceof File) formData.append("file", file);
+    //   formData.append("upload_preset", "vulum_upload_preset"); // replace this
+    //   formData.append("folder", "products"); // to organize uploads
+    //   try {
+    //     const response = await axios.post(
+    //       `https://api.cloudinary.com/v1_1/dawa2plry/image/upload`,
+    //       formData,
+    //       {
+    //         headers: { "Content-Type": "multipart/form-data" },
+    //       }
+    //     );
+    //     return response.data.secure_url;
+    //   } catch (error: any) {
+    //     throw new Error(
+    //       error.response?.data?.error?.message || "Cloudinary upload failed"
+    //     );
+    //   }
+    // }
     async function buildRequestBody() {
       return {
         ProductName: product.ProductName,

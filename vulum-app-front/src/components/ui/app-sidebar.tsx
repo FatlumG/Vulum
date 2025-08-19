@@ -9,6 +9,9 @@ import {
   LogOut,
   Package2,
   Tag,
+  Boxes,
+  ShoppingBag,
+  Hourglass,
 } from "lucide-react";
 import {
   Sidebar,
@@ -31,7 +34,9 @@ export function AppSidebar() {
   const logoutUser = () => {
     dispatch(logout());
   };
-  // const [user, setUser] = useState<userInterface>();
+  const user = getPfp();
+  const userRole = user.user?.role.RoleName;
+
   const items = [
     {
       title: "Dashboard",
@@ -41,8 +46,24 @@ export function AppSidebar() {
     {
       title: "Products",
       url: "/products",
+      icon: Boxes,
+    },
+    {
+      title: "My Products",
+      url: "/my-products",
       icon: Package2,
     },
+    ...(userRole === "Super Admin" ||
+    userRole === "Admin" ||
+    userRole === "Manager"
+      ? [
+          {
+            title: "Pending Products",
+            url: "/pending-products",
+            icon: Hourglass,
+          },
+        ]
+      : []),
     {
       title: "Favorites",
       url: "/favorites",
@@ -85,8 +106,6 @@ export function AppSidebar() {
       onclick: () => logoutUser(),
     },
   ];
-
-  const user = getPfp();
 
   return (
     <Sidebar>
