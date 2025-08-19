@@ -14,7 +14,11 @@ import { CategoryInterface } from "../../interfaces/CategoryInterface";
 import { useNavigate } from "react-router-dom";
 import { startLoading, stopLoading } from "../../features/loading/loadingSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { HashLoader } from "react-spinners";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { productSchema, ProductForm } from "../../validation/productSchema";
+import { notify } from "../../utils/notify";
+
 interface AddProductFormProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }
@@ -49,11 +53,27 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
       CreatedBy: null,
     }));
 
+    const {
+      register,
+      handleSubmit,
+      control,
+      reset,
+      formState: { errors },
+    } = useForm<ProductForm>({
+      resolver: zodResolver(productSchema),
+      defaultValues: {
+        ProductName: "",
+        ProductDescription: "",
+        Price: 0,
+        Stock: 1,
+      },
+    });
+
     useEffect(() => {
       const fetchCategories = async () => {
         try {
           // dispatch(startLoading());
-          console.log("Fetching categories");
+          // console.log("Fetching categories");
           const res = await api.get("/categories");
           setCategories(res.data.rows);
           // dispatch(stopLoading());
@@ -99,7 +119,6 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
         return null;
       }
     }
-
     async function uploadToCloudinary(file: File): Promise<void> {
       const formData = new FormData();
       formData.append("file", file);
@@ -120,8 +139,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
         );
       }
     }
-
-    async function buildRequestBody() {
+    async function buildRequestBody(data: ProductForm) {
       const userId = await getUserIdFromToken();
 
       const uploadedImageUrls = await Promise.all(
@@ -134,11 +152,11 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
 
       const requestBody = {
         product: {
-          ProductName: product.ProductName,
-          ProductDescription: product.ProductDescription,
-          Price: Number(product.Price),
-          Stock: Number(product.Stock),
-          Category: Number(product.Category),
+          ProductName: data.ProductName,
+          ProductDescription: data.ProductDescription,
+          Price: Number(data.Price),
+          Stock: Number(data.Stock),
+          Category: Number(selectedCategory),
           CreatedBy: userId,
         },
         images: imagesForRequest,
@@ -189,85 +207,113 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
       }
     };
 
-    const addProduct = async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
+    // const addProduct = async (data: ProductForm) => {
+    //   dispatch(startLoading());
+
+    //   try {
+    //     const requestBody = await buildRequestBody(data);
+    //     await api.post("/products", requestBody);
+
+    //     dispatch(stopLoading());
+    //     setProduct({
+    //       ProductName: "",
+    //       ProductDescription: "",
+    //       Price: 0,
+    //       Stock: 1,
+    //       Category: categories?.length ? categories[0].id : null,
+    //       CreatedBy: null,
+    //     });
+
+    //     setImages([]);
+    //     setSelectedImageIndex(null);
+
+    //     navigate("/products");
+    //   } catch (err: any) {
+    //     dispatch(stopLoading());
+    //     console.error(err.response.data, "err.response.data.message");
+    //   } finally {
+    //     dispatch(stopLoading());
+    //   }
+    // };
+
+    const addProduct = async (data: ProductForm) => {
       dispatch(startLoading());
 
       try {
-        const requestBody = await buildRequestBody();
+        const requestBody = await buildRequestBody(data);
         await api.post("/products", requestBody);
 
-        // const userId = await getUserIdFromToken();
+        dispatch(stopLoading());
 
-        setProduct({
-          ProductName: "",
-          ProductDescription: "",
-          Price: 0,
-          Stock: 1,
-          Category: categories?.length ? categories[0].id : null,
-          CreatedBy: null,
-        });
+        // Show success toast BEFORE navigating
+        notify.success("✅ Product added successfully!");
 
+        reset();
         setImages([]);
         setSelectedImageIndex(null);
 
-        navigate("/products");
+        // Small delay so toast is visible (optional)
+        setTimeout(() => {
+          navigate("/products");
+        }, 500);
       } catch (err: any) {
         dispatch(stopLoading());
-        if (err.response) {
-          console.error("Error data:", err.response.data);
-          console.error("Validation errors:", err.response.data.errors);
-        } else if (err.request) {
-          console.error("No response received:", err.request);
-        } else {
-          console.error("Error message:", err.message);
-        }
-      } finally {
-        dispatch(stopLoading());
+
+        const message =
+          err.response?.data?.message || "❌ Failed to add product";
+        notify.error(message);
+
+        console.error(err.response?.data);
       }
     };
 
-    const isLoading = useSelector((state: any) => state.loading.isLoading);
-
-    if (isLoading)
-      return (
-        <div className="w-full h-full flex justify-center items-center">
-          <HashLoader color="#000" size={50} />
-        </div>
-      );
+    const onError = (errors: any) => {
+      const firstError = Object.values(errors)[0] as any;
+      if (firstError?.message) {
+        notify.error(firstError.message);
+      }
+    };
 
     return (
       <form
         className="mt-5 grid grid-cols-5 grid-rows-3 gap-5"
-        onSubmit={addProduct}
+        onSubmit={handleSubmit(addProduct, onError)}
         ref={ref}
       >
         <div className="col-span-3 row-span-2 grid grid-rows-6 gap-5 bg-gray-200 p-7 rounded-xl shadow-lg">
           <span className="row-span-1 font-semibold text-lg">General Info</span>
           <div className="row-span-2">
             <Label htmlFor="pName">Product Name</Label>
-            <Input
-              type="text"
-              id="pName"
-              placeholder="Product Name"
-              value={product.ProductName}
-              onChange={(e) =>
-                setProduct({ ...product, ProductName: e.target.value })
-              }
+            <Controller
+              name="ProductName"
+              control={control}
+              defaultValue="" // let RHF handle initial value
+              render={({ field }) => (
+                <Input
+                  type="text"
+                  id="pName"
+                  placeholder="Product Name"
+                  {...field} // RHF manages value & onChange
+                />
+              )}
             />
           </div>
           <div className="row-span-3">
             <Label htmlFor="pDesc">Product Description</Label>
-            <textarea
-              id="pDesc"
-              placeholder="Product Description"
-              className={cn(
-                "flex h-24 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm resize-none"
+            <Controller
+              name="ProductDescription"
+              control={control} // make sure you extract `control` from useForm
+              defaultValue={product.ProductDescription} // optional: initial state
+              render={({ field }) => (
+                <textarea
+                  id="pDesc"
+                  placeholder="Product Description"
+                  className={cn(
+                    "flex h-24 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm resize-none"
+                  )}
+                  {...field} // RHF now controls value & onChange
+                />
               )}
-              value={product.ProductDescription}
-              onChange={(e) =>
-                setProduct({ ...product, ProductDescription: e.target.value })
-              }
             />
           </div>
         </div>
@@ -324,21 +370,30 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
           <span className="row-span-1 col-span-2 font-semibold text-lg">
             Pricing and Stock
           </span>
+
           <div className="row-span-2 col-span-1">
             <Label htmlFor="pPrice">Product Price</Label>
-            <Input
-              type="number"
-              id="pPrice"
-              value={product.Price}
-              onChange={(e) =>
-                setProduct({ ...product, Price: parseFloat(e.target.value) })
-              }
-              onBlur={onBlur}
-              step={0.01}
-              min={0}
-              max={999999.99}
-              placeholder="Enter price"
-              className="input-class"
+            <Controller
+              name="Price"
+              control={control}
+              defaultValue={0} // start as number
+              render={({ field }) => (
+                <Input
+                  type="number"
+                  id="pPrice"
+                  {...field}
+                  value={field.value ?? 0} // ensure number, not string
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    field.onChange(value === "" ? 0 : Number(value)); // always a number
+                  }}
+                  step={0.01}
+                  min={0}
+                  max={999999.99}
+                  placeholder="Enter price"
+                  className="input-class"
+                />
+              )}
             />
           </div>
           <div className="row-span-1 col-span-1">
@@ -346,6 +401,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
             <Input
               type="text"
               id="pStock"
+              {...register("Stock", { valueAsNumber: true })}
               placeholder="Product Stock"
               value={product.Stock}
               onChange={(e) =>
