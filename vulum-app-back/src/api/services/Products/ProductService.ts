@@ -25,11 +25,21 @@ export class ProductService {
   }
 
   public async getAvailableProducts(resourceOptions?: object) {
-    return await this.productRepository.find({ where: { Status: 'available' }, ...resourceOptions, relations: ['productImages'] });
+    return await this.productRepository.find({
+      where: { Status: 'available' },
+      ...resourceOptions,
+      relations: ['productImages'],
+      order: { id: 'DESC' },
+    });
   }
 
   public async getPendingProducts(resourceOptions?: object) {
-    return await this.productRepository.find({ where: { Status: 'pending' }, ...resourceOptions, relations: ['productImages'] });
+    return await this.productRepository.find({
+      where: { Status: 'pending' },
+      ...resourceOptions,
+      relations: ['productImages'],
+      order: { id: 'DESC' },
+    });
   }
 
   public async getSoldProducts(resourceOptions?: object) {
