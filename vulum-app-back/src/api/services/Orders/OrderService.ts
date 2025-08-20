@@ -95,7 +95,7 @@ export class OrderService {
       mode: 'payment',
       customer_email: user.email,
       line_items: stripeLineItems,
-      success_url: `http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
+      success_url: `http://localhost:5173/dashboard`,
       cancel_url: 'http://localhost:3000/cancel',
       metadata: {
         userId: user.userId,
