@@ -57,6 +57,7 @@ export class ProductService {
         'product.ProductDescription',
         'product.Price',
         'product.Stock',
+        'category.id',
         'category.CategoryName',
         'productImages.image_url',
       ])

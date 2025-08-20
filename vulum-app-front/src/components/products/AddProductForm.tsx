@@ -246,7 +246,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
         dispatch(stopLoading());
 
         // Show success toast BEFORE navigating
-        notify.success("✅ Product added successfully!");
+        notify.success("Product added successfully!");
 
         reset();
         setImages([]);
