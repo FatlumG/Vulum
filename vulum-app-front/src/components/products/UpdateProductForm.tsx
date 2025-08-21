@@ -8,11 +8,13 @@ import { FaPlusCircle } from "react-icons/fa";
 import { IoTrashBin } from "react-icons/io5";
 import PicUploads from "./PicUploads";
 import api from "../../auth/api";
-import axios from "axios";
 import Select from "../ui/select";
 import { CategoryInterface } from "@/interfaces/CategoryInterface";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { notify } from "../../utils/notify";
+import { startLoading, stopLoading } from "../../features/loading/loadingSlice";
+import { useDispatch } from "react-redux";
 
 interface UpdateProductFormProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
@@ -35,9 +37,9 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
       ProductDescription: "",
       Price: 0,
       Stock: 1,
-      Category: selectedCategory as number | null,
+      Category: selectedCategory as number,
     });
-    
+
     const navigate = useNavigate();
     const { slug } = useParams();
     const id = slug?.split("-").pop();
@@ -49,6 +51,7 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
           setProduct(res.data);
           setImages(res.data.productImages);
         } catch (error: any) {
+          notify.error(error.response.data.message);
           console.error(error.message, "error.message");
         }
       };
@@ -62,6 +65,7 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
           // console.log(res.data.rows, "res.data.rows");
           setCategories(res.data.rows);
         } catch (error) {
+          notify.error("Failed to fetch categories");
           console.error("Error fetching categories:", error);
         }
       };
@@ -102,12 +106,15 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
     //   }
     // }
     async function buildRequestBody() {
+      console.log(product.Category, "product");
+
       return {
         ProductName: product.ProductName,
         ProductDescription: product.ProductDescription,
         Price: Number(product.Price),
         Stock: Number(product.Stock),
-        Category: Number(product.Category),
+        // @ts-ignore
+        Category: Number(product.category.id),
       };
     }
 
@@ -116,14 +123,13 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
 
       try {
         const requestBody = await buildRequestBody();
-        // console.log(id, "id");
-        // console.log(requestBody, "requestBody");
-        // console.log("Product updated successfully!");
         await api.put(`/products/${product.id}`, requestBody);
-        navigate("/products");
+        navigate("/my-products");
+        notify.success("Product updated successfully!");
       } catch (error: any) {
+        notify.error(error.response.data.message);
         console.error(error);
-        console.error("Validation errors:", error.response.data.errors);
+        console.error("Validation errors:", error.response.data);
       }
     };
 
@@ -262,7 +268,7 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
           <Select
             label="Product Category"
             options={categories ?? []}
-            value={product.Category ?? 0}
+            value={product.Category}
             onChange={(id) => {
               setSelectedCategory(id);
               setProduct((prev) => ({ ...prev, Category: id }));

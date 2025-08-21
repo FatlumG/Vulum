@@ -9,6 +9,7 @@ import {
 } from "../../features/products/favoriteSlice";
 import { updateProdStatus } from "../../features/products/productSlice";
 import { Button } from "../ui/button";
+import { notify } from "../../utils/notify";
 
 interface ProductCardProps {
   id: number;
@@ -66,9 +67,24 @@ const MyProductCard: FC<ProductCardProps> = ({
 
   async function allowOnSale(id: number) {
     try {
-      await api.patch(`/products/${id}`);
+      await api.patch(`/products/${id}`, { status: "available" });
       dispatch(updateProdStatus({ id, status: "available" }));
+      window.location.reload();
+      notify.success("Product allowed for sale!");
     } catch (error) {
+      notify.error("Failed to allow product for sale!");
+      console.error(error);
+    }
+  }
+
+  async function disallowOnSale(id: number) {
+    try {
+      await api.patch(`/products/${id}`, { status: "unavailable" });
+      dispatch(updateProdStatus({ id, status: "unavailable" }));
+      window.location.reload();
+      notify.success("Product disallowed from sale!");
+    } catch (error) {
+      notify.error("Failed to disallow product from sale!");
       console.error(error);
     }
   }
@@ -115,13 +131,12 @@ const MyProductCard: FC<ProductCardProps> = ({
               Edit product
             </Link>
           ) : page === "pendings" ? (
-            <Link
-              to="/products"
+            <Button
               className="text-sm px-3 py-2 bg-slate-500 rounded-xl text-white cursor-pointer hover:"
               onClick={() => allowOnSale(id)}
             >
               Allow on Sale
-            </Link>
+            </Button>
           ) : (
             <Link
               to={`/products/view/${slug}`}
@@ -130,19 +145,28 @@ const MyProductCard: FC<ProductCardProps> = ({
               View Product
             </Link>
           )}
-          <p
-            className={`text-sm p-1 px-2 rounded-xl ${
-              status === "available"
-                ? "bg-green-200"
-                : status === "unavailable"
-                ? "bg-red-200"
-                : status === "sold"
-                ? "bg-orange-200"
-                : "bg-yellow-200"
-            }`}
-          >
-            {product?.status || status}
-          </p>
+          {page === "pendings" ? (
+            <Button
+              className="text-sm px-3 py-2 bg-slate-500 rounded-xl text-white cursor-pointer hover:"
+              onClick={() => disallowOnSale(id)}
+            >
+              Don't Allow
+            </Button>
+          ) : (
+            <p
+              className={`text-sm p-1 px-2 rounded-xl ${
+                status === "available"
+                  ? "bg-green-200"
+                  : status === "unavailable"
+                  ? "bg-red-200"
+                  : status === "sold"
+                  ? "bg-orange-200"
+                  : "bg-yellow-200"
+              }`}
+            >
+              {product?.status || status}
+            </p>
+          )}
         </div>
       </div>
     </div>

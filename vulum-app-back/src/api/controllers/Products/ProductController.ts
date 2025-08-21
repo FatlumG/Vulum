@@ -14,6 +14,7 @@ import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterf
 import { ProductImagesService } from '@api/services/ProductImages/ProductImagesService';
 import { ProductImagesCreateRequest } from '@base/api/requests/ProductImages/ProductImagesCreateRequest';
 import { StatusUpdateRequest } from '@base/api/requests/Products/StatusUpdateRequest';
+import { ProductStatus } from '@base/api/models/Products/PEnum';
 
 @Service()
 @OpenAPI({
@@ -52,6 +53,14 @@ export class ProductController extends ControllerBase {
 
     return await this.productService.getPendingProducts(resourceOptions);
   }
+
+  @Get('/unavailable-products')
+  public async getUnavailableProducts(@QueryParams() parseResourceOptions: RequestQueryParser) {
+    const resourceOptions = parseResourceOptions.getAll();
+
+    return await this.productService.getUnavailableProducts(resourceOptions);
+  }
+
   @Get('/sold-products')
   public async getSoldProducts(@QueryParams() parseResourceOptions: RequestQueryParser) {
     const resourceOptions = parseResourceOptions.getAll();
@@ -98,13 +107,11 @@ export class ProductController extends ControllerBase {
     return await this.productService.updateOneById(id, product);
   }
 
-@Patch('/:id')
-@UseBefore(HasRole(['Super Admin', 'Admin', 'Manager']))
-public async patch(@Param('id') id: number) {
-  return await this.productService.updateStatusById(id);
-}
-
-
+  @Patch('/:id')
+  @UseBefore(HasRole(['Super Admin', 'Admin', 'Manager']))
+  public async updateStatus(@Param('id') id: number, @Body() body: { status: ProductStatus }) {
+    return this.productService.updateStatusById(id, body.status);
+  }
   @Delete('/:id')
   @UseBefore(HasRole(['Super Admin', 'Admin', 'Manager']))
   @HttpCode(204)

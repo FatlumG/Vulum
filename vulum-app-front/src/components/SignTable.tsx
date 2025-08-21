@@ -10,6 +10,7 @@ import api from "../auth/api";
 import { useDispatch } from "react-redux";
 import { login } from "../features/store/authSlice";
 import { toast } from "sonner";
+import { notify } from "../utils/notify";
 
 interface SignTableProps {
   SignIn: boolean;
@@ -44,15 +45,14 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
       const token = res.data.access_token;
       localStorage.setItem("token", token);
       dispatch(login({ token, user: res.data.user }));
-      toast("Login successful!");
+      notify.success("Login successful!");
       if (token) {
         setTimeout(() => {
           navigate("/dashboard");
         }, 3000);
       }
     } catch (err: any) {
-      toast(err.response.data.message);
-      // console.error("Login Error:", err);
+      notify.error(err.response.data.message);
       setError("Invalid credentials. Please try again.");
     }
   };
@@ -65,9 +65,10 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
       const token = res.data.access_token;
       localStorage.setItem("token", token);
       dispatch(login({ token, user: res.data.user }));
+      notify.success("Registration successful!");
       navigate("/dashboard");
     } catch (err: any) {
-      toast(err.response.data.message);
+      notify.error(err.response.data.message);
       setError("Invalid credentials. Please try again.");
     }
   };

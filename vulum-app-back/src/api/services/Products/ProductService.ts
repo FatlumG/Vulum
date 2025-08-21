@@ -41,6 +41,14 @@ export class ProductService {
       order: { id: 'DESC' },
     });
   }
+  public async getUnavailableProducts(resourceOptions?: object) {
+    return await this.productRepository.find({
+      where: { Status: 'unavailable' },
+      ...resourceOptions,
+      relations: ['productImages'],
+      order: { id: 'DESC' },
+    });
+  }
 
   public async getSoldProducts(resourceOptions?: object) {
     return await this.productRepository.find({ where: { Status: 'sold' }, ...resourceOptions });
@@ -57,6 +65,7 @@ export class ProductService {
         'product.ProductDescription',
         'product.Price',
         'product.Stock',
+        'category.id',
         'category.CategoryName',
         'productImages.image_url',
       ])
@@ -107,9 +116,9 @@ export class ProductService {
     return await this.productRepository.updateproduct(product, data);
   }
 
-  public async updateStatusById(id: number) {
-    await this.productRepository.update(id, { Status: ProductStatus.AVAILABLE });
-    return { message: 'Status updated to AVAILABLE' };
+  public async updateStatusById(id: number, status: ProductStatus) {
+    await this.productRepository.update(id, { Status: status });
+    return { message: `Status updated to ${status}` };
   }
 
   public async deleteOneById(id: number) {

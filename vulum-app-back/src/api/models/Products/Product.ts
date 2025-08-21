@@ -33,7 +33,11 @@ export class Product extends EntityBase {
   @Column()
   CreatedBy: number;
 
-  @Column({ default: ProductStatus.PENDING })
+  @Column({
+    type: 'enum',
+    enum: ProductStatus,
+    default: ProductStatus.PENDING,
+  })
   Status: ProductStatus;
 
   @Column()

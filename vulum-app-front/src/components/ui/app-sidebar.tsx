@@ -79,11 +79,11 @@ export function AppSidebar() {
       url: "/order-lists",
       icon: ListOrdered,
     },
-    {
-      title: "Calendar",
-      url: "/calendar",
-      icon: Calendar,
-    },
+    // {
+    //   title: "Calendar",
+    //   url: "/calendar",
+    //   icon: Calendar,
+    // },
     {
       title: "Invoices",
       url: "/invoices",
