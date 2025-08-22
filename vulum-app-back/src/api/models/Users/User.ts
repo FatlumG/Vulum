@@ -16,62 +16,59 @@ export class User extends EntityBase {
   id: number;
 
   @Column({ unique: true })
-  Username: string;
+  username: string;
 
   @Column()
-  Bio: string;
+  bio: string;
 
   @Column()
-  @JoinColumn({ name: 'First Name' })
-  FName: string;
+  first_name: string;
 
   @Column()
-  @JoinColumn({ name: 'Last Name' })
-  LName: string;
+  last_name: string;
 
   @Column({ nullable: true })
-  ProfilePhotoUrl?: string;
+  profile_photo_url?: string;
 
   @Column({ unique: true })
-  Email: string;
+  email: string;
 
   @Column()
   @Exclude()
-  Password: string;
+  password: string;
 
   @Column({ nullable: true })
-  Phone?: string;
+  phone?: string;
 
   @ManyToOne(() => Plan, { eager: true })
-  @JoinColumn({ name: 'PricingPlan' })
-  PricingPlan: Plan;
+  pricing_plan: Plan;
 
   @Column({ default: 0 })
-  Products: number;
+  products: number;
 
   @Column({ default: 0 })
-  Orders: number;
+  orders: number;
 
   @Column({ default: 0 })
-  Sales: number;
+  sales: number;
 
   @Column({ default: 0 })
-  Favorites: number;
+  favorites: number;
 
   @Column({ default: 0 })
-  Pendings: number;
+  pendings: number;
 
   @Column({ default: 0 })
-  Todos: number;
+  todos: number;
 
   @Column({ default: 0 })
-  Payments: number;
+  payments: number;
 
   @Column({ nullable: true })
-  Address?: string;
+  address?: string;
 
-  @Column({default: 5})
-  RoleId: number;
+  @Column({ default: 5 })
+  role_id: number;
 
   @OneToOne(() => Role)
   @JoinColumn({ name: 'RoleId' })
@@ -79,43 +76,43 @@ export class User extends EntityBase {
 
   @Expose({ name: 'FullName' })
   get fullName() {
-    return this.FName + ' ' + this.LName;
+    return this.first_name + ' ' + this.last_name;
   }
 
   @BeforeInsert()
   async hashPasswordBeforeInsert() {
-    if (this.Password) {
-      this.Password = await new HashService().make(this.Password);
+    if (this.password) {
+      this.password = await new HashService().make(this.password);
     }
   }
 
   @BeforeUpdate()
   async hashPasswordBeforeUpdate() {
     // Hash only if the password is not already hashed
-    if (this.Password && !this.Password.startsWith('$2b$')) {
-      this.Password = await new HashService().make(this.Password);
+    if (this.password && !this.password.startsWith('$2b$')) {
+      this.password = await new HashService().make(this.password);
     }
   }
 
   @BeforeInsert()
   async setDefaultRole() {
-    const roleId = this.RoleId ? this.RoleId : 5;
+    const roleId = this.role_id ? this.role_id : 5;
 
-    this.RoleId = roleId;
+    this.role_id = roleId;
   }
 
   @OneToMany(() => Sale, (sale) => sale.user_id)
-  sales: Sale[];
+  salesList: Sale[];
 
-  @OneToMany(() => Product, (product) => product.CreatedBy)
-  products: Product[];
+  @OneToMany(() => Product, (product) => product.createdBy)
+  productsList: Product[];
 
-  @OneToMany(() => Pending, (pending) => pending.UserId)
-  pendings: Pending[];
+  @OneToMany(() => Pending, (pending) => pending.user_id)
+  pendingsList: Pending[];
 
   @OneToMany(() => Favorite, (favorite) => favorite.user_id)
-  favorites: Favorite[];
-  
-  @OneToMany(() => UserSubscription, (UserSubscription) => UserSubscription.user)
+  favoritesList: Favorite[];
+
+  @OneToMany(() => UserSubscription, (UserSubscription) => UserSubscription.usersList)
   subscriptions: UserSubscription[];
 }

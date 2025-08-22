@@ -17,11 +17,11 @@ export class Favorite extends EntityBase {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: string;
 
-  @ManyToOne(() => Product, (product) => product.favorites)
+  @ManyToOne(() => Product, (product) => product.favoritesList, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'product_id' })
   product: Product;
 
-  @ManyToOne(() => User, (user) => user.Favorites)
+  @ManyToOne(() => User, (user) => user.favoritesList)
   @JoinColumn({ name: 'user_id' })
   user: User;
 }

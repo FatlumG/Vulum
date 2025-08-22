@@ -7,5 +7,5 @@ export class Role extends EntityBase {
   id: number;
 
   @Column()
-  RoleName: string;
+  role_name: string;
 }

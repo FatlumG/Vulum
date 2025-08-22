@@ -19,10 +19,11 @@ export class Sale extends EntityBase {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   sold_at: string;
 
-  @ManyToOne(() => User, (user) => user.Sales)
+  @ManyToOne(() => User, (user) => user.sales)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
   @OneToMany(() => Order, (order) => order.id)
+  @JoinColumn({ name: 'order_id' })
   order: Order;
 }

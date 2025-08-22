@@ -8,14 +8,14 @@ export class Category extends EntityBase {
   id: number;
 
   @Column()
-  CategoryName: string;
+  category_name: string;
 
   @Column()
-  CategoryDescription: string;
+  category_description: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  CreatedAt: string;
+  created_at: string;
 
-  @OneToMany(() => Product, (product) => product.Category)
-  products: Product[];
+  @OneToMany(() => Product, (product) => product.category)
+  productsList: Product[];
 }

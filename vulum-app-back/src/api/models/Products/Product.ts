@@ -13,53 +13,53 @@ export class Product extends EntityBase {
   id: number;
 
   @Column()
-  ProductName: string;
+  product_name: string;
 
   @Column()
-  ProductDescription: string;
+  product_description: string;
 
   @Column('decimal', { precision: 8, scale: 2, default: 0 })
-  Price: number;
+  price: number;
 
   @Column({ default: 1 })
-  Stock: number;
+  stock: number;
 
   @Column()
-  Category: number;
+  category_id: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  CreatedAt: string;
+  created_at: string;
 
   @Column()
-  CreatedBy: number;
+  created_by: number;
 
   @Column({
     type: 'enum',
     enum: ProductStatus,
     default: ProductStatus.PENDING,
   })
-  Status: ProductStatus;
+  status: ProductStatus;
 
   @Column()
-  StripeProductId: string;
+  stripe_price_id: string;
 
   @Column()
-  StripePriceId: string;
+  stripe_product_id: string;
 
-  @OneToMany(() => OrderItem, (orderItem) => orderItem.product_id)
-  orderItems: OrderItem[];
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.productsList)
+  orderItemsList: OrderItem[];
 
-  @ManyToOne(() => User, (user) => user.Products)
-  @JoinColumn({ name: 'CreatedBy' })
+  @ManyToOne(() => User, (user) => user.products)
+  @JoinColumn({ name: 'created_by' })
   createdBy: User;
 
   @OneToMany(() => ProductImages, (productImages) => productImages.product_id)
   productImages: ProductImages[];
 
   @OneToMany(() => Favorite, (favorite) => favorite.product_id)
-  favorites: Favorite[];
+  favoritesList: Favorite[];
 
-  @ManyToOne(() => Category, (category) => category.products)
+  @ManyToOne(() => Category, (category) => category.productsList)
   @JoinColumn({ name: 'Category' })
   category: Category;
 }

@@ -44,9 +44,9 @@ export class UserSubscription extends EntityBase {
 
   @ManyToOne(() => User, (user) => user.subscriptions)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  usersList: User;
 
   @ManyToOne(() => Plan, (plan) => plan.subscriptions)
   @JoinColumn({ name: 'plan_id' })
-  plan: Plan;
+  plansList: Plan;
 }
