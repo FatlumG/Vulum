@@ -4,16 +4,16 @@ import { BillingCycle } from '@base/api/models/Plans/PEnum';
 export class PlanCreateRequest {
   @IsNotEmpty()
   @IsString()
-  PlanName: string;
+  plan_name: string;
 
   @IsNotEmpty()
   @IsString()
-  PlanDescription: string;
+  plan_description: string;
 
   @IsNotEmpty()
   @IsNumber()
-  Price: number;
+  price: number;
 
   @IsEnum(BillingCycle)
-  BillingCycle: BillingCycle;
+  billing_cycle: BillingCycle;
 }

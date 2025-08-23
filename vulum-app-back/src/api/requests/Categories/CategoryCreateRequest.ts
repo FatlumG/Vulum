@@ -4,10 +4,10 @@ export class CategoryCreateRequest {
   @MinLength(2)
   @IsString()
   @IsNotEmpty()
-  CategoryName: string;
+  category_name: string;
 
   @MinLength(2)
   @IsString()
   @IsNotEmpty()
-  CategoryDescription: string;
+  category_description: string;
 }

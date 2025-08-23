@@ -5,26 +5,26 @@ export class RegisterRequest {
   @MinLength(2)
   @IsString()
   @IsNotEmpty()
-  Username: string;
+  username: string;
 
   @MaxLength(20)
   @MinLength(2)
   @IsString()
   @IsNotEmpty()
-  FName: string;
+  first_name: string;
 
   @MaxLength(20)
   @MinLength(2)
   @IsString()
   @IsNotEmpty()
-  LName: string;
+  last_name: string;
 
   @IsEmail()
   @IsString()
   @IsNotEmpty()
-  Email: string;
+  email: string;
 
   @IsString()
   @IsNotEmpty()
-  Password: string;
+  password: string;
 }

@@ -3,21 +3,21 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 export class ProductUpdateRequest {
   @IsNotEmpty()
   @IsString()
-  ProductName: string;
+  product_name: string;
 
   @IsNotEmpty()
   @IsString()
-  ProductDescription: string;
+  product_description: string;
 
   @IsNumber()
   @IsNotEmpty()
-  Price: number;
+  price: number;
 
   @IsNumber()
   @IsNotEmpty()
-  Stock: number;
+  stock: number;
 
   @IsNumber()
   @IsNotEmpty()
-  Category: number;
+  category: number;
 }
