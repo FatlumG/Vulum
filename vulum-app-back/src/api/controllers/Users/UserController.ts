@@ -50,7 +50,7 @@ export class UserController extends ControllerBase {
   }
 
   @Get('/:username')
-  public async getBySearch(@Param('username') username: string, @QueryParams() parseResourceOptions: RequestQueryParser) {
+  public async getBySearch(@Param('username') username: string) {
     return this.userService.getUsersBySearch(username);
   }
 

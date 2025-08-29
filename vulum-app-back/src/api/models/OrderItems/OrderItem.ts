@@ -3,7 +3,7 @@ import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 import { Product } from '../Products/Product';
 import { Order } from '../Orders/Order';
 
-@Entity({ name: 'orderitems' })
+@Entity({ name: 'order_items' })
 export class OrderItem extends EntityBase {
   @PrimaryGeneratedColumn('increment')
   id: number;

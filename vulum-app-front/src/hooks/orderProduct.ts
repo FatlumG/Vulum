@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import api from "../auth/api";
 
 export const useOrderProduct = async (id: number) => {
@@ -16,6 +17,7 @@ export const useOrderProduct = async (id: number) => {
     }
     return response.data;
   } catch (error: any) {
-    console.error(error.response.data, "error.response.data");
+    toast.error(error.response.data.message);
+    // console.error(error.response.data, "error.response.data");
   }
 };

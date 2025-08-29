@@ -28,7 +28,7 @@ export class FavoriteService {
   public async create(data: any, loggedUser: LoggedUserInterface) {
     const existingFavorite = await this.favoriteRepository.findOne({
       where: {
-        user_id: loggedUser.userId,
+        user_id: loggedUser.email,
         product_id: data.product_id,
       },
     });
@@ -55,7 +55,7 @@ export class FavoriteService {
       .getOne();
 
     this.eventDispatcher.dispatch('onFavoriteCreate', favorite);
-    this.userRepository.update(favorite.user_id, { Favorites: user.Favorites + 1 });
+    this.userRepository.update(favorite.user_id, { favorites: user.favorites + 1 });
     return {
       ...favorite,
       user,

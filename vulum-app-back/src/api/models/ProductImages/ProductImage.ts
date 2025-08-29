@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 't
 import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 import { Product } from '../Products/Product';
 
-@Entity({ name: 'Product_images' })
+@Entity({ name: 'product_images' })
 export class ProductImages extends EntityBase {
   @PrimaryGeneratedColumn('increment')
   id: number;

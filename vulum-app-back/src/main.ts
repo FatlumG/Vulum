@@ -89,7 +89,7 @@ export class App {
             const userRepository = getRepository(User);
             const user = await userRepository.findOne({
               where: { id: userId },
-              relations: ['PricingPlan'],
+              relations: ['pricing_plan'],
             });
 
             if (!user) return res.status(400).send('User not found');
@@ -137,7 +137,7 @@ export class App {
 
               console.log(subscriptionData, 'subscriptionData');
 
-              user.PricingPlan = plan;
+              user.pricing_plan = plan;
               await userRepository.save(user);
 
               console.log('User plan updated from checkout.session.completed');
@@ -168,23 +168,23 @@ export class App {
                     console.warn(`⚠️ Product not found for ID: ${id}`);
                     continue;
                   }
-                  product.Stock -= item?.quantity ?? 1;
-                  product.Status = ProductStatus.SOLD;
+                  product.stock -= item?.quantity ?? 1;
+                  product.status = ProductStatus.SOLD;
                   await productRepository.save(product);
 
-                  if (!product.Price || !product.CreatedBy || !orderId) {
+                  if (!product.price || !product.created_by || !orderId) {
                     throw new Error('Missing product data or orderId');
                   }
 
                   const sale = new Sale();
-                  const prodOwner = await userRepository.findOne({ where: { id: product.CreatedBy } });
+                  const prodOwner = await userRepository.findOne({ where: { id: product.created_by } });
 
                   sale.order_id = Number(orderId);
-                  sale.total_price = product.Price;
-                  sale.user_id = product.CreatedBy;
+                  sale.total_price = product.price;
+                  sale.user_id = product.created_by;
                   await saleRepository.save(sale);
 
-                  prodOwner.Sales += 1;
+                  prodOwner.sales += 1;
                   await userRepository.save(prodOwner);
                   products.push({
                     product,
@@ -195,15 +195,15 @@ export class App {
 
               const order = await orderRepository.findOne({ where: { id: orderId } });
               order.status = OrderStatus.CONFIRMED;
-              user.Orders += 1;
+              user.orders += 1;
 
               generateInvoicePdf({
-                customerName: user.Username,
-                customerAddress: user.Address,
+                customerName: user.username,
+                customerAddress: user.address,
                 items: products.map((p) => ({
-                  description: p.product.ProductName,
+                  description: p.product.product_name,
                   quantity: p.quantity,
-                  price: p.product.Price,
+                  price: p.product.price,
                 })),
                 stripePaymentId: String(session.payment_intent),
                 paymentDate: String(new Date()),

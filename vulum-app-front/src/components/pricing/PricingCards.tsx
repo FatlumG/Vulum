@@ -12,15 +12,15 @@ const PricingCards: React.FC = () => {
       try {
         const res = await api.get("/user-subscription/my-subscription");
         setSubscribedPlan(res.data.plan_id);
+        console.log(res.data.plan_id, "res.data.plan_id");
+        
       } catch (error: any) {
-        console.error(error.message);
+        console.error(error.response.data);
       }
     };
 
     getSubscribedPlan();
   }, []);
-
-  
 
   const plans = getPricingPlans({});
   const { subscribePlan } = useSubscribePlan();
@@ -34,10 +34,10 @@ const PricingCards: React.FC = () => {
         pricingPlans.map((plan: any) => (
           <PricingCard
             key={plan.id}
-            PlanName={plan.PlanName}
-            PlanDescription={plan.PlanDescription}
-            BillingCycle={plan.BillingCycle}
-            Price={plan.Price}
+            plan_name={plan.plan_name}
+            plan_description={plan.plan_description}
+            billing_cycle={plan.billing_cycle}
+            price={plan.price}
             isSubscribed={subscribedPlan === plan.id}
             link={() => subscribePlan(plan.id)}
           />

@@ -25,7 +25,7 @@ export class UserService {
     return await this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.role', 'role')
-      .select(['user.id', 'user.FName', 'user.LName', 'user.ProfilePhotoUrl', 'role.RoleName'])
+      .select(['user.id', 'user.first_name', 'user.last_name', 'user.profile_photo_url', 'role.role_name'])
       .where('user.id = :id', { id })
       .getOne();
   }
@@ -59,7 +59,7 @@ export class UserService {
         folder: 'Profile Pictures',
       })) as UploadApiResponse;
 
-      client.ProfilePhotoUrl = result.secure_url;
+      client.profile_photo_url = result.secure_url;
       await client.save();
     } catch (error) {
       throw new Error(`Cloudinary upload failed: ${error.message}`);
@@ -73,8 +73,8 @@ export class UserService {
   private async getRequestedUserOrFail(id: number, resourceOptions?: object) {
     const user = await this.userRepository
       .createQueryBuilder('user')
-      .leftJoinAndSelect('user.PricingPlan', 'plan')
-      .select(['user', 'plan.id', 'plan.PlanName', 'plan.PlanDescription', 'plan.Price', 'plan.BillingCycle'])
+      .leftJoinAndSelect('user.pricing_plan', 'plan')
+      .select(['user', 'plan.id', 'plan.plan_name', 'plan.plan_description', 'plan.price', 'plan.billing_cycle'])
       .where('user.id = :id', { id })
       .getOne();
 
@@ -91,7 +91,7 @@ export class UserService {
     const queryBuilder = this.userRepository.createQueryBuilder('User').leftJoinAndSelect('User.role', 'role');
 
     if (!isSearchEmpty) {
-      const searchFields = ['FName', 'LName', 'Email', 'RoleName'];
+      const searchFields = ['first_name', 'last_name', 'email', 'role_name'];
 
       const orConditions = searchFields.map((field) => {
         return `${field} LIKE :search`;
@@ -103,7 +103,7 @@ export class UserService {
       queryBuilder.andWhere(whereClause, { search: searchValue });
     }
 
-    queryBuilder.select(['User.id', 'User.Username', 'User.FName', 'User.LName', 'User.Email', 'User.Phone', 'role.RoleName']);
+    queryBuilder.select(['User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.email', 'User.phone', 'role.role_name']);
 
     const users = await queryBuilder.getMany();
 

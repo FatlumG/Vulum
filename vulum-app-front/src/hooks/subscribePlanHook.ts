@@ -1,10 +1,10 @@
 import api from "../auth/api";
 
 export const useSubscribePlan = () => {
-  const subscribePlan = async (planId: number) => {
+  const subscribePlan = async (plan_id: number) => {
     try {
       const response = await api.post("/pricing/checkout-session", {
-        planId,
+        plan_id,
       });
       const url = response.data.url;
       if (url) {

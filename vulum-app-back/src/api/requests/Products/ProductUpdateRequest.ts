@@ -19,5 +19,5 @@ export class ProductUpdateRequest {
 
   @IsNumber()
   @IsNotEmpty()
-  category: number;
+  category_id: number;
 }

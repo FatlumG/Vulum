@@ -18,9 +18,10 @@ export const getPfp = () => {
     fetchUser();
   }, []);
 
-  const userInitials = `${user?.FName?.[0].toUpperCase() ?? ""}${
-    user?.LName?.[0].toUpperCase() ?? ""
+  const userInitials = `${user?.first_name?.[0].toUpperCase() ?? ""}${
+    user?.last_name?.[0].toUpperCase() ?? ""
   }`;
+  
 
   return { user, userInitials };
 };

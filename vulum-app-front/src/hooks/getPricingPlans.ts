@@ -9,6 +9,8 @@ export const getPricingPlans: FC = () => {
       try {
         const res = await api.get("/pricing");
         setPlans(res.data.rows);
+        console.log(res.data.rows, "res.data.rows");
+        
       } catch (error: any) {
         console.error(error.message);
       }

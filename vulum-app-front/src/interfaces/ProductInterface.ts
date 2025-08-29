@@ -5,15 +5,15 @@ export interface ProductImage {
 
 export interface ProductInterface {
   id: number;
-  Category: number;
-  CreatedAt: string;
-  CreatedBy: number;
-  Price: number;
-  ProductDescription: string;
-  ProductName: string;
-  Status: string;
-  Stock: number;
-  StripePriceId: string;
-  StripeProductId: string;
+  category: number;
+  created_at: string;
+  created_by: number;
+  price: number;
+  product_description: string;
+  product_name: string;
+  status: string;
+  stock: number;
+  stripe_price_id: string;
+  stripe_product_id: string;
   productImages: ProductImage[];
 }

@@ -23,14 +23,18 @@ export class UserSubscriptionService {
   }
 
   public async getMySubscription(user_id: number) {
-    return await this.userSubscriptionRepository
+    const subscription = await this.userSubscriptionRepository
       .createQueryBuilder('subscription')
-      .leftJoinAndSelect('subscription.plan', 'plan')
-      .leftJoin('subscription.user', 'user')
+      .leftJoinAndSelect('subscription.plansList', 'plan')
+      .leftJoin('subscription.usersList', 'user')
       .where('user.id = :userId', { userId: user_id })
       .orderBy('subscription.id', 'DESC')
       .select(['subscription.plan_id'])
       .getOne();
+
+    console.log(subscription);
+
+    return subscription;
   }
 
   public async create(data: UserSubscriptionCreateRequest) {

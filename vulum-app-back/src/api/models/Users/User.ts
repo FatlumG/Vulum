@@ -41,6 +41,7 @@ export class User extends EntityBase {
   phone?: string;
 
   @ManyToOne(() => Plan, { eager: true })
+  @JoinColumn({ name: 'pricing_plan' })
   pricing_plan: Plan;
 
   @Column({ default: 0 })
@@ -71,7 +72,7 @@ export class User extends EntityBase {
   role_id: number;
 
   @OneToOne(() => Role)
-  @JoinColumn({ name: 'RoleId' })
+  @JoinColumn({ name: 'role_id' })
   role: Role;
 
   @Expose({ name: 'FullName' })

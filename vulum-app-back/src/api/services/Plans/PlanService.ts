@@ -8,7 +8,6 @@ import { BillingCycle } from '@base/api/models/Plans/PEnum';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
 import stripe from '@base/config/stripe';
 import { UserRepository } from '@base/api/repositories/Users/UserRepository';
-import { User } from '@base/api/models/Users/User';
 
 @Service()
 export class PlanService {
@@ -30,23 +29,23 @@ export class PlanService {
 
   public async create(data: PlanCreateRequest) {
     const product = await stripe.products.create({
-      name: data.PlanName,
-      description: data.PlanDescription,
+      name: data.plan_name,
+      description: data.plan_description,
     });
 
     const price = await stripe.prices.create({
-      unit_amount: Math.round(data.Price * 100),
+      unit_amount: Math.round(data.price * 100),
       currency: 'usd',
       recurring: {
-        interval: data.BillingCycle === BillingCycle.MONTHLY ? 'month' : 'year',
+        interval: data.billing_cycle === BillingCycle.MONTHLY ? 'month' : 'year',
       },
       product: product.id,
     });
 
     const planWithStripe = {
       ...data,
-      StripeProductId: product.id,
-      StripePriceId: price.id,
+      stripe_product_id: product.id,
+      stripe_price_id: price.id,
     };
     let plan = await this.planRepository.createPlan(planWithStripe);
     this.eventDispatcher.dispatch('onPlanCreate', plan);
@@ -55,16 +54,16 @@ export class PlanService {
 
   public async createCheckoutSession(planId: number, user: LoggedUserInterface) {
     const plan = await this.planRepository.findOne(planId);
-    if (!plan || !plan.StripePriceId) {
+    if (!plan || !plan.stripe_price_id) {
       throw new Error('Plan or Stripe price not found');
     }
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      mode: plan.BillingCycle === 'none' ? 'payment' : 'subscription',
+      mode: plan.billing_cycle === 'none' ? 'payment' : 'subscription',
       customer_email: user.email,
       line_items: [
         {
-          price: plan.StripePriceId,
+          price: plan.stripe_price_id,
           quantity: 1,
         },
       ],
@@ -89,10 +88,10 @@ export class PlanService {
   public async getMyPlan(user: LoggedUserInterface) {
     const fullUser = await this.userRepository.findOne({
       where: { id: user.userId },
-      relations: ['PricingPlan'],
+      relations: ['pricing_plan'],
     });
 
-    return fullUser?.PricingPlan ?? null;
+    return fullUser?.pricing_plan ?? null;
   }
 
   private async getRequestedPlanOrFail(id: number, resourceOptions?: object) {

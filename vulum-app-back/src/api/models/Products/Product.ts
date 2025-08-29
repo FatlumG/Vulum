@@ -60,6 +60,6 @@ export class Product extends EntityBase {
   favoritesList: Favorite[];
 
   @ManyToOne(() => Category, (category) => category.productsList)
-  @JoinColumn({ name: 'Category' })
+  @JoinColumn({ name: 'category_id' })
   category: Category;
 }

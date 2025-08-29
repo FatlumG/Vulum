@@ -19,15 +19,15 @@ interface SignTableProps {
 const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [signInData, setSignInData] = useState({
-    Email: "",
-    Password: "",
+    email: "",
+    password: "",
   });
   const [signUpData, setSignUpData] = useState({
-    Username: "",
-    FName: "",
-    LName: "",
-    Email: "",
-    Password: "",
+    username: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -41,6 +41,7 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
     e.preventDefault();
 
     try {
+      console.log(signInData, "signInData");
       const res = await api.post("/login", signInData);
       const token = res.data.access_token;
       localStorage.setItem("token", token);
@@ -52,6 +53,8 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
         }, 3000);
       }
     } catch (err: any) {
+      console.error(err.response.data, "err");
+
       notify.error(err.response.data.message);
       setError("Invalid credentials. Please try again.");
     }
@@ -115,10 +118,10 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
                   type="username"
                   placeholder="Username"
                   className="w-[110%] mt-2 p-4 border-[1px] border-gray-200 rounded-xl text-sm text-lightGray font-thin text-[13px] focus:outline-secondary focus:text-gray-900"
-                  value={signUpData.Username}
+                  value={signUpData.username}
                   name="username"
                   onChange={(e) =>
-                    setSignUpData({ ...signUpData, Username: e.target.value })
+                    setSignUpData({ ...signUpData, username: e.target.value })
                   }
                 />
               </div>
@@ -131,10 +134,10 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
                   type="email"
                   placeholder="Email Address"
                   className="w-full mt-2 p-4 border-[1px] border-gray-200 rounded-xl text-sm text-lightGray font-thin text-[13px] focus:outline-secondary focus:text-gray-900"
-                  value={signUpData.Email}
+                  value={signUpData.email}
                   name="email"
                   onChange={(e) =>
-                    setSignUpData({ ...signUpData, Email: e.target.value })
+                    setSignUpData({ ...signUpData, email: e.target.value })
                   }
                 />
               </div>
@@ -149,10 +152,10 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
                 type="email"
                 placeholder="Email Address"
                 className="w-full mt-2 p-4 border-[1px] border-gray-200 rounded-xl text-sm text-lightGray font-thin text-[13px] focus:outline-secondary focus:text-gray-900"
-                value={signInData.Email}
+                value={signInData.email}
                 name="email"
                 onChange={(e) =>
-                  setSignInData({ ...signInData, Email: e.target.value })
+                  setSignInData({ ...signInData, email: e.target.value })
                 }
               />
             </div>
@@ -170,9 +173,9 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
                 type={!showPassword ? "password" : "text"}
                 placeholder="Password"
                 className="w-full p-4 text-sm text-lightGray font-thin text-[13px] rounded-xl focus:outline-secondary focus:text-gray-900"
-                value={signInData.Password}
+                value={signInData.password}
                 onChange={(e) =>
-                  setSignInData({ ...signInData, Password: e.target.value })
+                  setSignInData({ ...signInData, password: e.target.value })
                 }
                 name="password"
               />
@@ -204,10 +207,10 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
                   type="text"
                   placeholder="Email Address"
                   className="w-[110%] mt-2 p-4 border-[1px] border-gray-200 rounded-xl text-sm text-lightGray font-thin text-[13px] focus:outline-secondary focus:text-gray-900"
-                  value={signUpData.FName}
-                  name="firstName"
+                  value={signUpData.first_name}
+                  name="first_name"
                   onChange={(e) =>
-                    setSignUpData({ ...signUpData, FName: e.target.value })
+                    setSignUpData({ ...signUpData, first_name: e.target.value })
                   }
                 />
               </div>
@@ -220,10 +223,10 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
                   type="text"
                   placeholder="Email Address"
                   className="w-[110%] mt-2 p-4 border-[1px] border-gray-200 rounded-xl text-sm text-lightGray font-thin text-[13px] focus:outline-secondary focus:text-gray-900"
-                  value={signUpData.LName}
-                  name="lastName"
+                  value={signUpData.last_name}
+                  name="last_name"
                   onChange={(e) =>
-                    setSignUpData({ ...signUpData, LName: e.target.value })
+                    setSignUpData({ ...signUpData, last_name: e.target.value })
                   }
                 />
               </div>
@@ -238,10 +241,10 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
                   type={!showPassword ? "password" : "text"}
                   placeholder="Password"
                   className="w-full p-4 text-sm text-lightGray font-thin text-[13px] rounded-xl focus:outline-secondary focus:text-gray-900"
-                  value={signUpData.Password}
+                  value={signUpData.password}
                   name="password"
                   onChange={(e) =>
-                    setSignUpData({ ...signUpData, Password: e.target.value })
+                    setSignUpData({ ...signUpData, password: e.target.value })
                   }
                 />
                 {!showPassword ? (
@@ -267,7 +270,7 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
 
         <div className="w-full h-[100px] flex flex-col items-center gap-4">
           <button className="w-full mt-9 py-4 bg-darkBlue text-white rounded-xl shadow-xl active:relative top-[1px]">
-            Sign In
+            {SignIn ? "Sign In" : "Sign Up"}
           </button>
 
           {SignIn && (
