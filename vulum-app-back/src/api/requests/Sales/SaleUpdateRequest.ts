@@ -3,13 +3,13 @@ import { IsNotEmpty, IsNumber } from 'class-validator';
 export class SaleUpdateRequest {
   @IsNumber()
   @IsNotEmpty()
-  OrderId: number;
+  order_id: number;
 
   @IsNumber()
   @IsNotEmpty()
-  UserId: number;
+  user_id: number;
 
   @IsNumber()
   @IsNotEmpty()
-  TotalPrice: number;
+  total_price: number;
 }

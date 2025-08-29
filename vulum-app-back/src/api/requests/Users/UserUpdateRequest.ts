@@ -1,33 +1,33 @@
-import {IsString, MinLength, MaxLength, IsOptional } from 'class-validator';
+import { IsString, MinLength, MaxLength, IsOptional } from 'class-validator';
 
 export class UserUpdateRequest {
   @IsOptional()
   @MaxLength(20)
   @MinLength(2)
   @IsString()
-  Username?: string;
+  username?: string;
 
   @IsOptional()
   @MaxLength(20)
   @MinLength(2)
   @IsString()
-  FName?: string;
+  first_name?: string;
 
   @IsOptional()
   @MaxLength(20)
   @MinLength(2)
   @IsString()
-  LName?: string;
+  last_name?: string;
 
   @IsOptional()
   @MinLength(9)
-  Phone?: string;
+  phone?: string;
 
   @IsOptional()
   @IsString()
-  Address?: string;
+  address?: string;
 
   @IsOptional()
   @IsString()
-  Bio?: string;
+  bio?: string;
 }

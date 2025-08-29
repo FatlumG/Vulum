@@ -35,7 +35,7 @@ export function AppSidebar() {
     dispatch(logout());
   };
   const user = getPfp();
-  const userRole = user.user?.role.RoleName;
+  const userRole = user.user?.role.role_name;
 
   const items = [
     {
@@ -139,7 +139,7 @@ export function AppSidebar() {
                 <div className="cursor-pointer">
                   <h3>{user?.user?.FullName}</h3>
                   <p className="text-[12px] text-grayText cursor-pointer">
-                    {user?.user?.role.RoleName}
+                    {user?.user?.role.role_name}
                   </p>
                 </div>
               </Link>

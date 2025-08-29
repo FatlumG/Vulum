@@ -21,13 +21,12 @@ export class Order extends EntityBase {
   created_at: string;
 
   @Column()
-  @JoinColumn({ name: 'created_by' })
   created_by: number;
 
-  @OneToMany(() => OrderItem, (orderItem) => orderItem.order_id)
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.ordersList)
   orderItems: OrderItem[];
 
-  @ManyToOne(() => User, (user) => user.Orders)
+  @ManyToOne(() => User, (user) => user.orders)
   @JoinColumn({ name: 'created_by' })
   createdBy: User;
 }

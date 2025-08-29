@@ -1,21 +1,21 @@
 export interface userInterface {
-  Address: string;
-  Bio: string;
-  Email: string;
-  FName: string;
-  Favorites: number;
+  address: string;
+  bio: string;
+  email: string;
+  first_name: string;
+  favorites: number;
   FullName: string;
-  LName: string;
-  Orders: number;
-  Payments: number;
-  Pendings: number;
-  Phone: string;
-  PricingPlan: object;
-  Products: number;
-  ProfilePhotoUrl: null;
+  last_name: string;
+  orders: number;
+  payments: number;
+  pendings: number;
+  phone: string;
+  pricing_plan: object;
+  products: number;
+  profile_photo_url: null;
   role: any;
-  Sales: number;
-  Todos: number;
-  Username: string;
+  sales: number;
+  todos: number;
+  username: string;
   id: number;
 }

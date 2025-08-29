@@ -24,12 +24,12 @@ interface AddProductFormProps {
 }
 
 interface AddProductInterface {
-  ProductName: string;
-  ProductDescription: string;
-  Price: number;
-  Stock: number;
-  Category: number | null;
-  CreatedBy: number | null;
+  product_name: string;
+  product_description: string;
+  price: number;
+  stock: number;
+  category: number | null;
+  created_by: number | null;
 }
 
 const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
@@ -45,12 +45,12 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
     const [categories, setCategories] = useState<CategoryInterface[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<number>();
     const [product, setProduct] = useState<AddProductInterface>(() => ({
-      ProductName: "",
-      ProductDescription: "",
-      Price: 0,
-      Stock: 1,
-      Category: null,
-      CreatedBy: null,
+      product_name: "",
+      product_description: "",
+      price: 0,
+      stock: 1,
+      category: null,
+      created_by: null,
     }));
 
     const {
@@ -62,10 +62,10 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
     } = useForm<ProductForm>({
       resolver: zodResolver(productSchema),
       defaultValues: {
-        ProductName: "",
-        ProductDescription: "",
-        Price: 0,
-        Stock: 1,
+        product_name: "",
+        product_description: "",
+        price: 0,
+        stock: 1,
       },
     });
 
@@ -76,6 +76,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
           // console.log("Fetching categories");
           const res = await api.get("/categories");
           setCategories(res.data.rows);
+          console.log(res.data.rows, "res.data.rows");
           // dispatch(stopLoading());
         } catch (error) {
           console.error("Error fetching categories:", error);
@@ -88,7 +89,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
         const id = await getUserIdFromToken();
         setProduct((prev) => ({
           ...prev,
-          CreatedBy: id,
+          created_by: id,
         }));
       };
 
@@ -97,10 +98,10 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
     }, []);
 
     useEffect(() => {
-      if (categories.length > 0 && product.Category === null) {
+      if (categories.length > 0 && product.category === null) {
         setProduct((prev) => ({
           ...prev,
-          Category: categories[0].id,
+          category: categories[0].id,
         }));
         setSelectedCategory(categories[0].id);
       }
@@ -152,12 +153,12 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
 
       const requestBody = {
         product: {
-          ProductName: data.ProductName,
-          ProductDescription: data.ProductDescription,
-          Price: Number(data.Price),
-          Stock: Number(data.Stock),
-          Category: Number(selectedCategory),
-          CreatedBy: userId,
+          product_name: data.product_name,
+          product_description: data.product_description,
+          price: Number(data.price),
+          stock: Number(data.stock),
+          category: Number(selectedCategory),
+          created_by: userId,
         },
         images: imagesForRequest,
       };
@@ -285,7 +286,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
           <div className="row-span-2">
             <Label htmlFor="pName">Product Name</Label>
             <Controller
-              name="ProductName"
+              name="product_name"
               control={control}
               defaultValue="" // let RHF handle initial value
               render={({ field }) => (
@@ -301,9 +302,9 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
           <div className="row-span-3">
             <Label htmlFor="pDesc">Product Description</Label>
             <Controller
-              name="ProductDescription"
+              name="product_description"
               control={control} // make sure you extract `control` from useForm
-              defaultValue={product.ProductDescription} // optional: initial state
+              defaultValue={product.product_description} // optional: initial state
               render={({ field }) => (
                 <textarea
                   id="pDesc"
@@ -374,7 +375,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
           <div className="row-span-2 col-span-1">
             <Label htmlFor="pPrice">Product Price</Label>
             <Controller
-              name="Price"
+              name="price"
               control={control}
               defaultValue={0} // start as number
               render={({ field }) => (
@@ -401,11 +402,11 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
             <Input
               type="text"
               id="pStock"
-              {...register("Stock", { valueAsNumber: true })}
+              {...register("stock", { valueAsNumber: true })}
               placeholder="Product Stock"
-              value={product.Stock}
+              value={product.stock}
               onChange={(e) =>
-                setProduct({ ...product, Stock: Number(e.target.value) })
+                setProduct({ ...product, stock: Number(e.target.value) })
               }
             />
           </div>
@@ -417,12 +418,12 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
             value={selectedCategory}
             onChange={(id) => {
               setSelectedCategory(id);
-              setProduct((prev) => ({ ...prev, Category: id }));
+              setProduct((prev) => ({ ...prev, category: id }));
             }}
           />
           <Button
             type="button"
-            className="rounded-3xl bg-primaryBlue"
+            className="rounded-3xl bg-primaryBlue relative transition-all duration-300 active:-translate-y-[2px]"
             onClick={() => {}}
           >
             Add Category

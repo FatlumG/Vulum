@@ -52,24 +52,24 @@ export class OrderService {
       if (!product) {
         throw new Error(`Product with id ${item.product_id} not found.`);
       }
-      if (product.CreatedBy === user.userId) {
+      if (product.created_by === user.userId) {
         throw new Error(`You cannot buy your own product.`);
       }
       if (item.quantity <= 0) {
-        throw new Error(`Invalid quantity for ${product.ProductName}.`);
+        throw new Error(`Invalid quantity for ${product.product_name}.`);
       }
 
-      totalAmount += product.Price * item.quantity;
+      totalAmount += product.price * item.quantity;
 
-      if (!product.StripePriceId) {
-        throw new Error(`Stripe Price ID missing for product ${product.ProductName}.`);
+      if (!product.stripe_price_id) {
+        throw new Error(`Stripe Price ID missing for product ${product.product_name}.`);
       }
-      if (product.Stock < item?.quantity) {
-        throw new Error(`Not enough stock for ${product.ProductName}.`);
+      if (product.stock < item?.quantity) {
+        throw new Error(`Not enough stock for ${product.product_name}.`);
       }
 
       stripeLineItems.push({
-        price: product.StripePriceId,
+        price: product.stripe_price_id,
         quantity: item.quantity || 1,
       });
     }
@@ -86,7 +86,7 @@ export class OrderService {
         order_id: order.id,
         product_id: item.product_id,
         quantity: item.quantity,
-        total_amount: products.find((p) => p.id === item.product_id).Price * item.quantity,
+        total_amount: products.find((p) => p.id === item.product_id).price * item.quantity,
       });
     }
 

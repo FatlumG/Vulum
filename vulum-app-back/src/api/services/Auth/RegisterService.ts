@@ -27,11 +27,11 @@ export class RegisterService {
     return this.authService.sign(
       {
         userId: user.id,
-        email: user.Email,
-        role_id: user.RoleId,
-        role: user.role.RoleName,
+        email: user.email,
+        role_id: user.role_id,
+        role: user.role.role_name,
       },
-      { user: { id: user.id, email: user.Email, role: user.role.RoleName } },
+      { user: { id: user.id, email: user.email, role: user.role.role_name } },
     );
   }
 }

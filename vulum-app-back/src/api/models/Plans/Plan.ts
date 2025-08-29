@@ -10,29 +10,29 @@ export class Plan extends EntityBase {
   id: number;
 
   @Column()
-  PlanName: string;
+  plan_name: string;
 
   @Column()
-  PlanDescription: string;
+  plan_description: string;
 
   @Column('decimal', { precision: 5, scale: 2, default: 0 })
-  Price: number;
+  price: number;
 
   @Column({ default: BillingCycle.NONE })
-  BillingCycle: BillingCycle;
+  billing_cycle: BillingCycle;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  CreatedAt: string;
+  created_at: string;
 
   @Column({ nullable: true })
-  StripePriceId: string;
+  stripe_price_id: string;
 
   @Column({ nullable: true })
-  StripeProductId: string;
+  stripe_product_id: string;
 
-  @OneToMany(() => User, (user) => user.PricingPlan)
+  @OneToMany(() => User, (user) => user.pricing_plan)
   users: User[];
 
-  @OneToMany(() => UserSubscription, (subscription) => subscription.plan)
+  @OneToMany(() => UserSubscription, (subscription) => subscription.plansList)
   subscriptions: UserSubscription[];
 }

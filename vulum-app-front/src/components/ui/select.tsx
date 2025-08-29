@@ -18,7 +18,7 @@ const Select: React.FC<SelectProps> = ({
 }) => {
   return (
     <div className="flex flex-col">
-      <label className="mb-1 font-medium text-gray-700">{label}</label>
+      <label className="mb-1 font-semibold text-lg ">{label}</label>
       <select
         className="border border-gray-300 rounded-md px-3 py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
         value={value}
@@ -28,7 +28,7 @@ const Select: React.FC<SelectProps> = ({
         {Array.isArray(options) &&
           options.map((option) => (
             <option key={option.id} value={option.id}>
-              {option.CategoryName}
+              {option.category_name}
             </option>
           ))}
       </select>

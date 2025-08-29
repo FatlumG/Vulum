@@ -28,7 +28,7 @@ const DashboardPage: FC = () => {
     <div>
       <h1 className="text-[25px] font-bold">
         <span className="font-semibold">Welcome to dashboard </span>
-        {user?.FName}
+        {user?.first_name}
       </h1>
       <div className="flex items-center gap-10">
         <TotalStats
@@ -44,7 +44,7 @@ const DashboardPage: FC = () => {
           img={orders}
           alt="products"
           title="Total Products"
-          quantity={user?.Products}
+          quantity={user?.products}
           percentage="1,8%"
           descr="Up from yesterday"
           up={true}
@@ -53,7 +53,7 @@ const DashboardPage: FC = () => {
           img={Sales}
           alt="sales"
           title="Total Sales"
-          quantity={user?.Sales}
+          quantity={user?.sales}
           percentage="4,3%"
           descr="Up from yesterday"
           up={false}
@@ -62,7 +62,7 @@ const DashboardPage: FC = () => {
           img={pendings}
           alt="orders"
           title="Total Orders"
-          quantity={user?.Orders}
+          quantity={user?.orders}
           percentage="1,3%"
           descr="Up from past week"
           up={true}

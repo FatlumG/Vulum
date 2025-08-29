@@ -3,17 +3,17 @@ import { IsDecimal, IsNotEmpty, IsNumber } from 'class-validator';
 export class OrderItemCreateRequest {
   @IsNumber()
   @IsNotEmpty()
-  OrderId: number;
+  order_id: number;
 
   @IsNumber()
   @IsNotEmpty()
-  ProductId: number;
+  product_id: number;
 
   @IsNumber()
   @IsNotEmpty()
-  Quantity: number;
+  quantity: number;
 
   @IsDecimal()
   @IsNotEmpty()
-  Price: number;
+  price: number;
 }

@@ -26,7 +26,7 @@ export class ProductService {
 
   public async getAvailableProducts(resourceOptions?: object) {
     return await this.productRepository.find({
-      where: { Status: 'available' },
+      where: { status: 'available' },
       ...resourceOptions,
       relations: ['productImages'],
       order: { id: 'DESC' },
@@ -35,7 +35,7 @@ export class ProductService {
 
   public async getPendingProducts(resourceOptions?: object) {
     return await this.productRepository.find({
-      where: { Status: 'pending' },
+      where: { status: 'pending' },
       ...resourceOptions,
       relations: ['productImages'],
       order: { id: 'DESC' },
@@ -43,7 +43,7 @@ export class ProductService {
   }
   public async getUnavailableProducts(resourceOptions?: object) {
     return await this.productRepository.find({
-      where: { Status: 'unavailable' },
+      where: { status: 'unavailable' },
       ...resourceOptions,
       relations: ['productImages'],
       order: { id: 'DESC' },
@@ -55,20 +55,27 @@ export class ProductService {
   }
 
   public async findOneById(id: number) {
+    // const product = await this.productRepository
+    //   .createQueryBuilder('product')
+    //   .leftJoinAndSelect('product.productImages', 'productImages')
+    //   .leftJoinAndSelect('product.category', 'category')
+    //   .select([
+    //     'product.id',
+    //     'product.product_name',
+    //     'product.product_description',
+    //     'product.price',
+    //     'product.stock',
+    //     'category.id',
+    //     'category.category_name',
+    //     'productImages.image_url',
+    //   ])
+    //   .where('product.id = :id', { id })
+    //   .getOne();
+
     const product = await this.productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.productImages', 'productImages')
       .leftJoinAndSelect('product.category', 'category')
-      .select([
-        'product.id',
-        'product.ProductName',
-        'product.ProductDescription',
-        'product.Price',
-        'product.Stock',
-        'category.id',
-        'category.CategoryName',
-        'productImages.image_url',
-      ])
       .where('product.id = :id', { id })
       .getOne();
 
@@ -76,31 +83,31 @@ export class ProductService {
   }
 
   public async getMyProducts(user: LoggedUserInterface) {
-    return await this.productRepository.find({ where: { CreatedBy: user.userId }, relations: ['productImages'], order: { CreatedAt: 'DESC' } });
+    return await this.productRepository.find({ where: { createdBy: user.userId }, relations: ['productImages'], order: { created_at: 'DESC' } });
   }
 
   public async create(data: ProductCreateRequest, loggedUser: LoggedUserInterface) {
     const user = await this.userRepository.findOne(loggedUser.userId);
 
     const productItem = await stripe.products.create({
-      name: data.ProductName,
-      description: data.ProductDescription,
+      name: data.product_name,
+      description: data.product_description,
     });
 
     const price = await stripe.prices.create({
-      unit_amount: Math.round(data.Price * 100),
+      unit_amount: Math.round(data.price * 100),
       currency: 'usd',
       product: productItem.id,
     });
 
     const planWithStripe = {
       ...data,
-      StripeProductId: productItem.id,
-      StripePriceId: price.id,
-      CreatedBy: loggedUser.userId,
+      stripe_product_id: productItem.id,
+      stripe_price_id: price.id,
+      created_by: loggedUser.userId,
     };
 
-    user.Products += 1;
+    user.products += 1;
 
     await this.userRepository.save(user);
 
@@ -117,7 +124,7 @@ export class ProductService {
   }
 
   public async updateStatusById(id: number, status: ProductStatus) {
-    await this.productRepository.update(id, { Status: status });
+    await this.productRepository.update(id, { status: status });
     return { message: `Status updated to ${status}` };
   }
 
@@ -141,7 +148,7 @@ export class ProductService {
     const queryBuilder = this.productRepository.createQueryBuilder('Product');
 
     if (!isSearchEmpty) {
-      const searchFields = ['ProductName', 'ProductDescription'];
+      const searchFields = ['product_name', 'product_description'];
 
       const orConditions = searchFields.map((field) => {
         return `${field} LIKE :search`;
@@ -155,12 +162,12 @@ export class ProductService {
 
     queryBuilder.select([
       'Product.id',
-      'Product.ProductName',
-      'Product.ProductDescription',
-      'Product.Price',
-      'Product.Stock',
-      'Product.Category',
-      'Product.CreatedAt',
+      'Product.product_name',
+      'Product.product_description',
+      'Product.price',
+      'Product.stock',
+      'Product.category',
+      'Product.created_at',
     ]);
 
     const products = await queryBuilder.getMany();

@@ -3,7 +3,7 @@ import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 import { Product } from '../Products/Product';
 import { Order } from '../Orders/Order';
 
-@Entity({ name: 'orderitems' })
+@Entity({ name: 'order_items' })
 export class OrderItem extends EntityBase {
   @PrimaryGeneratedColumn('increment')
   id: number;
@@ -25,9 +25,9 @@ export class OrderItem extends EntityBase {
 
   @ManyToOne(() => Order, (order) => order.orderItems, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'order_id' })
-  order: Order;
+  ordersList: Order;
 
-  @ManyToOne(() => Product, (product) => product.orderItems, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Product, (product) => product.orderItemsList, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'product_id' })
-  product: Product;
+  productsList: Product;
 }

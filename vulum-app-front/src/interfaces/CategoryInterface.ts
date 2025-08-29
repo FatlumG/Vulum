@@ -1,6 +1,6 @@
 export interface CategoryInterface {
   id: number;
-  CategoryName: string;
-  CategoryDescription: string;
-  CreatedAt: string;
+  category_name: string;
+  category_description: string;
+  created_at: string;
 }

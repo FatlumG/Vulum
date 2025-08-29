@@ -3,11 +3,11 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class OrderUpdateRequest {
   @IsNotEmpty()
   @IsString()
-  OName: string;
+  name: string;
 
   @IsNotEmpty()
-  UserId: number;
+  created_by: number;
 
   @IsNotEmpty()
-  TotalPrice: number;
+  amount: number;
 }

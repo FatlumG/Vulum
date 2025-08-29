@@ -3,13 +3,14 @@ import { Button } from "../components/ui/button";
 import { getProduct } from "../hooks/getProduct";
 import { useParams } from "react-router-dom";
 import { useOrderProduct } from "../hooks/orderProduct";
-import { Link } from "react-router-dom";
 
 const ViewProductPage: React.FC = () => {
   const { slug } = useParams();
   const id = slug?.split("-").pop();
   if (!id) return <p>Invalid product ID</p>;
   const product = getProduct(id);
+
+  console.log(product, "product");
 
   const [images, setImages] = useState<string[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -27,7 +28,7 @@ const ViewProductPage: React.FC = () => {
         <div className="h-[500px] w-[60%]">
           <img
             src={product?.productImages?.[selectedIndex]?.image_url || ""}
-            alt={product?.ProductName}
+            alt={product?.product_name}
             className="h-[80%] w-full object-cover rounded-md"
           />
 
@@ -47,20 +48,21 @@ const ViewProductPage: React.FC = () => {
           </div>
         </div>
         <div className="w-[30%] flex flex-col gap-5">
-          <h2 className="text-2xl font-semibold">{product?.ProductName}</h2>
+          <h2 className="text-2xl font-semibold">{product?.product_name}</h2>
           <p>
             <span className="font-semibold">Description:</span>{" "}
-            {product?.ProductDescription}
+            {product?.product_description}
           </p>
           <p>
-            <span className="font-semibold">Price:</span> ${product?.Price}
+            <span className="font-semibold">Price:</span> ${product?.price}
           </p>
           <p>
-            <span className="font-semibold">Stock:</span> {product?.Stock}
+            <span className="font-semibold">Stock:</span> {product?.stock}
           </p>
           <p>
-            <span className="font-semibold">Category:</span> {/* @ts-ignore */}
-            {product?.category.CategoryName}
+            <span className="font-semibold">Category:</span>
+            {/* @ts-ignore */}
+            {product?.category?.category_name}
           </p>
           <Button
             className="rounded-3xl bg-primaryBlue"

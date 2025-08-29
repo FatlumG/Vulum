@@ -1,9 +1,9 @@
 export interface UserUpdateInterface {
-  Username?: string;
-  FName?: string;
-  LName?: string;
-  Email?: string;
-  Phone?: string;
-  Address?: string;
-  Bio?: string;
+  username?: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  bio?: string;
 }

@@ -2,14 +2,14 @@ import { IsNotEmpty } from 'class-validator';
 
 export class OrderItemUpdateRequest {
   @IsNotEmpty()
-  OrderId: number;
+  order_id: number;
 
   @IsNotEmpty()
-  ProductId: number;
+  product_id: number;
 
   @IsNotEmpty()
-  Quantity: number;
+  quantity: number;
 
   @IsNotEmpty()
-  Price: number;
+  price: number;
 }

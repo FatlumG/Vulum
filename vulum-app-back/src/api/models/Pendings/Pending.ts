@@ -8,15 +8,15 @@ export class Pending extends EntityBase {
   id: number;
 
   @Column()
-  OrderId: number;
+  order_id: number;
 
   @Column()
-  UserId: number;
+  user_id: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  CreatedAt: string;
+  created_at: string;
 
-  @ManyToOne(() => User, (user) => user.Pendings)
-  @JoinColumn({ name: 'UserId' })
-  userId: User;
+  @ManyToOne(() => User, (user) => user.pendings)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }

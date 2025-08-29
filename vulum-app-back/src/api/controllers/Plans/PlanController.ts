@@ -46,7 +46,7 @@ export class PlanController extends ControllerBase {
   @Post('/checkout-session')
   @HttpCode(200)
   public async createCheckoutSession(@Body() data: PlanSubscribeRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
-    return await this.planService.createCheckoutSession(data.planId, loggedUser);
+    return await this.planService.createCheckoutSession(data.plan_id, loggedUser);
   }
 
   @Put('/:id')
