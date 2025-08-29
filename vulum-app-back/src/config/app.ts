@@ -14,7 +14,7 @@ export const appConfig = {
   isStaging: env('NODE_ENV') === 'staging',
   isDevelopment: env('NODE_ENV') === 'development',
   name: env('APP_NAME'),
-  port: Number(env('APP_PORT')),
+  port: Number(env('PORT') || env('APP_PORT') || 3000),
   routePrefix: env('APP_ROUTE_PREFIX'),
   url: env('APP_URL'),
   appPath: getAppPath(),
