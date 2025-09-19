@@ -12,8 +12,6 @@ import { RequestQueryParser } from 'typeorm-simple-query-parser';
 import { LoggedUser } from '@base/decorators/LoggedUser';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
 import { ProductImagesService } from '@api/services/ProductImages/ProductImagesService';
-import { ProductImagesCreateRequest } from '@base/api/requests/ProductImages/ProductImagesCreateRequest';
-import { StatusUpdateRequest } from '@base/api/requests/Products/StatusUpdateRequest';
 import { ProductStatus } from '@base/api/models/Products/PEnum';
 
 @Service()
@@ -83,6 +81,7 @@ export class ProductController extends ControllerBase {
   @Post()
   @HttpCode(201)
   public async create(@Body() body: CreateProductWithImagesRequest, @LoggedUser() loggedUser: LoggedUserInterface) {
+    console.log('Controller is hit!');
     const createdProduct = await this.productService.create(body.product, loggedUser);
 
     const imagesWithProductId = body.images.map((img) => ({

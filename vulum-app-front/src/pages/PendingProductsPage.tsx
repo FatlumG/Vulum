@@ -28,11 +28,11 @@ const PendingProductsPage: React.FC = () => {
             image={
               prod.productImages?.[0]?.image_url || "fallback-image-url.jpg"
             }
-            alt={prod.ProductName}
-            title={prod.ProductName}
-            price={prod.Price}
-            status={prod.Status}
-            stock={prod.Stock}
+            alt={prod.product_name}
+            title={prod.product_name}
+            price={prod.price}
+            status={prod.status}
+            stock={prod.stock}
             page="pendings"
           />
         ))}

@@ -87,6 +87,8 @@ export class ProductService {
   }
 
   public async create(data: ProductCreateRequest, loggedUser: LoggedUserInterface) {
+    console.log('creating product..');
+
     const user = await this.userRepository.findOne(loggedUser.userId);
 
     const productItem = await stripe.products.create({
@@ -94,11 +96,18 @@ export class ProductService {
       description: data.product_description,
     });
 
+    console.log(data.product_name, data.product_description);
+
+
+    console.log(productItem, 'productItem');
+
     const price = await stripe.prices.create({
       unit_amount: Math.round(data.price * 100),
       currency: 'usd',
       product: productItem.id,
     });
+
+    console.log(price, 'price');
 
     const planWithStripe = {
       ...data,
@@ -106,6 +115,8 @@ export class ProductService {
       stripe_price_id: price.id,
       created_by: loggedUser.userId,
     };
+
+    console.log(planWithStripe, 'planWithStripe');
 
     user.products += 1;
 

@@ -44,9 +44,9 @@ const MyProductCard: FC<ProductCardProps> = ({
 
   async function addFavoriteProduct(id: number) {
     try {
-      console.log(id, "id");
       await api.post("/favorites", { product_id: id });
       dispatch(addFavorite(id));
+      console.log("added favorite");
     } catch (error: any) {
       if (error.response?.data?.message === "This Product is already saved!") {
         removeFavoriteProduct(id);
@@ -60,6 +60,7 @@ const MyProductCard: FC<ProductCardProps> = ({
     try {
       await api.delete(`/favorites/${id}`);
       dispatch(removeFavorite(id));
+      console.log("deleted favorite");
     } catch (error: any) {
       console.error("error.response.data.errors", error.response.data.errors);
     }

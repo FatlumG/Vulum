@@ -18,7 +18,7 @@ import SettingsPage from "./pages/SettingsPage";
 import NewLayout from "./layouts/NewLayout";
 import AddProductPage from "./pages/AddProductPage";
 import UpdateProductPage from "./pages/UpdateProductPage";
-import { useSelector, UseSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { HashLoader } from "react-spinners";
 import NotFoundPage from "./pages/NotFoundPage";
 import AllProductsPage from "./pages/AllProductsPage";

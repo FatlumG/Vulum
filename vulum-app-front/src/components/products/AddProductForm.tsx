@@ -157,11 +157,12 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
           product_description: data.product_description,
           price: Number(data.price),
           stock: Number(data.stock),
-          category: Number(selectedCategory),
+          category_id: Number(selectedCategory),
           created_by: userId,
         },
         images: imagesForRequest,
       };
+      console.log(requestBody, "requestBody");
 
       return requestBody;
     }
@@ -264,7 +265,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
           err.response?.data?.message || "❌ Failed to add product";
         notify.error(message);
 
-        console.error(err.response?.data);
+        console.error(err.response, "err.response");
       }
     };
 
