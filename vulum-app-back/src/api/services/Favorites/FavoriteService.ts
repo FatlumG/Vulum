@@ -28,10 +28,12 @@ export class FavoriteService {
   public async create(data: any, loggedUser: LoggedUserInterface) {
     const existingFavorite = await this.favoriteRepository.findOne({
       where: {
-        user_id: loggedUser.email,
+        user_id: loggedUser.userId,
         product_id: data.product_id,
       },
     });
+
+    console.log(existingFavorite, 'existingFavorite');
 
     if (existingFavorite) {
       throw new Error('This Product is already saved!');
@@ -43,15 +45,15 @@ export class FavoriteService {
     });
 
     const user = await this.userRepository
-      .createQueryBuilder('User')
-      .where('User.id = :id', { id: favorite.user_id })
-      .select(['User.Username', 'User.FName', 'User.LName', 'User.Email', 'User.Phone', 'User.Favorites'])
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id: favorite.user_id })
+      .select(['user.username', 'user.first_name', 'user.last_name', 'user.email', 'user.phone', 'user.favorites'])
       .getOne();
 
     const product = await this.productRepository
       .createQueryBuilder('products')
       .where('products.id = :id', { id: favorite.product_id })
-      .select(['products.ProductName', 'products.ProductDescription', 'products.Price'])
+      .select(['products.product_name', 'products.product_description', 'products.price'])
       .getOne();
 
     this.eventDispatcher.dispatch('onFavoriteCreate', favorite);
