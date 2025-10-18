@@ -1,0 +1,1 @@
+{"version":3,"file":"fix-module-alias.js","sourceRoot":"","sources":["../../src/utils/fix-module-alias.ts"],"names":[],"mappings":";;;;;;AAAA,gEAAuC;AAEvC,SAAgB,cAAc,CAAC,OAAe;IAC5C,sBAAW,CAAC,UAAU,CAAC;QACrB,OAAO,EAAE,OAAO;QAChB,MAAM,EAAE,OAAO,GAAG,MAAM;KACzB,CAAC,CAAC;AACL,CAAC;AALD,wCAKC"}

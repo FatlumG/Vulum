@@ -1,0 +1,1 @@
+{"version":3,"file":"LoggedUser.js","sourceRoot":"","sources":["../../src/decorators/LoggedUser.ts"],"names":[],"mappings":";;;AAAA,6DAA2D;AAE3D,SAAgB,UAAU;IACxB,OAAO,IAAA,0CAAoB,EAAC;QAC1B,KAAK,EAAE,CAAC,MAAM,EAAE,EAAE;YAChB,OAAO,MAAM,CAAC,OAAO,CAAC,UAAU,CAAC;QACnC,CAAC;KACF,CAAC,CAAC;AACL,CAAC;AAND,gCAMC"}

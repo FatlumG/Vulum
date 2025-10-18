@@ -1,0 +1,1 @@
+{"version":3,"file":"CategoryNotFoundException.js","sourceRoot":"","sources":["../../../../src/api/exceptions/Categories/CategoryNotFoundException.ts"],"names":[],"mappings":";;;AAAA,6DAAoD;AAEpD,MAAa,yBAA0B,SAAQ,mCAAa;IAC1D;QACE,KAAK,CAAC,qBAAqB,CAAC,CAAC;IAC/B,CAAC;CACF;AAJD,8DAIC"}
