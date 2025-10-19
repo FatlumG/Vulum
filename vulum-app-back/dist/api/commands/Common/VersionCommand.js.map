@@ -1,1 +1,0 @@
-{"version":3,"file":"VersionCommand.js","sourceRoot":"","sources":["../../../../src/api/commands/Common/VersionCommand.ts"],"names":[],"mappings":";;;;;;;;;;;;AAEA,MAAa,cAAc;IAA3B;QACS,YAAO,GAAG,SAAS,CAAC;QACpB,aAAQ,GAAG,6BAA6B,CAAC;IAKlD,CAAC;IAHc,OAAO;;YAClB,OAAO,CAAC,GAAG,CAAC,OAAO,CAAC,GAAG,CAAC,mBAAmB,CAAC,CAAC;QAC/C,CAAC;KAAA;CACF;AAPD,wCAOC"}

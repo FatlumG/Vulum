@@ -1,1 +1,0 @@
-{"version":3,"file":"MailTemplateBase.js","sourceRoot":"","sources":["../../../src/infrastructure/abstracts/MailTemplateBase.ts"],"names":[],"mappings":";;;AACA,kEAA+D;AAE/D,MAAsB,gBAAgB;IAG7B,cAAc;QACnB,OAAO,IAAI,6BAAa,EAAE,CAAC,mBAAmB,CAAC,IAAI,CAAC,WAAW,EAAE,CAAC,CAAC;IACrE,CAAC;CACF;AAND,4CAMC"}
