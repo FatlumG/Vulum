@@ -23,7 +23,7 @@ export class RoleRepository extends RepositoryBase<Role> {
 
     data.forEach((element) => {
       const role = new Role();
-      role.RoleName = element.RoleName;
+      role.role_name = element.RoleName;
       roles.push(role);
     });
 

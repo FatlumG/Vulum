@@ -9,17 +9,23 @@ export class Invoice extends EntityBase {
   id: number;
 
   @Column({ unique: true })
+  user_id: number;
+
+  @Column({ unique: true })
+  order_id: number;
+
+  @Column({ unique: true })
   stripe_invoice_id: string;
 
   @Column()
   stripe_customer_id: string;
 
   @ManyToOne(() => User, (user) => user.invoices)
-  @JoinColumn({name: 'user_id'})
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @ManyToOne(() => Order, (order) => order.invoices, { nullable: true })
-  @JoinColumn({name: 'order_id'})
+  @JoinColumn({ name: 'order_id' })
   order: Order;
 
   @Column({ nullable: true })
