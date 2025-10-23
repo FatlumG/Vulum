@@ -3,6 +3,7 @@ import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 import { OrderStatus } from './OEnum';
 import { OrderItem } from '../OrderItems/OrderItem';
 import { User } from '../Users/User';
+import { Invoice } from '../Invoices/Invoice';
 @Entity({ name: 'orders' })
 export class Order extends EntityBase {
   @PrimaryGeneratedColumn('increment')
@@ -29,4 +30,10 @@ export class Order extends EntityBase {
   @ManyToOne(() => User, (user) => user.orders)
   @JoinColumn({ name: 'created_by' })
   createdBy: User;
+
+  // @ManyToOne(() => Invoice, (invoice) => invoice.order)
+  // @JoinColumn({ name: 'invoice_id' })
+  // invoices: Invoice[];
+  @OneToMany(() => Invoice, (invoice) => invoice.order)
+  invoices: Invoice[];
 }

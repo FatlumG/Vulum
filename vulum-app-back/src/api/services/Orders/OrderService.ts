@@ -6,7 +6,9 @@ import { InjectRepository } from 'typeorm-typedi-extensions';
 import { LoggedUserInterface } from '@base/api/interfaces/users/LoggedUserInterface';
 import { ProductRepository } from '@base/api/repositories/Products/ProductRepository';
 import { OrderItemRepository } from '@base/api/repositories/OrderItems/OrderItemRepository';
+import { InvoiceRepository } from '@base/api/repositories/Invoices/InvoiceRepository';
 import stripe from '@base/config/stripe';
+import { UserRepository } from '@base/api/repositories/Users/UserRepository';
 
 @Service()
 export class OrderService {
@@ -14,6 +16,8 @@ export class OrderService {
     @InjectRepository() private orderRepository: OrderRepository,
     @InjectRepository() private orderItemRepository: OrderItemRepository,
     @InjectRepository() private productRepository: ProductRepository,
+    @InjectRepository() private invoiceRepository: InvoiceRepository,
+    @InjectRepository() private userRepository: UserRepository,
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
   ) {
     //
@@ -90,10 +94,24 @@ export class OrderService {
       });
     }
 
+    let stripeCustomerId = user.stripe_customer_id;
+
+    if (!stripeCustomerId) {
+      const customer = await stripe.customers.create({
+        email: user.email,
+        name: user.name,
+      });
+      stripeCustomerId = customer.id;
+
+      // await this.userRepository.save(user);
+      console.log('user.userId:', user.userId);
+      await this.userRepository.update({ id: user.userId }, { stripe_customer_id: stripeCustomerId });
+    }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
-      customer_email: user.email,
+      customer: stripeCustomerId,
       line_items: stripeLineItems,
       success_url: `http://localhost:5173/dashboard`,
       cancel_url: 'http://localhost:3000/cancel',
@@ -101,10 +119,24 @@ export class OrderService {
         userId: user.userId,
         orderId: order.id,
         productId: productIds.join(','),
+        // invoiceId: invoice.id,
       },
     });
 
-    return { url: session.url };
+    console.log(user, 'user');
+    console.log(user.userId, 'user.userId');
+
+    const invoice = await this.invoiceRepository.createInvoice({
+      user: user.userId,
+      order: order.id,
+      stripe_invoice_id: session.id, // until Stripe confirms
+      stripe_customer_id: stripeCustomerId, // can fill later
+      status: 'pending',
+      amount_due: totalAmount,
+      currency: 'usd', // or your currency
+    });
+
+    return { url: session.url, invoiceId: invoice.id };
   }
 
   public async updateOneById(id: number, data: object) {

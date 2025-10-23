@@ -24,6 +24,7 @@ import { User } from './api/models/Users/User';
 import { Product } from './api/models/Products/Product';
 import { Order } from './api/models/Orders/Order';
 import { Sale } from './api/models/Sales/Sale';
+import { Invoice } from './api/models/Invoices/Invoice';
 import { getRepository } from 'typeorm';
 import Stripe from 'stripe';
 import { generateInvoicePdf } from './utils/pdf-generator';
@@ -209,21 +210,49 @@ export class App {
                 paymentDate: String(new Date()),
                 currency: 'USD',
               });
+
+              const invoiceId = parseInt(session.metadata.invoiceId);
+
+              const invoiceRepository = getRepository(Invoice);
+
+              const invoice = await invoiceRepository.findOne({ where: { id: invoiceId }, relations: ['order'] });
+              if (!invoice) throw new Error('Invoice not found');
+
+              invoice.status = 'paid';
+              invoice.stripe_invoice_id = session.payment_intent?.toString();
+              invoice.stripe_customer_id = session.customer?.toString();
+              await invoiceRepository.save(invoice);
+
+              invoice.order.status = OrderStatus.APPROVED;
+
+              console.log(invoice);
+              await invoiceRepository.save(invoice.order);
+
               await userRepository.save(user);
               await orderRepository.save(order);
               return res.status(200).send('Order incremented');
             }
 
             return res.status(400).send('No valid metadata found');
-
           // case 'invoice.payment_succeeded':
           //   const invoice = event.data.object as Stripe.Invoice;
           //   console.log('Invoice payment succeeded:', invoice);
           //   return res.status(200).send('Invoice handled');
-
           case 'invoice.created':
+            const invoiceId = parseInt(session.metadata.invoiceId);
+            const invoiceRepository = getRepository(Invoice);
+            const invoice = await invoiceRepository.findOne({ where: { id: invoiceId }, relations: ['order'] });
+            invoice.status = 'created';
+            await invoiceRepository.save(invoice);
+            break;
           case 'invoice.finalized':
+            invoice.status = 'finalized';
+            await invoiceRepository.save(invoice);
+            break;
           case 'invoice.paid':
+            invoice.status = 'paid';
+            await invoiceRepository.save(invoice);
+            break;
           case 'invoice.payment_succeeded': {
             const invoice = event.data.object as Stripe.Invoice;
 
@@ -238,14 +267,12 @@ export class App {
 
             return res.status(200).send(`Handled ${event.type}`);
           }
-
           case 'payment_intent.created': {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
             console.log('Payment Intent created:', paymentIntent.id);
             // Optional: update DB or notify user here
             return res.status(200).send('Payment Intent created handled');
           }
-
           //needs to be fixed
           case 'invoice.payment_failed': {
             const invoice = event.data.object as any;
@@ -271,7 +298,6 @@ export class App {
             const subscription = event.data.object as Stripe.Subscription;
             console.log('Customer subscription created:', subscription);
             return res.status(200).send('Subscription handled');
-
           //needs to be fixed
           case 'customer.subscription.updated': {
             const subscription = event.data.object as Stripe.Subscription;
@@ -324,7 +350,6 @@ export class App {
 
             return res.status(200).send('Subscription update handled');
           }
-
           //needs to be fixed
           case 'customer.subscription.deleted': {
             const subscription = event.data.object as Stripe.Subscription;
@@ -343,7 +368,6 @@ export class App {
 
             return res.status(200).send('Subscription deleted handled');
           }
-
           case 'charge.updated':
             const charge = event.data.object as Stripe.Charge;
             console.log('Charge updated:', charge);

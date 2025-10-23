@@ -9,6 +9,7 @@ import { Pending } from '../Pendings/Pending';
 import { Plan } from '../Plans/Plan';
 import { Favorite } from '../Favorites/Favorite';
 import { UserSubscription } from '../Subscriptions/UserSubscription';
+import { Invoice } from '../Invoices/Invoice';
 
 @Entity({ name: 'users' })
 export class User extends EntityBase {
@@ -75,6 +76,9 @@ export class User extends EntityBase {
   @JoinColumn({ name: 'role_id' })
   role: Role;
 
+  @Column({ type: 'varchar', nullable: true })
+  stripe_customer_id: string;
+
   @Expose({ name: 'FullName' })
   get fullName() {
     return this.first_name + ' ' + this.last_name;
@@ -116,4 +120,7 @@ export class User extends EntityBase {
 
   @OneToMany(() => UserSubscription, (UserSubscription) => UserSubscription.usersList)
   subscriptions: UserSubscription[];
+
+  @OneToMany(() => Invoice, (invoice) => invoice.user)
+  invoices: Invoice;
 }

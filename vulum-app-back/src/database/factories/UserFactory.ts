@@ -8,10 +8,10 @@ define(User, (faker: typeof Faker) => {
   const email = faker.internet.email(firstName, lastName).toLowerCase();
 
   const user = new User();
-  user.FName = firstName;
-  user.LName = lastName;
-  user.Email = email;
-  user.Password = 'password';
+  user.first_name = firstName;
+  user.last_name = lastName;
+  user.email = email;
+  user.password = 'password';
 
   return user;
 });
