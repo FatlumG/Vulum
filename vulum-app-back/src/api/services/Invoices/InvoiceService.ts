@@ -59,9 +59,10 @@ export class InvoiceService {
     const [items, total] = await this.invoiceRepository
       .createQueryBuilder('invoice')
       .leftJoinAndSelect('invoice.order', 'order')
-      .leftJoinAndSelect('order.product', 'product')
+      .leftJoinAndSelect('order.orderItems', 'orderItems')
+      .leftJoinAndSelect('orderItems.productsList', 'product')
       .leftJoinAndSelect('product.productImages', 'productImages')
-      .where('order.user_id = :userId', { userId: user.userId })
+      .where('order.created_by = :userId', { userId: user.userId })
       .skip(skip)
       .take(limit)
       .getManyAndCount();

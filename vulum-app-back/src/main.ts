@@ -234,7 +234,6 @@ export class App {
             }
 
             return res.status(400).send('No valid metadata found');
-
           // case 'invoice.payment_succeeded':
           //   const invoice = event.data.object as Stripe.Invoice;
           //   console.log('Invoice payment succeeded:', invoice);
@@ -268,14 +267,12 @@ export class App {
 
             return res.status(200).send(`Handled ${event.type}`);
           }
-
           case 'payment_intent.created': {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
             console.log('Payment Intent created:', paymentIntent.id);
             // Optional: update DB or notify user here
             return res.status(200).send('Payment Intent created handled');
           }
-
           //needs to be fixed
           case 'invoice.payment_failed': {
             const invoice = event.data.object as any;
@@ -301,7 +298,6 @@ export class App {
             const subscription = event.data.object as Stripe.Subscription;
             console.log('Customer subscription created:', subscription);
             return res.status(200).send('Subscription handled');
-
           //needs to be fixed
           case 'customer.subscription.updated': {
             const subscription = event.data.object as Stripe.Subscription;
@@ -354,7 +350,6 @@ export class App {
 
             return res.status(200).send('Subscription update handled');
           }
-
           //needs to be fixed
           case 'customer.subscription.deleted': {
             const subscription = event.data.object as Stripe.Subscription;
@@ -373,7 +368,6 @@ export class App {
 
             return res.status(200).send('Subscription deleted handled');
           }
-
           case 'charge.updated':
             const charge = event.data.object as Stripe.Charge;
             console.log('Charge updated:', charge);

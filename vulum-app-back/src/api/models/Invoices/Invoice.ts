@@ -1,17 +1,17 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 import { User } from '../Users/User';
 import { Order } from '../Orders/Order';
-import { EntityBase } from '@base/infrastructure/abstracts/EntityBase';
 
 @Entity({ name: 'invoices' })
 export class Invoice extends EntityBase {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ unique: true })
+  @Column()
   user_id: number;
 
-  @Column({ unique: true })
+  @Column()
   order_id: number;
 
   @Column({ unique: true })

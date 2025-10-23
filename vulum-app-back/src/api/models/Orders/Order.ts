@@ -31,7 +31,9 @@ export class Order extends EntityBase {
   @JoinColumn({ name: 'created_by' })
   createdBy: User;
 
-  @ManyToOne(() => Invoice, (invoice) => invoice.order)
-  @JoinColumn({ name: 'invoice_id' })
+  // @ManyToOne(() => Invoice, (invoice) => invoice.order)
+  // @JoinColumn({ name: 'invoice_id' })
+  // invoices: Invoice[];
+  @OneToMany(() => Invoice, (invoice) => invoice.order)
   invoices: Invoice[];
 }
