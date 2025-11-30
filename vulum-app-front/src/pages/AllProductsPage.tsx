@@ -1,7 +1,7 @@
 import React from "react";
 import MyProductCard from "../components/products/MyProductCard";
 import { Link } from "react-router-dom";
-import { useAllProducts } from "../hooks/getAllProductsHook";
+import { useAllProducts } from "../hooks-apiCalls/getAllProductsHook";
 
 const AllProductsPage: React.FC = () => {
   const products = useAllProducts();

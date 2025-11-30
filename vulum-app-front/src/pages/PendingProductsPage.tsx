@@ -1,9 +1,9 @@
 import React from "react";
 import MyProductCard from "../components/products/MyProductCard";
 import { Link } from "react-router-dom";
-import { getMyProducts } from "../hooks/getMyProductsHook";
-import { getMyFavorites } from "../hooks/getMyFavoritesHook";
-import { usePendingProducts } from "../hooks/getAllPendingProducts";
+import { getMyProducts } from "../hooks-apiCalls/getMyProductsHook";
+import { getMyFavorites } from "../hooks-apiCalls/getMyFavoritesHook";
+import { usePendingProducts } from "../hooks-apiCalls/getAllPendingProducts";
 
 const PendingProductsPage: React.FC = () => {
   const products = usePendingProducts();

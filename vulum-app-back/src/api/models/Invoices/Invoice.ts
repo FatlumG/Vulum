@@ -8,19 +8,13 @@ export class Invoice extends EntityBase {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column()
-  user_id: number;
-
-  @Column()
-  order_id: number;
-
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   stripe_invoice_id: string;
 
-  @Column()
+  @Column({ nullable: true })
   stripe_customer_id: string;
 
-  @ManyToOne(() => User, (user) => user.invoices)
+  @ManyToOne(() => User, (user) => user.invoices, { nullable: false })
   @JoinColumn({ name: 'user_id' })
   user: User;
 

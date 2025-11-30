@@ -1,8 +1,8 @@
 import React from "react";
 import MyProductCard from "../components/products/MyProductCard";
 import { Link } from "react-router-dom";
-import { getMyProducts } from "../hooks/getMyProductsHook";
-import { getMyFavorites } from "../hooks/getMyFavoritesHook";
+import { getMyProducts } from "../hooks-apiCalls/getMyProductsHook";
+import { getMyFavorites } from "../hooks-apiCalls/getMyFavoritesHook";
 
 const MyProductsPage: React.FC = () => {
   const products = getMyProducts();

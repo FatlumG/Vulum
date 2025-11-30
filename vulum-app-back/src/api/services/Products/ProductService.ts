@@ -83,7 +83,7 @@ export class ProductService {
   }
 
   public async getMyProducts(user: LoggedUserInterface) {
-    return await this.productRepository.find({ where: { createdBy: user.userId }, relations: ['productImages'], order: { created_at: 'DESC' } });
+    return await this.productRepository.find({ where: { created_by: user.userId }, relations: ['productImages'], order: { created_at: 'DESC' } });
   }
 
   public async create(data: ProductCreateRequest, loggedUser: LoggedUserInterface) {
@@ -97,7 +97,6 @@ export class ProductService {
     });
 
     console.log(data.product_name, data.product_description);
-
 
     console.log(productItem, 'productItem');
 
