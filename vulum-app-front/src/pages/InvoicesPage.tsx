@@ -1,9 +1,25 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import Invoice from "../components/invoices/Invoice";
 import { getMyInvoices } from "../hooks-apiCalls/getMyInvoices";
+import { InvoiceInterface } from "@/interfaces/InvoiceInterface";
+import InvoiceModal from "../components/invoices/InvoiceModal";
 
 const InvoicesPage: FC = () => {
   const invoices = getMyInvoices();
+
+  const [selectedInvoice, setSelectedInvoice] =
+    useState<InvoiceInterface | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handlePreview = (invoice: InvoiceInterface) => {
+    setSelectedInvoice(invoice);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedInvoice(null);
+  };
 
   return (
     <div className="col-span-10 py-5 px-10 font-NunitoSans">
@@ -18,8 +34,14 @@ const InvoicesPage: FC = () => {
           amount_due={invoice.amount_due}
           currency={invoice.currency}
           order={invoice.order}
+          onPreview={handlePreview.bind(null, invoice)}
         />
       ))}
+
+      {/* debug why when users click preview is not working */}
+      {isModalOpen && selectedInvoice && (
+        <InvoiceModal invoice={selectedInvoice} onClose={closeModal} />
+      )}
     </div>
   );
 };
