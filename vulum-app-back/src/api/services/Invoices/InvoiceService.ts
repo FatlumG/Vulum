@@ -65,6 +65,7 @@ export class InvoiceService {
       .where('order.created_by = :userId', { userId: user.userId })
       .skip(skip)
       .take(limit)
+      .orderBy('invoice.created_at', 'DESC')
       .getManyAndCount();
 
     return {
