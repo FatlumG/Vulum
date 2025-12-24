@@ -6,6 +6,7 @@ import loadingSlice from "../features/loading/loadingSlice";
 import favoriteSlice from "../features/products/favoriteSlice";
 import userSlice from "../features/user/userSlice";
 import invoiceSlice from "../features/invoices/invoiceSlice";
+import statsSlice from "../features/dashboard/statsSlice";
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     favorites: favoriteSlice,
     user: userSlice,
     invoice: invoiceSlice,
+    stats: statsSlice,
   },
 });
 
