@@ -49,6 +49,15 @@ export class UserController extends ControllerBase {
     return await this.userService.getProfile(loggedUser.userId);
   }
 
+  @Get('/dashboard-stats')
+  public async getDashboardStats(@LoggedUser() loggedUser: LoggedUserInterface) {
+    return await this.userService.dashboardStats(loggedUser.userId);
+  }
+  @Get('/get-monthly-stats')
+  public async getMonthlyStats(@LoggedUser() loggedUser: LoggedUserInterface) {
+    return await this.userService.getMonthlyStats(loggedUser.userId);
+  }
+
   @Get('/:username')
   public async getBySearch(@Param('username') username: string) {
     return this.userService.getUsersBySearch(username);
