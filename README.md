@@ -393,7 +393,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-**Fatlum G** - [GitHub](https://github.com/FatlumG)
+**Fatlum Gërxhaliu** - [GitHub](https://github.com/FatlumG)
+**Laurent Maxhuni** - [GitHub](https://github.com/LaurentMaxhuni)
 
 ---
 
