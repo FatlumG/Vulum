@@ -1,6 +1,6 @@
 import React from "react";
 import ProductCard from "../components/products/MyProductCard";
-import { getMyFavorites } from "../hooks/getMyFavoritesHook";
+import { getMyFavorites } from "../hooks-apiCalls/getMyFavoritesHook";
 
 const FavoritePage: React.FC = () => {
   const products = getMyFavorites();

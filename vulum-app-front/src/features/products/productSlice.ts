@@ -15,6 +15,7 @@ const productsSlice = createSlice({
       console.log("Reducer called with:", action.payload);
       const product = state.find((p) => p.id === action.payload.id);
       if (product) {
+        // self-ignored
         product.Status = action.payload.status;
         console.log(
           `Updated product ${product.id} status to ${product.Status}`

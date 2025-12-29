@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PricingCard from "./PricingCard";
-import { getPricingPlans } from "../../hooks/getPricingPlans";
-import { useSubscribePlan } from "../../hooks/subscribePlanHook";
+import { getPricingPlans } from "../../hooks-apiCalls/getPricingPlans";
+import { useSubscribePlan } from "../../hooks-apiCalls/subscribePlanHook";
 import api from "../../auth/api";
 
 const PricingCards: React.FC = () => {

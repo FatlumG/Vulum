@@ -26,7 +26,7 @@ import {
 import vulum from "../../assets/logos/vulumBlue.png";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/store/authSlice";
-import { getPfp } from "../../hooks/getPfpHook";
+import { getPfp } from "../../hooks-apiCalls/getPfpHook";
 import { Link } from "react-router-dom";
 
 export function AppSidebar() {

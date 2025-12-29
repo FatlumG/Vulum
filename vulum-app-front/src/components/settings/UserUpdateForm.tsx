@@ -1,7 +1,7 @@
 import React, { FC, useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { getPfp } from "../../hooks/getPfpHook";
+import { getPfp } from "../../hooks-apiCalls/getPfpHook";
 import { CiCamera } from "react-icons/ci";
 import { Button } from "../ui/button";
 import { UserUpdateInterface } from "../../interfaces/UserUpdateInterface";

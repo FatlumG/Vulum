@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
-import { getProduct } from "../hooks/getProduct";
+import { getProduct } from "../hooks-apiCalls/getProduct";
 import { useParams } from "react-router-dom";
-import { useOrderProduct } from "../hooks/orderProduct";
+import { useOrderProduct } from "../hooks-apiCalls/orderProduct";
 
 const ViewProductPage: React.FC = () => {
   const { slug } = useParams();

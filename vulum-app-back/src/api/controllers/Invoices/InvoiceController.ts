@@ -55,10 +55,6 @@ export class InvoiceController extends ControllerBase {
     const page = parseResourceOptions.getPage() || 1;
     const limit = parseResourceOptions.parseLimit() || 10;
 
-    console.log(loggedUser, 'loggedUser');
-    console.log(page, 'page');
-    console.log(limit, 'limit');
-
     return await this.invoiceService.getMyInvoices(loggedUser, page, limit);
   }
 }

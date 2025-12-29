@@ -9,6 +9,7 @@ import { OrderItemRepository } from '@base/api/repositories/OrderItems/OrderItem
 import { InvoiceRepository } from '@base/api/repositories/Invoices/InvoiceRepository';
 import stripe from '@base/config/stripe';
 import { UserRepository } from '@base/api/repositories/Users/UserRepository';
+import { Order } from '@base/api/models/Orders/Order';
 
 @Service()
 export class OrderService {
@@ -108,6 +109,46 @@ export class OrderService {
       await this.userRepository.update({ id: user.userId }, { stripe_customer_id: stripeCustomerId });
     }
 
+    console.log(user, 'user');
+    console.log(user.userId, 'user.userId');
+
+    const userEntity = await this.userRepository.findOne({ where: { id: user.userId } });
+    if (!userEntity) throw new Error('User not found');
+
+    console.log('Invoice object before save:', {
+      user: userEntity,
+      user_id: userEntity?.id,
+      order: order,
+      stripe_invoice_id: null,
+      stripe_customer_id: userEntity.stripe_customer_id,
+      status: 'pending',
+      amount_due: totalAmount,
+      currency: 'usd',
+    });
+
+    // const invoice = await this.invoiceRepository.createInvoice({
+    //   user_id: userEntity, // user.userId
+    //   order_id: order.id, // order.id
+    //   stripe_invoice_id: null, // until Stripe confirms
+    //   stripe_customer_id: userEntity.stripe_customer_id, // can fill later
+    //   status: 'pending',
+    //   amount_due: totalAmount,
+    //   currency: 'usd', // or your currency
+    // });
+    const invoice = this.invoiceRepository.create({
+      user: userEntity, // pass entity
+      order: order, // pass entity or null
+      stripe_invoice_id: null, // leave null until Stripe provides real id
+      stripe_customer_id: userEntity.stripe_customer_id, // ensure this exists or null if DB allows
+      status: 'pending',
+      amount_due: totalAmount,
+      currency: 'usd',
+    });
+    await this.invoiceRepository.save(invoice);
+
+    if (!userEntity.stripe_customer_id) {
+      throw new Error('User missing stripe_customer_id');
+    }
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
@@ -119,23 +160,9 @@ export class OrderService {
         userId: user.userId,
         orderId: order.id,
         productId: productIds.join(','),
-        // invoiceId: invoice.id,
+        invoiceId: invoice.id.toString(),
       },
     });
-
-    console.log(user, 'user');
-    console.log(user.userId, 'user.userId');
-
-    const invoice = await this.invoiceRepository.createInvoice({
-      user: user.userId,
-      order: order.id,
-      stripe_invoice_id: session.id, // until Stripe confirms
-      stripe_customer_id: stripeCustomerId, // can fill later
-      status: 'pending',
-      amount_due: totalAmount,
-      currency: 'usd', // or your currency
-    });
-
     return { url: session.url, invoiceId: invoice.id };
   }
 
