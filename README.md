@@ -202,52 +202,27 @@ npm install
 
 ### Environment Variables
 
-#### Backend (`vulum-app-back/.env`)
+Environment variables are required for both frontend and backend. Example files are provided.
 
-Create a `.env` file in the `vulum-app-back` directory:
+#### Backend Setup
 
-```env
-# Application
-NODE_ENV=development
-PORT=3000
-APP_URL=http://localhost:3000
-
-# Database
-DB_HOST=localhost
-DB_PORT=3306
-DB_USERNAME=root
-DB_PASSWORD=your_password
-DB_DATABASE=vulum
-
-# JWT
-JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRES_IN=7d
-
-# Stripe
-STRIPE_SECRET_KEY=your_stripe_secret_key_here
-STRIPE_WEBHOOK_SECRET=your_webhook_secret_here
-
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-
-# Email (Nodemailer)
-MAIL_HOST=smtp.example.com
-MAIL_PORT=587
-MAIL_USER=your_email@example.com
-MAIL_PASSWORD=your_email_password
-MAIL_FROM=noreply@vulum.com
+```bash
+cd vulum-app-back
+cp .env.example .env
 ```
 
-#### Frontend (`vulum-app-front/.env`)
+Then edit `.env` with your configuration values (database, Stripe, Cloudinary, etc.)
 
-Create a `.env` file in the `vulum-app-front` directory:
+#### Frontend Setup
 
-```env
-VITE_API_URL=http://localhost:3000
-VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
+```bash
+cd vulum-app-front
+cp .env.example .env
 ```
+
+Then edit `.env` with your API URL and Cloudinary cloud name.
+
+> ⚠️ **Important**: Never commit `.env` files to version control. Only `.env.example` files should be committed.
 
 ---
 
@@ -393,7 +368,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-**Fatlum G** - [GitHub](https://github.com/FatlumG)
+**Fatlum Gërxhaliu** - [GitHub](https://github.com/FatlumG)
+**Laurent Maxhuni** - [GitHub](https://github.com/LaurentMaxhuni)
 
 ---
 
