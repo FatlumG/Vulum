@@ -56,6 +56,13 @@ const App: React.FC = () => {
               </PublicRoute>
             }
           />
+          <Route 
+            path="*"
+            element={
+              <PublicRoute>
+                <NotFoundPage />
+              </PublicRoute>
+            }/>
 
           {/* Protected Layout Wrapper */}
           <Route
