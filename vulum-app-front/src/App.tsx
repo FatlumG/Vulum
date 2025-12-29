@@ -25,6 +25,7 @@ import AllProductsPage from "./pages/AllProductsPage";
 import PendingProductsPage from "./pages/PendingProductsPage";
 import ViewProductPage from "./pages/ViewProductPage";
 import { Toaster } from "sonner";
+import LandingPage from "./pages/LandingPage";
 
 const App: React.FC = () => {
   const isLoading = useSelector((state: any) => state.loading.isLoading);
@@ -42,6 +43,14 @@ const App: React.FC = () => {
           {/* Public Routes */}
           <Route
             path="/"
+            element={
+              <PublicRoute>
+                <LandingPage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/sign-in"
             element={
               <PublicRoute>
                 <SignInPage />
