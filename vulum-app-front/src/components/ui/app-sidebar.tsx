@@ -1,16 +1,12 @@
 import {
   Home,
-  Calendar,
   Settings,
-  ListOrdered,
   Heart,
-  Package,
   Sheet,
   LogOut,
   Package2,
   Tag,
   Boxes,
-  ShoppingBag,
   Hourglass,
 } from "lucide-react";
 import {
@@ -69,21 +65,6 @@ export function AppSidebar() {
       url: "/favorites",
       icon: Heart,
     },
-    {
-      title: "Products Stock",
-      url: "/products-stock",
-      icon: Package,
-    },
-    {
-      title: "Orders List",
-      url: "/order-lists",
-      icon: ListOrdered,
-    },
-    // {
-    //   title: "Calendar",
-    //   url: "/calendar",
-    //   icon: Calendar,
-    // },
     {
       title: "Invoices",
       url: "/invoices",

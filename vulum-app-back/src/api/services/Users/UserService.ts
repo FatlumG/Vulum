@@ -112,4 +112,64 @@ export class UserService {
     }
     return users;
   }
+
+  public async dashboardStats(id: number) {
+    const [totalUsers, user] = await Promise.all([
+      this.userRepository.count(),
+      this.userRepository.findOne(id, {
+        select: ['id', 'sales', 'products', 'orders', 'favorites', 'pendings', 'first_name', 'last_name'],
+        loadEagerRelations: false,
+      }),
+    ]);
+
+    if (!user) {
+      throw new UserNotFoundException();
+    }
+
+    return { totalUsers, user };
+  }
+
+  public async getMonthlyStats(id: number, year: number = new Date().getFullYear()) {
+    const user = await this.userRepository.findOne(id, {
+      relations: ['salesList', 'productsList', 'pendingsList'],
+      loadEagerRelations: false,
+    });
+
+    if (!user) {
+      throw new UserNotFoundException();
+    }
+
+    const monthlyData = Array.from({ length: 12 }, (_, index) => ({
+      month: index + 1,
+      monthName: new Date(year, index).toLocaleString('default', { month: 'short' }),
+      sales: 0,
+      products: 0,
+      pendings: 0,
+    }));
+
+    // Generic helper that accepts a date extractor function
+    const countByMonth = <T>(items: T[], getDate: (item: T) => Date | string) => {
+      const counts = new Array(12).fill(0);
+      items?.forEach((item) => {
+        const date = new Date(getDate(item));
+        if (date.getFullYear() === year) {
+          counts[date.getMonth()]++;
+        }
+      });
+      return counts;
+    };
+
+    // Use the correct date field for each entity
+    const salesByMonth = countByMonth(user.salesList, (sale) => sale.sold_at);
+    const productsByMonth = countByMonth(user.productsList, (product) => product.created_at); // ← Need to verify
+    const pendingsByMonth = countByMonth(user.pendingsList, (pending) => pending.created_at); // ← Need to verify
+
+    monthlyData.forEach((data, index) => {
+      data.sales = salesByMonth[index];
+      data.products = productsByMonth[index];
+      data.pendings = pendingsByMonth[index];
+    });
+
+    return monthlyData;
+  }
 }

@@ -1,73 +1,72 @@
-import React, { useState, useEffect, FC } from "react";
+import { FC } from "react";
 import TotalStats from "../components/TotalStats";
-import users from "../assets/figures/users.svg";
-import orders from "../assets/figures/orders.svg";
-import Sales from "../assets/figures/sales.svg";
-import pendings from "../assets/figures/pendings.svg";
-import api from "../auth/api";
-import { userInterface } from "../interfaces/UserInterface";
+import usersIcon from "../assets/figures/users.svg";
+import ordersIcon from "../assets/figures/orders.svg";
+import salesIcon from "../assets/figures/sales.svg";
+import pendingsIcon from "../assets/figures/pendings.svg";
+import DashboardChart from "../components/dashboard/DashboardChart";
+import getDashboardData from "../hooks-apiCalls/useDashboardData";
 
 const DashboardPage: FC = () => {
-  const [user, setUser] = useState<userInterface>();
+  const { stats, monthlyStats, loading, error } = getDashboardData();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await api.get("/users/me");
-        setUser(res.data);
-        // console.log(res.data, "res.data");
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchUser();
-  }, []);
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
 
   return (
     <div>
       <h1 className="text-[25px] font-bold">
         <span className="font-semibold">Welcome to dashboard </span>
-        {user?.first_name}
+        {stats?.user?.first_name ?? ""}
       </h1>
+
       <div className="flex items-center gap-10">
         <TotalStats
-          img={users}
+          img={usersIcon}
           alt="users"
           title="Total Users"
-          quantity={40689}
+          quantity={stats?.totalUsers ?? 0}
           percentage="8,5%"
           descr="Up from yesterday"
           up={true}
         />
         <TotalStats
-          img={orders}
+          img={pendingsIcon}
           alt="products"
           title="Total Products"
-          quantity={user?.products}
+          quantity={stats?.user?.products ?? 0}
           percentage="1,8%"
           descr="Up from yesterday"
           up={true}
         />
         <TotalStats
-          img={Sales}
+          img={salesIcon}
           alt="sales"
           title="Total Sales"
-          quantity={user?.sales}
+          quantity={stats?.user?.sales ?? 0}
           percentage="4,3%"
           descr="Up from yesterday"
           up={false}
         />
         <TotalStats
-          img={pendings}
+          img={ordersIcon}
           alt="orders"
           title="Total Orders"
-          quantity={user?.orders}
+          quantity={stats?.user?.orders ?? 0}
           percentage="1,3%"
           descr="Up from past week"
           up={true}
         />
       </div>
+
+      {loading ? (
+        <p className="mt-6 text-gray-500">Loading charts...</p>
+      ) : (
+        <div className="mt-6">
+          <DashboardChart data={monthlyStats} />
+        </div>
+      )}
     </div>
   );
 };

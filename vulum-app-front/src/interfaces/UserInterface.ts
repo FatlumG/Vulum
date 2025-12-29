@@ -18,4 +18,8 @@ export interface userInterface {
   todos: number;
   username: string;
   id: number;
+
+  salesData?: { month: string; sales: number }[];
+  ordersData?: { month: string; orders: number }[];
+  productsData?: { month: string; products: number }[];
 }

@@ -106,13 +106,13 @@ export class User extends EntityBase {
     this.role_id = roleId;
   }
 
-  @OneToMany(() => Sale, (sale) => sale.user_id)
+  @OneToMany(() => Sale, (sale) => sale.user) // ✅ Points to the relation property
   salesList: Sale[];
 
-  @OneToMany(() => Product, (product) => product.createdBy)
+  @OneToMany(() => Product, (product) => product.createdBy) // ✅ This one looks correct if Product has 'createdBy' relation
   productsList: Product[];
 
-  @OneToMany(() => Pending, (pending) => pending.user_id)
+  @OneToMany(() => Pending, (pending) => pending.user) // ✅ Points to the relation property (need to verify Pending entity)
   pendingsList: Pending[];
 
   @OneToMany(() => Favorite, (favorite) => favorite.user_id)
