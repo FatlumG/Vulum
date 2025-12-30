@@ -77,47 +77,52 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
   };
 
   return (
-    <div className="bg-white px-8 py-10 h-[600px] w-[500px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-10 shadow-2xl rounded-[40px]">
+    <div className="bg-white px-6 sm:px-8 py-8 sm:py-10 h-[550px] sm:h-[600px] overflow-y-auto scrollbar-hide w-[95%] sm:w-[90%] md:w-[500px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 shadow-2xl rounded-[24px] sm:rounded-[40px]">
       <div className="flex justify-between items-center">
-        <p>Welcome to Vulum</p>
+        <p className="text-sm sm:text-base">Welcome to Vulum</p>
         {SignIn ? (
-          <div>
-            <p className="text-lightGray text-sm">No Account?</p>
+          <div className="text-right">
+            <p className="text-lightGray text-xs sm:text-sm">No Account?</p>
             <p
-              className="text-darkBlue text-sm cursor-pointer"
+              className="text-darkBlue text-xs sm:text-sm cursor-pointer hover:underline"
               onClick={() => navigate("/sign-up")}
             >
               Sign Up
             </p>
           </div>
         ) : (
-          <div>
-            <p className="text-lightGray text-sm">Have an Account?</p>
+          <div className="text-right">
+            <p className="text-lightGray text-xs sm:text-sm">
+              Have an Account?
+            </p>
             <p
-              className="text-darkBlue text-sm cursor-pointer"
-              onClick={() => navigate("/")}
+              className="text-darkBlue text-xs sm:text-sm cursor-pointer hover:underline"
+              onClick={() => navigate("/sign-in")}
             >
               Sign In
             </p>
           </div>
         )}
       </div>
-      <h1 className="text-[40px] font-[600]">
+      <h1 className="text-[28px] sm:text-[40px] font-semibold mt-2">
         {SignIn ? "Sign In" : "Sign Up"}
       </h1>
       <form onSubmit={SignIn ? handleSignIn : handleSignUp}>
-        <div className="mt-7 flex gap-9">
+        <div className="mt-5 sm:mt-7 flex flex-col sm:flex-row gap-4 sm:gap-6">
           {!SignIn ? (
             <>
-              <div>
-                <label htmlFor="username" className="text-[14px]">
+              <div className="flex-1">
+                <label
+                  htmlFor="signup-username"
+                  className="text-[13px] sm:text-[14px]"
+                >
                   Enter your username
                 </label>
                 <input
-                  id="username"
-                  type="username"
+                  id="signup-username"
+                  type="text"
                   placeholder="Username"
-                  className="w-[110%] mt-2 p-4 border-[1px] border-gray-200 rounded-xl text-sm text-lightGray font-thin text-[13px] focus:outline-secondary focus:text-gray-900"
+                  className="w-full mt-2 p-3 sm:p-4 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-secondary focus:border-secondary"
                   value={signUpData.username}
                   name="username"
                   onChange={(e) =>
@@ -125,15 +130,18 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
                   }
                 />
               </div>
-              <div>
-                <label htmlFor="email" className="text-[14px]">
-                  Enter your email address
+              <div className="flex-1">
+                <label
+                  htmlFor="signup-email"
+                  className="text-[13px] sm:text-[14px]"
+                >
+                  Enter your email
                 </label>
                 <input
-                  id="email"
+                  id="signup-email"
                   type="email"
                   placeholder="Email Address"
-                  className="w-full mt-2 p-4 border-[1px] border-gray-200 rounded-xl text-sm text-lightGray font-thin text-[13px] focus:outline-secondary focus:text-gray-900"
+                  className="w-full mt-2 p-3 sm:p-4 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-secondary focus:border-secondary"
                   value={signUpData.email}
                   name="email"
                   onChange={(e) =>
@@ -144,14 +152,17 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
             </>
           ) : (
             <div className="w-full">
-              <label htmlFor="email" className="text-[14px]">
+              <label
+                htmlFor="signin-email"
+                className="text-[13px] sm:text-[14px]"
+              >
                 Enter your email address
               </label>
               <input
-                id="email"
+                id="signin-email"
                 type="email"
                 placeholder="Email Address"
-                className="w-full mt-2 p-4 border-[1px] border-gray-200 rounded-xl text-sm text-lightGray font-thin text-[13px] focus:outline-secondary focus:text-gray-900"
+                className="w-full mt-2 p-3 sm:p-4 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-secondary focus:border-secondary"
                 value={signInData.email}
                 name="email"
                 onChange={(e) =>
@@ -161,7 +172,6 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
             </div>
           )}
         </div>
-
         {SignIn ? (
           <div className="mt-7 w-full">
             <label htmlFor="password" className="text-[14px]">

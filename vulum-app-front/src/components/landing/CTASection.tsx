@@ -19,7 +19,7 @@ const CTASection = () => {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-          <Link to="/register" className="w-full sm:w-auto">
+          <Link to="/sign-up" className="w-full sm:w-auto">
             <Button className="w-full sm:w-auto bg-white text-primaryBlue hover:bg-gray-100 px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl font-semibold shadow-lg">
               Get Started Free
               <ArrowRightIcon className="w-5 h-5 ml-2" />

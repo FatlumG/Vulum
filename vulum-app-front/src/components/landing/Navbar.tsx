@@ -45,7 +45,7 @@ const Navbar = () => {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden sm:flex items-center gap-4">
-            <Link to="/login">
+            <Link to="/sign-in">
               <Button
                 variant="ghost"
                 className="text-gray-600 hover:text-primaryBlue"
@@ -53,7 +53,7 @@ const Navbar = () => {
                 Sign In
               </Button>
             </Link>
-            <Link to="/register">
+            <Link to="/sign-up">
               <Button className="bg-primaryBlue hover:bg-darkBlue text-white px-6">
                 Get Started
               </Button>
