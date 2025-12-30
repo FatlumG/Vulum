@@ -23,11 +23,13 @@ const SignPage: React.FC = () => {
 
       {/* Decorative Images - Hidden on mobile/tablet */}
       <img
+      // @ts-ignore
         src={salyMoto}
         alt="Saly on Motorcycle"
         className="hidden xl:block absolute top-[140px] left-[5%] 2xl:left-[10%] z-10 max-w-[300px] 2xl:max-w-none"
       />
       <img
+      // @ts-ignore
         src={salyPhone}
         alt="Saly with Phone"
         className="hidden xl:block absolute top-[100px] right-[2%] z-10 max-w-[280px] 2xl:max-w-none"
