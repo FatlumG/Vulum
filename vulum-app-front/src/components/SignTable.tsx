@@ -288,15 +288,18 @@ const SignTable: React.FC<SignTableProps> = ({ SignIn = false }) => {
               <span className="text-lightGray">OR</span>
               <div className="w-full flex justify-between items-center">
                 <div className="flex justify-center items-center gap-5 bg-lightBlue py-3 px-8 rounded-xl cursor-pointer">
+                  {/* @ts-ignore */}
                   <img src={google} alt="" />
                   <p className="text-darkBlue text-[15px]">
                     Countinue with Google
                   </p>
                 </div>
                 <div className="bg-[#F6F6F6] py-3 px-5 rounded-xl cursor-pointer">
+                  {/* @ts-ignore */}
                   <img src={facebook} alt="" />
                 </div>
                 <div className="bg-[#F6F6F6] py-3 px-5 rounded-xl cursor-pointer">
+                  {/* @ts-ignore */}
                   <img src={apple} alt="" />
                 </div>
               </div>
