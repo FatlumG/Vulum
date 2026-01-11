@@ -462,7 +462,7 @@ export class App {
 
   private registerRoutingControllers() {
     useExpressServer(this.app, {
-      validation: { stopAtFirstError: true },
+      validation: true,
       cors: true,
       classTransformer: true,
       defaultErrorHandler: false,
