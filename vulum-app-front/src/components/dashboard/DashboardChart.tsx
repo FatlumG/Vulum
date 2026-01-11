@@ -20,7 +20,7 @@ interface Props {
   data?: Point[]; // [{month: "2025-01", sales: 123, products: 45, orders: 67}, ...]
 }
 
-const   DashboardChart = ({ data = [] }: Props) => {
+const DashboardChart = ({ data = [] }: Props) => {
   return (
     <div className="w-full h-[70vh] bg-white p-4 rounded shadow">
       <ResponsiveContainer>
@@ -42,15 +42,15 @@ const   DashboardChart = ({ data = [] }: Props) => {
           />
           <Line
             type="monotone"
-            dataKey="products"
-            stroke="#ffc849"
+            dataKey="orders"
+            stroke="#ffc43d"
             strokeWidth={2}
             dot={false}
           />
           <Line
             type="monotone"
-            dataKey="orders"
-            stroke="#ff9870"
+            dataKey="products"
+            stroke="#fea585"
             strokeWidth={2}
             dot={false}
           />
