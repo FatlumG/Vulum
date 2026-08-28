@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1787945126285,
+      "tag": "0000_black_inhumans",
+      "breakpoints": true
+    }
+  ]
+}
