@@ -31,7 +31,7 @@ async function seed() {
     const rolesData = [
       { roleName: 'super_admin' },
       { roleName: 'admin' },
-      { roleName: 'moderator' },
+      { roleName: 'manager' },
       { roleName: 'vendor' },
       { roleName: 'user' },
     ];

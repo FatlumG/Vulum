@@ -12,9 +12,12 @@ import { pgEnum } from 'drizzle-orm/pg-core';
 
 // Product status: lifecycle of a product listing
 export const productStatusEnum = pgEnum('product_status', [
-  'pending',   // Awaiting admin approval
-  'approved',  // Live and visible to buyers
-  'rejected',  // Rejected by admin
+  'pending',     // Awaiting admin approval (V1 + V2)
+  'approved',    // Live and visible to buyers (V2)
+  'rejected',    // Rejected by admin (V2)
+  'available',   // Live and visible to buyers (V1)
+  'unavailable', // Temporarily hidden (V1)
+  'sold',        // Sold out (V1)
 ]);
 
 // Order status: lifecycle of a customer order

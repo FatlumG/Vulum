@@ -25,6 +25,7 @@ import healthRoutes from './shared/health';
 import authRoutes from './modules/auth/auth.routes';
 import usersRoutes from './modules/users/users.routes';
 import categoriesRoutes from './modules/categories/categories.routes';
+import productsRoutes from './modules/products/products.routes';
 
 // ============================================================
 // App Setup
@@ -76,6 +77,9 @@ app.use('/api', usersRoutes);
 
 // Categories routes: GET /api/categories, POST, PUT, DELETE
 app.use('/api', categoriesRoutes);
+
+// Products routes: GET /api/products/*, POST, PUT, PATCH, DELETE
+app.use('/api', productsRoutes);
 
 // ============================================================
 // Default route
@@ -131,6 +135,12 @@ async function start() {
       console.log(`   POST   /api/categories`);
       console.log(`   PUT    /api/categories/:id`);
       console.log(`   DELETE /api/categories/:id`);
+      console.log(`   GET    /api/products`);
+      console.log(`   GET    /api/products/:id`);
+      console.log(`   POST   /api/products`);
+      console.log(`   PUT    /api/products/:id`);
+      console.log(`   PATCH  /api/products/:id`);
+      console.log(`   DELETE /api/products/:id`);
       console.log(`   GET    /api/health`);
       console.log(`   GET    /api/health/db`);
       console.log(`   GET    /api/health/ready`);
