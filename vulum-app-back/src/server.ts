@@ -26,6 +26,9 @@ import authRoutes from './modules/auth/auth.routes';
 import usersRoutes from './modules/users/users.routes';
 import categoriesRoutes from './modules/categories/categories.routes';
 import productsRoutes from './modules/products/products.routes';
+import ordersRoutes from './modules/orders/orders.routes';
+import orderItemsRoutes from './modules/orders/order-items.routes';
+import favoritesRoutes from './modules/favorites/favorites.routes';
 
 // ============================================================
 // App Setup
@@ -80,6 +83,15 @@ app.use('/api', categoriesRoutes);
 
 // Products routes: GET /api/products/*, POST, PUT, PATCH, DELETE
 app.use('/api', productsRoutes);
+
+// Orders routes: GET /api/orders/*, POST, PUT, DELETE
+app.use('/api', ordersRoutes);
+
+// Order Items routes: GET /api/orderitems/*, POST, PUT, DELETE
+app.use('/api', orderItemsRoutes);
+
+// Favorites routes: GET /api/favorites/*, POST, PUT, DELETE
+app.use('/api', favoritesRoutes);
 
 // ============================================================
 // Default route

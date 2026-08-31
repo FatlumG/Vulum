@@ -6,7 +6,7 @@
  *
  * Usage:
  *   router.get('/admin', authenticate, requireRole('admin'), handler);
- *   router.get('/moderator', authenticate, requireRole('admin', 'moderator'), handler);
+ *   router.get('/manager', authenticate, requireRole('admin', 'manager'), handler);
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -22,8 +22,8 @@ import { ForbiddenError } from '../errors';
  *   // Only admins can access
  *   router.delete('/users/:id', authenticate, requireRole('admin'), handler);
  *
- *   // Admins and moderators can access
- *   router.put('/products/:id', authenticate, requireRole('admin', 'moderator'), handler);
+ *   // Admins and managers can access
+ *   router.put('/products/:id', authenticate, requireRole('admin', 'manager'), handler);
  */
 export function requireRole(...roles: string[]) {
   return (req: Request, _res: Response, next: NextFunction) => {
