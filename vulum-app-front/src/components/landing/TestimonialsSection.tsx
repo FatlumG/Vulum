@@ -5,75 +5,64 @@ const TestimonialsSection = () => {
   return (
     <section
       id="testimonials"
-      className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-white"
+      className="py-32 md:py-48 px-4 sm:px-6 lg:px-8 bg-background"
     >
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-10 sm:mb-16">
-          <span className="text-primaryBlue font-semibold text-xs sm:text-sm uppercase tracking-wider">
-            Testimonials
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mt-3 sm:mt-4 mb-4 sm:mb-6">
+        <div className="text-center mb-16 md:mb-20">
+          <h2
+            className="font-extrabold text-foreground tracking-tight mb-4"
+            style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)" }}
+          >
             Loved by creators worldwide
           </h2>
-          <p className="text-base sm:text-xl text-gray-600 max-w-2xl mx-auto px-2">
-            Join thousands of satisfied creators who trust Vulum for their
-            digital product business.
+          <p className="text-muted-foreground max-w-xl mx-auto" style={{ fontSize: "clamp(1rem, 1.5vw, 1.125rem)" }}>
+            Join thousands of satisfied creators who trust Vulum.
           </p>
         </div>
 
         {/* Testimonials Grid */}
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {testimonials.map((testimonial, index) => (
-            <TestimonialCard key={index} testimonial={testimonial} />
+            <div
+              key={index}
+              className="group relative overflow-hidden rounded-2xl bg-card border border-border p-6 sm:p-8 hover:shadow-card-hover transition-all duration-500"
+            >
+              {/* Star Rating */}
+              <div className="flex gap-0.5 mb-4">
+                {[...Array(testimonial.rating)].map((_, i) => (
+                  <StarIcon key={i} filled />
+                ))}
+              </div>
+
+              {/* Quote */}
+              <p className="text-foreground/80 mb-6 leading-relaxed text-sm sm:text-base">
+                &ldquo;{testimonial.content}&rdquo;
+              </p>
+
+              {/* Author */}
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <img
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className="w-11 h-11 rounded-full object-cover ring-2 ring-background"
+                  />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm text-foreground">
+                    {testimonial.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {testimonial.role}
+                  </p>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </div>
     </section>
-  );
-};
-
-// Testimonial Card Sub-component
-interface TestimonialCardProps {
-  testimonial: {
-    name: string;
-    role: string;
-    image: string;
-    content: string;
-    rating: number;
-  };
-}
-
-const TestimonialCard = ({ testimonial }: TestimonialCardProps) => {
-  return (
-    <div className="bg-gray-50 rounded-xl sm:rounded-2xl p-5 sm:p-8 hover:shadow-lg transition-shadow">
-      {/* Star Rating */}
-      <div className="flex gap-1 mb-3 sm:mb-4">
-        {[...Array(testimonial.rating)].map((_, i) => (
-          <StarIcon key={i} filled />
-        ))}
-      </div>
-
-      {/* Testimonial Content */}
-      <p className="text-sm sm:text-base text-gray-700 mb-4 sm:mb-6 leading-relaxed">
-        "{testimonial.content}"
-      </p>
-
-      {/* Author Info */}
-      <div className="flex items-center gap-3 sm:gap-4">
-        <img
-          src={testimonial.image}
-          alt={testimonial.name}
-          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
-        />
-        <div>
-          <p className="font-semibold text-sm sm:text-base text-gray-900">
-            {testimonial.name}
-          </p>
-          <p className="text-xs sm:text-sm text-gray-500">{testimonial.role}</p>
-        </div>
-      </div>
-    </div>
   );
 };
 

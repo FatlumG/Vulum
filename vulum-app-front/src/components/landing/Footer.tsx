@@ -1,27 +1,24 @@
 import { Link } from "react-router-dom";
 import { TwitterIcon, GithubIcon, LinkedinIcon } from "./icons";
 import { footerSections } from "./data";
-import vulumLogo from "../../assets/logos/vulumBlue.png";
 
 const Footer = () => {
   return (
-    <footer className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gray-900">
+    <footer className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-foreground text-background">
       <div className="max-w-7xl mx-auto">
         {/* Footer Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12 mb-8 sm:mb-12">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12 mb-12 sm:mb-16">
           {/* Brand Column */}
           <div className="col-span-2 sm:col-span-2 md:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4 sm:mb-6">
-              {/* <img
-                src={vulumLogo}
-                alt="Vulum"
-                className="h-7 sm:h-8 w-auto brightness-0 invert"
-              /> */}
-              <span className="font-bold text-lg sm:text-xl text-white">
+            <Link to="/" className="flex items-center gap-2.5 mb-5">
+              <div className="w-8 h-8 rounded-lg bg-primaryBlue flex items-center justify-center">
+                <span className="text-white font-bold text-sm">V</span>
+              </div>
+              <span className="font-bold text-lg text-white tracking-tight">
                 Vulum
               </span>
             </Link>
-            <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
+            <p className="text-sm text-background/50 leading-relaxed max-w-xs">
               The all-in-one platform for selling digital products. Built for
               creators, by creators.
             </p>
@@ -33,14 +30,13 @@ const Footer = () => {
           ))}
         </div>
 
-        {/* Footer Bottom */}
-        <div className="border-t border-gray-800 pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-gray-400 text-xs sm:text-sm text-center sm:text-left">
-            © {new Date().getFullYear()} Vulum. All rights reserved.
+        {/* Divider */}
+        <div className="border-t border-background/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-background/40 text-xs sm:text-sm text-center sm:text-left">
+            &copy; {new Date().getFullYear()} Vulum. All rights reserved.
           </p>
 
-          {/* Social Links */}
-          <div className="flex items-center gap-4 sm:gap-6">
+          <div className="flex items-center gap-4 sm:gap-5">
             <SocialLink href="#" icon={<TwitterIcon />} label="Twitter" />
             <SocialLink href="#" icon={<GithubIcon />} label="GitHub" />
             <SocialLink href="#" icon={<LinkedinIcon />} label="LinkedIn" />
@@ -51,7 +47,6 @@ const Footer = () => {
   );
 };
 
-// Footer Column Sub-component
 interface FooterColumnProps {
   section: {
     title: string;
@@ -65,23 +60,21 @@ interface FooterColumnProps {
 const FooterColumn = ({ section }: FooterColumnProps) => {
   return (
     <div>
-      <h4 className="font-semibold text-white text-sm sm:text-base mb-3 sm:mb-4">
-        {section.title}
-      </h4>
-      <ul className="space-y-2 sm:space-y-3">
+      <h4 className="font-semibold text-white text-sm mb-4">{section.title}</h4>
+      <ul className="space-y-2.5">
         {section.links.map((link) => (
           <li key={link.label}>
             {link.href.startsWith("/") ? (
               <Link
                 to={link.href}
-                className="text-sm sm:text-base text-gray-400 hover:text-white transition-colors"
+                className="text-sm text-background/50 hover:text-white transition-colors"
               >
                 {link.label}
               </Link>
             ) : (
               <a
                 href={link.href}
-                className="text-sm sm:text-base text-gray-400 hover:text-white transition-colors"
+                className="text-sm text-background/50 hover:text-white transition-colors"
               >
                 {link.label}
               </a>
@@ -93,7 +86,6 @@ const FooterColumn = ({ section }: FooterColumnProps) => {
   );
 };
 
-// Social Link Sub-component
 interface SocialLinkProps {
   href: string;
   icon: React.ReactNode;
@@ -104,7 +96,7 @@ const SocialLink = ({ href, icon, label }: SocialLinkProps) => {
   return (
     <a
       href={href}
-      className="text-gray-400 hover:text-white transition-colors"
+      className="text-background/40 hover:text-white transition-colors"
       aria-label={label}
     >
       {icon}

@@ -8,22 +8,22 @@ interface InvoiceProps extends InvoiceInterface {
 
 const Invoice: FC<InvoiceProps> = ({ order, onPreview }) => {
   return (
-    <div className="flex flex-col gap-10 mt-10">
-      <div className="px-10 bg-gray-300 w-full h-24 rounded-lg flex items-center justify-between">
-        <img
-          className="h-16 rounded-lg"
-          src={order.orderItems[0].productsList.productImages[0].image_url}
-          alt={`Image of ${order.name}`}
-        />
-        <h2 className="">{order.name} </h2>
-        <div className="flex gap-5">
-          <Button variant="outline" onClick={onPreview}>
-            Preview
-          </Button>
-          <Button variant="default" className="bg-blue-500 hover:bg-blue-600">
-            Download
-          </Button>
-        </div>
+    <div className="bg-card border border-border rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:shadow-sm transition-shadow">
+      <img
+        className="h-14 w-14 rounded-lg object-cover shrink-0"
+        src={order.orderItems[0].productsList.productImages[0].image_url}
+        alt={`Image of ${order.name}`}
+      />
+      <div className="flex-1 min-w-0">
+        <h2 className="font-medium text-foreground truncate">{order.name}</h2>
+      </div>
+      <div className="flex gap-2 shrink-0">
+        <Button variant="outline" size="sm" onClick={onPreview}>
+          Preview
+        </Button>
+        <Button size="sm" className="bg-primaryBlue hover:bg-darkBlue text-white">
+          Download
+        </Button>
       </div>
     </div>
   );

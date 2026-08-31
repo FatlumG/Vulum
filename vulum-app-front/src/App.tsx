@@ -33,8 +33,8 @@ const App: React.FC = () => {
   return (
     <>
       {isLoading && (
-        <div className="w-full h-full bg-white flex justify-center items-center absolute z-50">
-          <HashLoader />
+        <div className="w-full h-full bg-background/80 backdrop-blur-sm flex justify-center items-center fixed inset-0 z-50">
+          <HashLoader color="hsl(var(--primary))" />
         </div>
       )}
 
@@ -65,13 +65,14 @@ const App: React.FC = () => {
               </PublicRoute>
             }
           />
-          <Route 
+          <Route
             path="*"
             element={
               <PublicRoute>
                 <NotFoundPage />
               </PublicRoute>
-            }/>
+            }
+          />
 
           {/* Protected Layout Wrapper */}
           <Route
@@ -86,9 +87,15 @@ const App: React.FC = () => {
             <Route path="/products" element={<AllProductsPage />} />
             <Route path="/my-products" element={<MyProductsPage />} />
             <Route path="/products/add-product" element={<AddProductPage />} />
-            <Route path="/pending-products" element={<PendingProductsPage />} />
+            <Route
+              path="/pending-products"
+              element={<PendingProductsPage />}
+            />
             <Route path="/products/:slug" element={<UpdateProductPage />} />
-            <Route path="/products/view/:slug" element={<ViewProductPage />} />
+            <Route
+              path="/products/view/:slug"
+              element={<ViewProductPage />}
+            />
             <Route path="/favorites" element={<FavoritePage />} />
             <Route path="/inbox" element={<InboxPage />} />
             <Route path="/order-lists" element={<OListPage />} />

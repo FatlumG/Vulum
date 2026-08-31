@@ -10,23 +10,43 @@ interface TotalStatsProps {
   up: boolean;
 }
 
-const TotalStats: React.FC<TotalStatsProps> = ({img, alt, title, quantity, percentage, descr, up}) =>  {
+const TotalStats: React.FC<TotalStatsProps> = ({
+  img,
+  alt,
+  title,
+  quantity,
+  percentage,
+  descr,
+  up,
+}) => {
   return (
-    <div className="h-[160px] w-[350px] flex flex-col justify-between py-5 px-6 mt-5 bg-white rounded-3xl relative">
-      <img src={img} alt={alt} className="size-[55px] absolute right-5" />
-      <p className="text-[14px]">{title}</p>
-      <p className="text-[25px] font-semibold">{quantity}</p>
-      <div className="flex items-center gap-2 text-[14px] whitespace-nowrap">
+    <div className="bg-card rounded-xl border border-border p-5 sm:p-6 hover:shadow-card-hover transition-all duration-300 group">
+      <div className="flex items-start justify-between mb-4">
+        <p className="text-sm font-medium text-muted-foreground">{title}</p>
+        <div className="w-10 h-10 rounded-lg bg-primaryBlue/5 flex items-center justify-center group-hover:bg-primaryBlue/10 transition-colors">
+          <img src={img} alt={alt} className="w-5 h-5 opacity-80" />
+        </div>
+      </div>
+      <p className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+        {quantity?.toLocaleString() ?? 0}
+      </p>
+      <div className="flex items-center gap-1.5 text-sm">
         <FaArrowTrendUp
-          className={`scale-105 ${up ? "text-green-500" : "text-red-500"}`}
+          className={`w-3.5 h-3.5 ${
+            up ? "text-emerald-500" : "text-red-500"
+          }`}
         />
-        <span className={`${up ? "text-green-500" : "text-red-500"}`}>
+        <span
+          className={`font-medium ${
+            up ? "text-emerald-500" : "text-red-500"
+          }`}
+        >
           {percentage}
         </span>
-        {descr}
+        <span className="text-muted-foreground text-xs">{descr}</span>
       </div>
     </div>
   );
-}
+};
 
 export default TotalStats;
