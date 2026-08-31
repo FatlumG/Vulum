@@ -1,11 +1,12 @@
-import { FC } from "react";
+import { FC, lazy, Suspense } from "react";
 import TotalStats from "../components/TotalStats";
 import usersIcon from "../assets/figures/users.svg";
 import ordersIcon from "../assets/figures/orders.svg";
 import salesIcon from "../assets/figures/sales.svg";
 import pendingsIcon from "../assets/figures/pendings.svg";
-import DashboardChart from "../components/dashboard/DashboardChart";
 import getDashboardData from "../hooks-apiCalls/useDashboardData";
+
+const DashboardChart = lazy(() => import("../components/dashboard/DashboardChart"));
 
 const DashboardPage: FC = () => {
   const { stats, monthlyStats, loading, error } = getDashboardData();
@@ -89,7 +90,9 @@ const DashboardPage: FC = () => {
           </div>
         ) : (
           <div className="p-4">
-            <DashboardChart data={monthlyStats} />
+            <Suspense fallback={<div className="flex items-center justify-center h-[50vh]"><div className="text-sm text-muted-foreground">Loading chart...</div></div>}>
+              <DashboardChart data={monthlyStats} />
+            </Suspense>
           </div>
         )}
       </div>
