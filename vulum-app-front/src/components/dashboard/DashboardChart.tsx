@@ -10,7 +10,7 @@ import {
 } from "recharts";
 
 type Point = {
-  month: string;
+  month: string | number;
   sales?: number;
   products?: number;
   orders?: number;

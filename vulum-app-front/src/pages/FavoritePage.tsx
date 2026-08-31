@@ -2,6 +2,18 @@ import React from "react";
 import ProductCard from "../components/products/MyProductCard";
 import { getMyFavorites } from "../hooks-apiCalls/getMyFavoritesHook";
 
+interface FavoriteItem {
+  id: number;
+  product?: {
+    id: number;
+    product_name: string;
+    price: number;
+    status: string;
+    stock: number;
+    productImages?: { id: number; image_url: string }[];
+  };
+}
+
 const FavoritePage: React.FC = () => {
   const products = getMyFavorites();
 
@@ -12,21 +24,24 @@ const FavoritePage: React.FC = () => {
       </h1>
       {products && products.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {products.map((prod) => (
-            <ProductCard
-              key={prod.id}
-              id={prod.id}
-              image={
-                prod.product?.productImages?.[0]?.image_url ||
-                "fallback-image-url.jpg"
-              }
-              alt={prod.product?.product_name}
-              title={prod.product?.product_name}
-              price={prod.product?.price}
-              status={prod.product?.status}
-              stock={prod.product?.stock}
-            />
-          ))}
+          {products.map((prod) => {
+            const fav = prod as unknown as FavoriteItem;
+            return (
+              <ProductCard
+                key={fav.id}
+                id={fav.id}
+                image={
+                  fav.product?.productImages?.[0]?.image_url ||
+                  "fallback-image-url.jpg"
+                }
+                alt={fav.product?.product_name ?? ""}
+                title={fav.product?.product_name ?? ""}
+                price={fav.product?.price ?? 0}
+                status={fav.product?.status ?? "unknown"}
+                stock={fav.product?.stock ?? 0}
+              />
+            );
+          })}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center">

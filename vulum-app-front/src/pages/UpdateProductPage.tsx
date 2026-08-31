@@ -5,7 +5,7 @@ import api from "../auth/api";
 import { useParams, useNavigate } from "react-router-dom";
 
 interface UpdateProductFormProps {
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onSubmit?: (event: FormEvent<HTMLFormElement>) => void;
 }
 
 const UpdateProductPage = forwardRef<HTMLFormElement, UpdateProductFormProps>(

@@ -11,13 +11,13 @@ import { Card, CardContent } from "../ui/card";
 const UserUpdateForm: FC = () => {
   const userpfp = getPfp();
   const [user, setUser] = useState<UserUpdateInterface>({
-    Username: userpfp?.user?.Username,
-    FName: userpfp?.user?.FName,
-    LName: userpfp?.user?.LName,
-    Email: userpfp?.user?.Email,
-    Phone: userpfp?.user?.Phone,
-    Address: userpfp?.user?.Address,
-    Bio: userpfp?.user?.Bio,
+    username: userpfp?.user?.username,
+    first_name: userpfp?.user?.first_name,
+    last_name: userpfp?.user?.last_name,
+    email: userpfp?.user?.email,
+    phone: userpfp?.user?.phone,
+    address: userpfp?.user?.address,
+    bio: userpfp?.user?.bio,
   });
 
   const userId = userpfp?.user?.id;
@@ -63,9 +63,9 @@ const UserUpdateForm: FC = () => {
                 id="username"
                 type="text"
                 placeholder="Username"
-                value={user.Username}
+                value={user.username}
                 onChange={(e) => {
-                  setUser({ ...user, Username: e.target.value });
+                  setUser({ ...user, username: e.target.value });
                 }}
               />
             </div>
@@ -75,7 +75,7 @@ const UserUpdateForm: FC = () => {
                 id="email"
                 type="email"
                 placeholder="Email"
-                value={user.Email}
+                value={user.email}
                 disabled
               />
             </div>
@@ -85,9 +85,9 @@ const UserUpdateForm: FC = () => {
                 id="fname"
                 type="text"
                 placeholder="First Name"
-                value={user.FName}
+                value={user.first_name}
                 onChange={(e) => {
-                  setUser({ ...user, FName: e.target.value });
+                  setUser({ ...user, first_name: e.target.value });
                 }}
               />
             </div>
@@ -97,9 +97,9 @@ const UserUpdateForm: FC = () => {
                 id="lname"
                 type="text"
                 placeholder="Last Name"
-                value={user.LName}
+                value={user.last_name}
                 onChange={(e) => {
-                  setUser({ ...user, LName: e.target.value });
+                  setUser({ ...user, last_name: e.target.value });
                 }}
               />
             </div>
@@ -109,9 +109,9 @@ const UserUpdateForm: FC = () => {
                 id="phone"
                 type="text"
                 placeholder="Phone Number"
-                value={user.Phone}
+                value={user.phone}
                 onChange={(e) => {
-                  setUser({ ...user, Phone: e.target.value });
+                  setUser({ ...user, phone: e.target.value });
                 }}
               />
             </div>
@@ -121,9 +121,9 @@ const UserUpdateForm: FC = () => {
                 id="address"
                 type="text"
                 placeholder="Address"
-                value={user.Address}
+                value={user.address}
                 onChange={(e) => {
-                  setUser({ ...user, Address: e.target.value });
+                  setUser({ ...user, address: e.target.value });
                 }}
               />
             </div>
@@ -135,9 +135,9 @@ const UserUpdateForm: FC = () => {
               id="bio"
               placeholder="Tell us about yourself..."
               className="flex h-24 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm shadow-sm transition-all duration-200 placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 resize-none"
-              value={user.Bio}
+              value={user.bio}
               onChange={(e) => {
-                setUser({ ...user, Bio: e.target.value });
+                setUser({ ...user, bio: e.target.value });
               }}
             />
           </div>
