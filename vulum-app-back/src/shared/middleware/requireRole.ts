@@ -6,7 +6,10 @@
  *
  * Usage:
  *   router.get('/admin', authenticate, requireRole('admin'), handler);
- *   router.get('/manager', authenticate, requireRole('admin', 'manager'), handler);
+ *   router.get('/admin-or-manager', authenticate, requireRole('admin', 'manager'), handler);
+ *
+ * Role names should match DB values exactly (e.g. 'admin', 'super admin', 'manager', 'user').
+ * Comparison is case-insensitive for safety, but canonical names are preferred.
  */
 
 import { Request, Response, NextFunction } from 'express';

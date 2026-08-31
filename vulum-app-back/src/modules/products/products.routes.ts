@@ -47,7 +47,7 @@ const router = Router();
 router.get(
   '/products',
   authenticate,
-  requireRole('Admin', 'Super Admin', 'Manager'),
+  requireRole('admin', 'super admin', 'manager'),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const page = req.query.page ? Number(req.query.page) : 1;
@@ -253,7 +253,7 @@ router.post(
 router.put(
   '/products/:id',
   authenticate,
-  requireRole('Admin', 'Super Admin', 'Manager'),
+  requireRole('admin', 'super admin', 'manager'),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = Number(req.params.id);
@@ -273,7 +273,7 @@ router.put(
 router.patch(
   '/products/:id',
   authenticate,
-  requireRole('Admin', 'Super Admin', 'Manager'),
+  requireRole('admin', 'super admin', 'manager'),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = Number(req.params.id);
@@ -294,7 +294,7 @@ router.patch(
 router.delete(
   '/products/:id',
   authenticate,
-  requireRole('Admin', 'Super Admin', 'Manager'),
+  requireRole('admin', 'super admin', 'manager'),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = Number(req.params.id);

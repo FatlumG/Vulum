@@ -96,7 +96,7 @@ router.post(
 router.put(
   '/categories/:id',
   authenticate,
-  requireRole('Admin', 'Super Admin', 'Manager'),
+  requireRole('admin', 'super admin', 'manager'),
   validate(schemas.category.create), // V1 update uses same fields as create
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -119,7 +119,7 @@ router.put(
 router.delete(
   '/categories/:id',
   authenticate,
-  requireRole('Admin', 'Super Admin', 'Manager'),
+  requireRole('admin', 'super admin', 'manager'),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = Number(req.params.id);
