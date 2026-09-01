@@ -29,6 +29,13 @@ import productsRoutes from './modules/products/products.routes';
 import ordersRoutes from './modules/orders/orders.routes';
 import orderItemsRoutes from './modules/orders/order-items.routes';
 import favoritesRoutes from './modules/favorites/favorites.routes';
+import invoicesRoutes from './modules/invoices/invoices.routes';
+import salesRoutes from './modules/sales/sales.routes';
+import pendingsRoutes from './modules/pendings/pendings.routes';
+import plansRoutes from './modules/plans/plans.routes';
+import subscriptionsRoutes from './modules/subscriptions/subscriptions.routes';
+import chatRoutes from './modules/chat/chat.routes';
+import { initializeChatSocket } from './modules/chat/chat.socket';
 
 // ============================================================
 // App Setup
@@ -93,6 +100,24 @@ app.use('/api', orderItemsRoutes);
 // Favorites routes: GET /api/favorites/*, POST, PUT, DELETE
 app.use('/api', favoritesRoutes);
 
+// Invoices routes: GET /api/invoices/*, POST, PUT, DELETE
+app.use('/api', invoicesRoutes);
+
+// Sales routes: GET /api/sales/*, POST, PUT, DELETE
+app.use('/api', salesRoutes);
+
+// Pendings routes: GET /api/pendings/*, POST, PUT, DELETE
+app.use('/api', pendingsRoutes);
+
+// Plans routes: GET /api/pricing/*, POST, PUT, DELETE
+app.use('/api', plansRoutes);
+
+// Subscriptions routes: GET /api/user-subscription/*, POST, DELETE
+app.use('/api', subscriptionsRoutes);
+
+// Chat REST routes: GET /api/chat/messages/*, DELETE
+app.use('/api', chatRoutes);
+
 // ============================================================
 // Default route
 // ============================================================
@@ -128,7 +153,21 @@ async function start() {
     console.log('✅ PostgreSQL connected');
     client.release();
 
-    app.listen(port, () => {
+    // Create HTTP server for Socket.IO
+    const http = require('http');
+    const httpServer = http.createServer(app);
+    const { Server } = require('socket.io');
+    const io = new Server(httpServer, {
+      cors: {
+        origin: '*',
+        methods: ['GET', 'POST'],
+      },
+    });
+
+    // Initialize Chat Socket.IO handlers
+    initializeChatSocket(io);
+
+    httpServer.listen(port, () => {
       console.log(`\n🚀 V2 Server started at http://localhost:${port}`);
       console.log(`📋 Environment: ${process.env.NODE_ENV || 'development'}`);
       console.log(`🗄️  Database: PostgreSQL (Drizzle ORM)`);
@@ -156,6 +195,10 @@ async function start() {
       console.log(`   GET    /api/health`);
       console.log(`   GET    /api/health/db`);
       console.log(`   GET    /api/health/ready`);
+      console.log(`   GET    /api/chat/messages/:roomId`);
+      console.log(`   GET    /api/chat/messages/:roomId/:id`);
+      console.log(`   DELETE /api/chat/messages/:id`);
+      console.log(`   🔌 Socket.IO /chat`);
       console.log(`\n⚠️  V1 server (main.ts) is NOT affected.\n`);
     });
   } catch (error) {
