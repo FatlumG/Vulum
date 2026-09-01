@@ -51,7 +51,7 @@ const UserUpdateForm: FC = () => {
               <CiCamera className="absolute z-10 text-muted-foreground group-hover:text-foreground transition-colors" />
             </div>
             <h3 className="text-sm text-muted-foreground">
-              {userpfp?.user?.role.RoleName}
+              {userpfp?.user?.role_name}
             </h3>
           </div>
 

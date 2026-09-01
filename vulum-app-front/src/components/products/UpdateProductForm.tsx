@@ -49,7 +49,7 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
         try {
           const res = await api.get(`/products/${id}`);
           setProduct(res.data);
-          setImages(res.data.productImages);
+          setImages(res.data.product_images);
         } catch (error: any) {
           notify.error(error.response.data.message);
           console.error(error.message, "error.message");
@@ -62,8 +62,8 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
       const fetchCategories = async () => {
         try {
           const res = await api.get("/categories");
-          // console.log(res.data.rows, "res.data.rows");
-          setCategories(res.data.rows);
+          // console.log(res.data.items, "res.data.items");
+          setCategories(res.data.items);
         } catch (error) {
           notify.error("Failed to fetch categories");
           console.error("Error fetching categories:", error);
@@ -109,12 +109,11 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
       console.log(product.Category, "product");
 
       return {
-        ProductName: product.ProductName,
-        ProductDescription: product.ProductDescription,
-        Price: Number(product.Price),
-        Stock: Number(product.Stock),
-        // @ts-ignore
-        Category: Number(product.category.id),
+        product_name: product.ProductName,
+        product_description: product.ProductDescription,
+        price: Number(product.Price),
+        stock: Number(product.Stock),
+        category_id: Number(product.Category ?? selectedCategory),
       };
     }
 

@@ -34,8 +34,8 @@ const Layout: FC<LayoutProps> = ({ children }) => {
     <>
       <Header
         userInitials={userInitials}
-        FullName={user?.FullName ?? ""}
-        RoleName={user?.role.RoleName}
+        FullName={`${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim()}
+        RoleName={user?.role_name ?? ""}
       />
       <div className="grid grid-cols-12">
         <DashboardSidebar classes="col-span-2" />

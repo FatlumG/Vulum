@@ -75,8 +75,8 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
           // dispatch(startLoading());
           // console.log("Fetching categories");
           const res = await api.get("/categories");
-          setCategories(res.data.rows);
-          console.log(res.data.rows, "res.data.rows");
+          setCategories(res.data.items);
+          console.log(res.data.items, "res.data.items");
           // dispatch(stopLoading());
         } catch (error) {
           console.error("Error fetching categories:", error);

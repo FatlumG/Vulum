@@ -11,10 +11,8 @@ export const useOrderProduct = async (id: number) => {
         },
       ],
     });
-    const url = response.data.url;
-    if (url) {
-      window.location.href = url;
-    }
+    // V2: Stripe checkout URL deferred — show success message
+    // V1: const url = response.data.url; if (url) window.location.href = url;
     return response.data;
   } catch (error: any) {
     toast.error(error.response.data.message);

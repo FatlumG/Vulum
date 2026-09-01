@@ -21,7 +21,7 @@ const PricingCards: React.FC = () => {
     getSubscribedPlan();
   }, []);
 
-  const plans = getPricingPlans({});
+  const plans = getPricingPlans();
   const { subscribePlan } = useSubscribePlan();
 
   if (!Array.isArray(plans)) return null;
