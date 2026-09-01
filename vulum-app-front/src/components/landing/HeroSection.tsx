@@ -30,17 +30,7 @@ const HeroSection = () => {
             style={{ fontSize: "clamp(2.5rem, 5vw, 5rem)" }}
           >
             <span className="max-w-5xl mx-auto block">
-              We shape{" "}
-              <span className="inline-block relative align-middle mx-1">
-                <span
-                  className="inline-block w-20 h-10 sm:w-28 sm:h-12 rounded-xl bg-cover bg-center mx-1 shadow-md"
-                  style={{
-                    backgroundImage:
-                      "url(https://picsum.photos/seed/digital1/200/100)",
-                  }}
-                />
-              </span>{" "}
-              digital products
+              We shape digital products
             </span>
           </h1>
 
