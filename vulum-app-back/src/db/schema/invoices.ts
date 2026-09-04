@@ -32,7 +32,14 @@ export const invoices = pgTable('invoices', {
   status: invoiceStatusEnum('status').notNull().default('draft'),
   hostedInvoiceUrl: text('hosted_invoice_url'),
   amountDue: decimal('amount_due', { precision: 12, scale: 2 }),
-  currency: varchar('currency', { length: 10 }).notNull().default('usd'),
+  currency: varchar('currency', { length: 10 }).notNull().default('eur'),
+  grossAmount: decimal('gross_amount', { precision: 12, scale: 2 }),
+  platformFee: decimal('platform_fee', { precision: 12, scale: 2 }),
+  stripeFee: decimal('stripe_fee', { precision: 12, scale: 2 }),
+  netAmount: decimal('net_amount', { precision: 12, scale: 2 }),
+  // Refund tracking
+  refundedAmount: decimal('refunded_amount', { precision: 12, scale: 2 }).default('0.00').notNull(),
+  refundStatus: varchar('refund_status', { length: 20 }).default('none').notNull(), // none | partial | full
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 }, (t) => ({

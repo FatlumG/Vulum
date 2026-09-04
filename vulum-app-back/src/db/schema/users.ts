@@ -37,6 +37,7 @@ export const users = pgTable('users', {
   pricingPlanId: integer('pricing_plan_id')
     .references(() => plans.id, { onDelete: 'set null' }),
   stripeCustomerId: varchar('stripe_customer_id', { length: 255 }),
+  stripeConnectAccountId: varchar('stripe_connect_account_id', { length: 255 }),
   deletedAt: timestamp('deleted_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),

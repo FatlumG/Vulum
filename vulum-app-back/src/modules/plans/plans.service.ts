@@ -32,9 +32,10 @@
  */
 
 import { db } from '../../db/client';
-import { plans, users } from '../../db/schema';
-import { eq, count, desc } from 'drizzle-orm';
+import { plans, users, subscriptions } from '../../db/schema';
+import { eq, count, desc, and, or } from 'drizzle-orm';
 import { NotFoundError, ValidationError } from '../../shared/errors';
+import { createPlanPrice } from '../stripe/stripe.service';
 import type {
   PlanResponse,
   PlanListResponse,
@@ -109,7 +110,7 @@ export async function findOneById(id: number): Promise<PlanResponse> {
 // ============================================================
 // create — Create a plan
 // V1: accepts { plan_name, plan_description, price, billing_cycle }, returns 201
-// V1 also creates Stripe product + price — DEFERRED to Phase 4
+// V2: creates Stripe Product+Price then saves to DB
 // ============================================================
 
 export async function create(data: CreatePlanInput): Promise<PlanResponse> {
@@ -124,6 +125,26 @@ export async function create(data: CreatePlanInput): Promise<PlanResponse> {
     throw new ValidationError('price is required');
   }
 
+  // Create Stripe Product + Price if billing cycle is not 'none' and price > 0
+  let stripeProductId: string | null = data.stripe_product_id || null;
+  let stripePriceId: string | null = data.stripe_price_id || null;
+
+  if (data.price > 0 && data.billing_cycle && data.billing_cycle !== 'none') {
+    try {
+      const interval = data.billing_cycle === 'yearly' ? 'year' : 'month';
+      const stripeResult = await createPlanPrice(
+        data.plan_name,
+        data.price,
+        'eur',
+        interval
+      );
+      stripeProductId = stripeResult.stripeProductId;
+      stripePriceId = stripeResult.stripePriceId;
+    } catch (err: any) {
+      console.warn('Failed to create Stripe Plan Price:', err.message);
+    }
+  }
+
   const [row] = await db
     .insert(plans)
     .values({
@@ -131,8 +152,8 @@ export async function create(data: CreatePlanInput): Promise<PlanResponse> {
       planDescription: data.plan_description,
       price: String(data.price),
       billingCycle: (data.billing_cycle as 'monthly' | 'yearly' | 'none') || 'none',
-      stripePriceId: data.stripe_price_id || null,
-      stripeProductId: data.stripe_product_id || null,
+      stripePriceId,
+      stripeProductId,
     })
     .returning();
 

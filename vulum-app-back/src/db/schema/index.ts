@@ -22,6 +22,8 @@ export { favorites } from './favorites';
 export { productImages } from './product-images';
 export { pendings } from './pendings';
 export { chatMessages } from './chat-messages';
+export { stripeConnectAccounts } from './stripe-connect-accounts';
+export { webhookEvents } from './webhook-events';
 
 // Re-export all relations
 export { rolesRelations } from './roles';
@@ -38,3 +40,4 @@ export { favoritesRelations } from './favorites';
 export { productImagesRelations } from './product-images';
 export { pendingsRelations } from './pendings';
 export { chatMessagesRelations } from './chat-messages';
+export { stripeConnectAccountsRelations } from './stripe-connect-accounts';

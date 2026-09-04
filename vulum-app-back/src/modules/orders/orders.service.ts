@@ -32,9 +32,12 @@
  */
 
 import { db } from '../../db/client';
-import { orders, orderItems, products, invoices, users } from '../../db/schema';
+import { orders, orderItems, products, invoices, users, stripeConnectAccounts } from '../../db/schema';
 import { eq, count, desc, inArray } from 'drizzle-orm';
 import { NotFoundError, ValidationError, ForbiddenError } from '../../shared/errors';
+import stripe, { stripeConfig } from '../../config/stripe';
+import { calculateCommission, toCents, centsToString } from '../stripe/stripe.commission';
+import type Stripe from 'stripe';
 import type {
   OrderResponse,
   CreateOrderInput,
@@ -106,7 +109,7 @@ export async function findOneById(id: number): Promise<OrderResponse> {
 }
 
 // ============================================================
-// createCheckoutSession — Create order with items + invoice
+// createCheckoutSession — Create order + Stripe Connect checkout
 //
 // V1 validation rules:
 //   - Items array non-empty
@@ -114,19 +117,22 @@ export async function findOneById(id: number): Promise<OrderResponse> {
 //   - User is not buying their own product
 //   - Quantities > 0
 //   - Sufficient stock
-//   - Stripe price IDs exist (V2 skips Stripe check)
+//   - Stripe price IDs exist (V1 checked this)
 //
-// V2 additions:
-//   - Creates invoice record (without Stripe IDs)
-//   - Returns order + items + invoiceId (no Stripe session URL)
+// V2 Stripe Connect flow:
+//   1. Validate items
+//   2. Find seller + their Connect account
+//   3. Calculate commission based on seller's subscription
+//   4. Create order + items + invoice in DB
+//   5. Create Stripe Checkout Session with destination charge
+//   6. Return { url, invoiceId } — customer redirects to Stripe
 // ============================================================
 
 export async function createCheckoutSession(
   data: CreateOrderInput,
   userId: number
 ): Promise<{
-  order: OrderResponse;
-  items: OrderItemResponse[];
+  url: string;
   invoiceId: number;
 }> {
   const { items: requestData } = data;
@@ -147,8 +153,10 @@ export async function createCheckoutSession(
     throw new ValidationError('One or more products not found.');
   }
 
-  // 3. Validate each item
+  // 3. Validate each item and find seller
   let totalAmount = 0;
+  let sellerId: number | null = null;
+  const stripeLineItems: { price: string; quantity: number }[] = [];
 
   for (const item of requestData) {
     const product = foundProducts.find((p) => p.id === item.product_id);
@@ -172,11 +180,50 @@ export async function createCheckoutSession(
       throw new ValidationError(`Not enough stock for ${product.productName}.`);
     }
 
+    // Must have a Stripe Price ID for checkout
+    if (!product.stripePriceId) {
+      throw new ValidationError(`Product "${product.productName}" is not configured for payment.`);
+    }
+
     // Accumulate total
     totalAmount += Number(product.price) * item.quantity;
+
+    // Track seller (assume all products in one order are from same seller)
+    if (!sellerId) {
+      sellerId = product.createdBy;
+    } else if (sellerId !== product.createdBy) {
+      throw new ValidationError('All products in an order must be from the same seller.');
+    }
+
+    // Build Stripe line items
+    stripeLineItems.push({
+      price: product.stripePriceId,
+      quantity: item.quantity,
+    });
   }
 
-  // 4. Create order record
+  if (!sellerId) {
+    throw new ValidationError('Could not determine seller for this order.');
+  }
+
+  // 4. Calculate commission
+  const totalAmountCents = Math.round(totalAmount * 100);
+  const commission = await calculateCommission(totalAmountCents, sellerId);
+
+  // 5. Look up seller's Stripe Connect account
+  const connectResult = await db
+    .select()
+    .from(stripeConnectAccounts)
+    .where(eq(stripeConnectAccounts.userId, sellerId))
+    .limit(1);
+
+  const connectAccount = connectResult[0];
+
+  if (!connectAccount || !connectAccount.chargesEnabled) {
+    throw new ValidationError('Seller is not set up to receive payments. Please ask them to complete Stripe onboarding.');
+  }
+
+  // 6. Create order record in DB
   const [orderRow] = await db
     .insert(orders)
     .values({
@@ -184,6 +231,12 @@ export async function createCheckoutSession(
       amount: String(totalAmount),
       status: 'pending',
       createdBy: userId,
+      sellerId,
+      grossAmount: String(totalAmount),
+      platformFee: centsToString(commission.platformFeeCents),
+      netAmount: centsToString(commission.netAmountCents),
+      commissionRate: String(commission.commissionRate),
+      currency: 'eur',
     })
     .returning();
 
@@ -191,36 +244,22 @@ export async function createCheckoutSession(
     throw new Error('Failed to create order');
   }
 
-  // 5. Create order items
-  const createdItems: OrderItemResponse[] = [];
-
+  // 7. Create order items
   for (const item of requestData) {
     const product = foundProducts.find((p) => p.id === item.product_id)!;
     const lineTotal = Number(product.price) * item.quantity;
 
-    const [itemRow] = await db
+    await db
       .insert(orderItems)
       .values({
         orderId: orderRow.id,
         productId: item.product_id,
         quantity: item.quantity,
         totalAmount: String(lineTotal),
-      })
-      .returning();
-
-    if (itemRow) {
-      createdItems.push({
-        id: itemRow.id,
-        order_id: itemRow.orderId,
-        product_id: itemRow.productId,
-        quantity: itemRow.quantity,
-        total_amount: String(itemRow.totalAmount),
-        created_at: itemRow.createdAt,
       });
-    }
   }
 
-  // 6. Create invoice record (without Stripe — Phase 4)
+  // 8. Create invoice record
   const [invoiceRow] = await db
     .insert(invoices)
     .values({
@@ -228,13 +267,69 @@ export async function createCheckoutSession(
       orderId: orderRow.id,
       status: 'draft',
       amountDue: String(totalAmount),
-      currency: 'usd',
+      currency: 'eur',
+      grossAmount: String(totalAmount),
+      platformFee: centsToString(commission.platformFeeCents),
+      netAmount: centsToString(commission.netAmountCents),
     })
     .returning();
 
+  // 9. Create Stripe Checkout Session with Connect destination charge
+  // Stripe will route payment: customer → Vulum platform → seller (minus platform fee)
+  let session: Stripe.Checkout.Session;
+
+  try {
+    session = await stripe.checkout.sessions.create(
+      {
+        payment_method_types: ['card'],
+        mode: 'payment',
+        line_items: stripeLineItems,
+        success_url: stripeConfig.successUrl,
+        cancel_url: stripeConfig.cancelUrl,
+        metadata: {
+          userId: String(userId),
+          orderId: String(orderRow.id),
+          sellerId: String(sellerId),
+          invoiceId: String(invoiceRow?.id ?? 0),
+          commissionRate: String(commission.commissionRate),
+        },
+        // Destination charge: payment goes to platform, then transferred to seller
+        payment_intent_data: {
+          application_fee_amount: commission.platformFeeCents,
+          transfer_data: {
+            destination: connectAccount.stripeAccountId,
+          },
+        },
+      },
+      {
+        // Idempotency key to prevent duplicate sessions for same order
+        idempotencyKey: `order-${orderRow.id}-${Date.now()}`,
+      }
+    );
+  } catch (error: any) {
+    // If Stripe session creation fails, we still have the order in DB
+    // Return the order without a Stripe URL (order stays pending)
+    console.error('Failed to create Stripe checkout session:', error.message);
+    throw new ValidationError(`Payment processing failed: ${error.message}`);
+  }
+
+  // 10. Update order with Stripe payment intent ID
+  if (session.payment_intent) {
+    await db
+      .update(orders)
+      .set({
+        stripePaymentIntentId: String(session.payment_intent),
+        updatedAt: new Date(),
+      })
+      .where(eq(orders.id, orderRow.id));
+  }
+
+  if (!session.url) {
+    throw new Error('Stripe checkout session created but no URL returned');
+  }
+
   return {
-    order: toOrderResponse(orderRow),
-    items: createdItems,
+    url: session.url,
     invoiceId: invoiceRow?.id ?? 0,
   };
 }

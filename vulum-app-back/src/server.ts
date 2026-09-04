@@ -36,6 +36,7 @@ import plansRoutes from './modules/plans/plans.routes';
 import subscriptionsRoutes from './modules/subscriptions/subscriptions.routes';
 import chatRoutes from './modules/chat/chat.routes';
 import { initializeChatSocket } from './modules/chat/chat.socket';
+import stripeRoutes from './modules/stripe/stripe.routes';
 
 // ============================================================
 // App Setup
@@ -64,6 +65,42 @@ app.use(
 
 // Request logging
 app.use(requestLogger);
+
+// Stripe webhook must be registered BEFORE JSON parser
+// It needs the raw body for signature verification
+import { stripeConfig } from './config/stripe';
+import Stripe from 'stripe';
+import { handleWebhookEvent } from './modules/stripe/stripe.webhook';
+
+app.post(
+  '/api/stripe/webhook',
+  express.raw({ type: 'application/json' }),
+  async (req, res) => {
+    const sig = req.headers['stripe-signature'] as string | undefined;
+    const endpointSecret = stripeConfig.webhookSecret;
+
+    if (!sig || !endpointSecret) {
+      console.error('Missing stripe signature or webhook secret');
+      return res.status(400).json({ error: 'Webhook config error' });
+    }
+
+    let event: Stripe.Event;
+    try {
+      const stripe = (await import('./config/stripe')).default;
+      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    } catch (err: any) {
+      console.error('Webhook signature verification failed:', err?.message);
+      return res.status(400).json({ error: `Webhook Error: ${err?.message}` });
+    }
+
+    // Fast 200 response — process asynchronously
+    res.status(200).json({ received: true });
+
+    handleWebhookEvent(event).catch((err) => {
+      console.error('Background webhook processing error:', err);
+    });
+  }
+);
 
 // JSON parsing
 app.use(express.json({ limit: '10mb' }));
@@ -117,6 +154,9 @@ app.use('/api', subscriptionsRoutes);
 
 // Chat REST routes: GET /api/chat/messages/*, DELETE
 app.use('/api', chatRoutes);
+
+// Stripe routes: Connect onboarding, status, config
+app.use('/api', stripeRoutes);
 
 // ============================================================
 // Default route

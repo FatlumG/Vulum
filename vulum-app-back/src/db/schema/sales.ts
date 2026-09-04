@@ -1,4 +1,4 @@
-import { pgTable, integer, decimal, timestamp, index } from 'drizzle-orm/pg-core';
+import { pgTable, integer, varchar, decimal, timestamp, index } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { users } from './users';
 import { orders } from './orders';
@@ -27,6 +27,17 @@ export const sales = pgTable('sales', {
   userId: integer('user_id')
     .references(() => users.id, { onDelete: 'set null' }),
   totalPrice: decimal('total_price', { precision: 12, scale: 2 }).notNull().default('0.00'),
+  grossAmount: decimal('gross_amount', { precision: 12, scale: 2 }),
+  platformFee: decimal('platform_fee', { precision: 12, scale: 2 }),
+  stripeFee: decimal('stripe_fee', { precision: 12, scale: 2 }),
+  netAmount: decimal('net_amount', { precision: 12, scale: 2 }),
+  commissionRate: decimal('commission_rate', { precision: 5, scale: 2 }),
+  currency: varchar('currency', { length: 10 }).default('eur'),
+  stripePaymentIntentId: varchar('stripe_payment_intent_id', { length: 255 }),
+  // Refund tracking — original values preserved above for audit.
+  refundedAmount: decimal('refunded_amount', { precision: 12, scale: 2 }).default('0.00').notNull(),
+  refundStatus: varchar('refund_status', { length: 20 }).default('none').notNull(), // none | partial | full
+  refundedAt: timestamp('refunded_at'),
   soldAt: timestamp('sold_at').defaultNow().notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 }, (t) => ({

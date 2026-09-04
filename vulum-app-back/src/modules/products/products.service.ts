@@ -28,6 +28,7 @@ import { db } from '../../db/client';
 import { products, productImages, categories } from '../../db/schema';
 import { eq, count, sql, desc, asc, like, and, isNull, ilike } from 'drizzle-orm';
 import { NotFoundError } from '../../shared/errors';
+import { createProductPrice } from '../stripe/stripe.service';
 import type {
   ProductResponse,
   ProductDetailResponse,
@@ -305,9 +306,9 @@ export async function getProductsBySearch(search: string): Promise<ProductRespon
 }
 
 // ============================================================
-// create — Create product with images
+// create — Create product with images + Stripe Product/Price
 // V1: creates Stripe product+price, then saves to DB
-// V2: skips Stripe (Phase 4), saves directly to DB
+// V2: creates Stripe Product+Price, then saves to DB with Stripe IDs
 // ============================================================
 
 export async function create(
@@ -315,6 +316,21 @@ export async function create(
   userId: number
 ): Promise<{ product: ProductResponse; images: ProductImageResponse[] }> {
   const { product: productData, images: imageData } = data;
+
+  // Create Stripe Product + Price
+  let stripeProductId: string | null = null;
+  let stripePriceId: string | null = null;
+  try {
+    const stripeResult = await createProductPrice(
+      productData.product_name,
+      productData.price
+    );
+    stripeProductId = stripeResult.stripeProductId;
+    stripePriceId = stripeResult.stripePriceId;
+  } catch (err: any) {
+    // Stripe creation failed — log but don't block product creation
+    console.warn('Failed to create Stripe Product/Price:', err.message);
+  }
 
   // Insert product
   const [productRow] = await db
@@ -327,6 +343,8 @@ export async function create(
       categoryId: productData.category_id,
       createdBy: userId,
       status: 'pending',
+      stripeProductId,
+      stripePriceId,
     })
     .returning();
 

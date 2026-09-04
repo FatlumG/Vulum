@@ -26,6 +26,10 @@ import { authenticate } from '../../shared/middleware/authenticate';
 import { validate, schemas } from '../../shared/validation';
 import { NotFoundError } from '../../shared/errors';
 import * as plansService from './plans.service';
+import stripe, { stripeConfig } from '../../config/stripe';
+import { db } from '../../db/client';
+import { users } from '../../db/schema';
+import { eq } from 'drizzle-orm';
 
 const router = Router();
 
@@ -62,17 +66,55 @@ router.get(
 );
 
 // POST /pricing/checkout-session
-// Stripe checkout — DEFERRED to Phase 4
+// Stripe subscription checkout
 router.post(
   '/pricing/checkout-session',
   authenticate,
-  async (_req: Request, res: Response) => {
-    res.status(501).json({
-      error: {
-        code: 'NOT_IMPLEMENTED',
-        message: 'Stripe checkout session is deferred to Phase 4',
-      },
-    });
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user!.userId;
+      const { plan_id } = req.body;
+
+      if (!plan_id) {
+        return res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'plan_id is required' } });
+      }
+
+      // Fetch plan
+      const plan = await plansService.findOneById(Number(plan_id));
+      if (!plan.stripe_price_id) {
+        return res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'Plan has no Stripe price configured' } });
+      }
+
+      // Fetch user for email
+      const userResult = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+      const user = userResult[0];
+      if (!user) {
+        return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'User not found' } });
+      }
+
+      // Create Stripe Checkout Session for subscription
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        mode: 'subscription',
+        customer_email: user.email,
+        line_items: [
+          {
+            price: plan.stripe_price_id,
+            quantity: 1,
+          },
+        ],
+        success_url: stripeConfig.successUrl,
+        cancel_url: stripeConfig.cancelUrl,
+        metadata: {
+          userId: String(userId),
+          planId: String(plan_id),
+        },
+      });
+
+      res.json({ url: session.url });
+    } catch (error) {
+      next(error);
+    }
   }
 );
 
