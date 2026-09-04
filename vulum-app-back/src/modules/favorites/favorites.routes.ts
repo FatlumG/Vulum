@@ -19,6 +19,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { authenticate } from '../../shared/middleware/authenticate';
 import { validate, schemas } from '../../shared/validation';
+import { ValidationError } from '../../shared/errors';
 import * as favoritesService from './favorites.service';
 
 const router = Router();
@@ -67,6 +68,7 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = Number(req.params.id);
+      if (isNaN(id) || id <= 0) throw new ValidationError('Invalid ID parameter');
       const result = await favoritesService.findOneById(id);
       res.json(result);
     } catch (error) {
@@ -100,6 +102,7 @@ router.put(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = Number(req.params.id);
+      if (isNaN(id) || id <= 0) throw new ValidationError('Invalid ID parameter');
       const result = await favoritesService.updateOneById(id, req.body);
       res.json(result);
     } catch (error) {
@@ -115,6 +118,7 @@ router.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = Number(req.params.id);
+      if (isNaN(id) || id <= 0) throw new ValidationError('Invalid ID parameter');
       await favoritesService.deleteOneById(id);
       res.status(204).send();
     } catch (error) {
