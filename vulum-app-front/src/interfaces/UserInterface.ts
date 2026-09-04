@@ -14,6 +14,7 @@ export interface userInterface {
   products: number;
   profile_photo_url: null;
   role: any;
+  role_name: string;
   sales: number;
   todos: number;
   username: string;

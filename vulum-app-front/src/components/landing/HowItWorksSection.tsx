@@ -4,68 +4,56 @@ const HowItWorksSection = () => {
   return (
     <section
       id="how-it-works"
-      className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gray-50"
+      className="py-32 md:py-48 px-4 sm:px-6 lg:px-8 bg-muted/30"
     >
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-10 sm:mb-16">
-          <span className="text-primaryBlue font-semibold text-xs sm:text-sm uppercase tracking-wider">
-            How It Works
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mt-3 sm:mt-4 mb-4 sm:mb-6">
-            Simple as 1, 2, 3
+        <div className="text-center mb-16 md:mb-20">
+          <h2
+            className="font-extrabold text-foreground tracking-tight mb-4"
+            style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)" }}
+          >
+            Three steps to start selling
           </h2>
-          <p className="text-base sm:text-xl text-gray-600 max-w-2xl mx-auto px-2">
-            Get started in minutes and start selling your digital products
-            today.
+          <p className="text-muted-foreground max-w-xl mx-auto" style={{ fontSize: "clamp(1rem, 1.5vw, 1.125rem)" }}>
+            Get started in minutes. No technical skills required.
           </p>
         </div>
 
-        {/* Steps Grid */}
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 relative">
-          {/* Connection Line - only visible on md and up */}
-          <div className="hidden md:block absolute top-24 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-primaryBlue via-indigo-400 to-primaryBlue"></div>
-
+        {/* Horizontal Step Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
           {steps.map((step, index) => (
-            <StepCard key={index} step={step} />
+            <div
+              key={index}
+              className="group relative overflow-hidden rounded-2xl bg-card border border-border p-8 hover:shadow-card-hover transition-all duration-500 cursor-default"
+            >
+              {/* Step number */}
+              <div className="text-7xl sm:text-8xl font-extrabold text-primaryBlue/5 absolute -top-2 -right-1 select-none group-hover:text-primaryBlue/10 transition-colors duration-500">
+                {step.step}
+              </div>
+
+              <div className="relative z-10">
+                {/* Icon */}
+                <div className="w-14 h-14 rounded-xl bg-primaryBlue/10 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-primaryBlue/15 transition-all duration-300">
+                  {step.icon}
+                </div>
+
+                {/* Content */}
+                <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2">
+                  {step.title}
+                </h3>
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  {step.description}
+                </p>
+              </div>
+
+              {/* Bottom accent line */}
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primaryBlue to-indigo-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+            </div>
           ))}
         </div>
       </div>
     </section>
-  );
-};
-
-// Step Card Sub-component
-interface StepCardProps {
-  step: {
-    icon: React.ReactNode;
-    step: string;
-    title: string;
-    description: string;
-  };
-}
-
-const StepCard = ({ step }: StepCardProps) => {
-  return (
-    <div className="relative">
-      <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-shadow text-center">
-        {/* Step Number */}
-        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primaryBlue text-white flex items-center justify-center mx-auto mb-4 sm:mb-6 text-xl sm:text-2xl font-bold relative z-10">
-          {step.step}
-        </div>
-
-        {/* Step Icon */}
-        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl bg-blue-100 flex items-center justify-center mx-auto mb-4 sm:mb-6">
-          {step.icon}
-        </div>
-
-        {/* Step Content */}
-        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
-          {step.title}
-        </h3>
-        <p className="text-sm sm:text-base text-gray-600">{step.description}</p>
-      </div>
-    </div>
   );
 };
 

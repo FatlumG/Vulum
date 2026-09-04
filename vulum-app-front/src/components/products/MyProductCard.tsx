@@ -90,50 +90,74 @@ const MyProductCard: FC<ProductCardProps> = ({
     }
   }
 
+  const getStatusStyles = (s: string) => {
+    switch (s) {
+      case "available":
+        return "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400";
+      case "unavailable":
+        return "bg-red-500/10 text-red-700 dark:text-red-400";
+      case "sold":
+        return "bg-amber-500/10 text-amber-700 dark:text-amber-400";
+      default:
+        return "bg-muted text-muted-foreground";
+    }
+  };
+
   return (
-    <div className="h-[400px] w-[300px] my-2 bg-white rounded-xl grid grid-rows-3 shadow-xl">
+    <div className="bg-card rounded-xl border border-border overflow-hidden hover:shadow-card-hover transition-all duration-300 group">
+      {/* Image */}
       <Link
-        to={`${
-          page === "myProducts" ? `/products/${slug}` : `/products/view/${slug}`
-        }`}
-        className="w-full h-full row-span-2"
+        to={
+          page === "myProducts"
+            ? `/products/${slug}`
+            : `/products/view/${slug}`
+        }
+        className="block relative overflow-hidden aspect-[4/3]"
       >
         <img
           src={image}
           alt={alt}
-          className="p-2 w-full h-full object-cover rounded-2xl hover:scale-105 hover:brightness-50 transition-all"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
       </Link>
-      <div className="px-5 py-4 pt-1 row-span-1 flex flex-col justify-between items-start">
-        <div className="flex items-center justify-between w-full">
-          <h2>{title}</h2>
+
+      {/* Content */}
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <h3 className="font-semibold text-foreground text-sm truncate">
+            {title}
+          </h3>
           {isFavorited ? (
             <MdOutlineFavorite
-              className="text-2xl cursor-pointer text-red-500 hover:scale-150 transition-all"
+              className="text-lg shrink-0 cursor-pointer text-red-500 hover:scale-125 transition-transform"
               onClick={() => removeFavoriteProduct(id)}
             />
           ) : (
             <MdOutlineFavoriteBorder
-              className="text-2xl cursor-pointer hover:scale-105 transition-all"
+              className="text-lg shrink-0 cursor-pointer text-muted-foreground hover:text-red-500 hover:scale-110 transition-all"
               onClick={() => addFavoriteProduct(id)}
             />
           )}
         </div>
-        <div className="w-full flex justify-between items-center">
-          <p className="text-sm">${price}</p>
-          <p className="text-sm">{stock} left</p>
+
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-sm font-semibold text-foreground">${price}</p>
+          <p className="text-xs text-muted-foreground">{stock} left</p>
         </div>
-        <div className="w-full flex justify-between items-center">
+
+        <div className="flex items-center justify-between gap-2">
           {page === "myProducts" ? (
             <Link
               to={`/products/${slug}`}
-              className="text-sm px-3 py-2 bg-slate-200 rounded-xl cursor-pointer"
+              className="text-xs px-3 py-1.5 bg-muted text-muted-foreground rounded-lg hover:bg-accent transition-colors"
             >
-              Edit product
+              Edit
             </Link>
           ) : page === "pendings" ? (
             <Button
-              className="text-sm px-3 py-2 bg-slate-500 rounded-xl text-white cursor-pointer hover:"
+              size="sm"
+              className="text-xs h-7 bg-emerald-500 hover:bg-emerald-600 text-white"
               onClick={() => allowOnSale(id)}
             >
               Allow on Sale
@@ -141,32 +165,29 @@ const MyProductCard: FC<ProductCardProps> = ({
           ) : (
             <Link
               to={`/products/view/${slug}`}
-              className="text-sm px-3 py-2 bg-slate-200 rounded-xl cursor-pointer"
+              className="text-xs px-3 py-1.5 bg-muted text-muted-foreground rounded-lg hover:bg-accent transition-colors"
             >
-              View Product
+              View
             </Link>
           )}
+
           {page === "pendings" ? (
             <Button
-              className="text-sm px-3 py-2 bg-slate-500 rounded-xl text-white cursor-pointer hover:"
+              size="sm"
+              variant="outline"
+              className="text-xs h-7"
               onClick={() => disallowOnSale(id)}
             >
-              Don't Allow
+              Deny
             </Button>
           ) : (
-            <p
-              className={`text-sm p-1 px-2 rounded-xl ${
-                status === "available"
-                  ? "bg-green-200"
-                  : status === "unavailable"
-                  ? "bg-red-200"
-                  : status === "sold"
-                  ? "bg-orange-200"
-                  : "bg-yellow-200"
-              }`}
+            <span
+              className={`text-xs px-2 py-1 rounded-md font-medium ${getStatusStyles(
+                product?.status || status
+              )}`}
             >
               {product?.status || status}
-            </p>
+            </span>
           )}
         </div>
       </div>

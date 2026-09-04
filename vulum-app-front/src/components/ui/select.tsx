@@ -18,9 +18,9 @@ const Select: React.FC<SelectProps> = ({
 }) => {
   return (
     <div className="flex flex-col">
-      <label className="mb-1 font-semibold text-lg ">{label}</label>
+      <label className="mb-1 text-sm font-medium text-foreground">{label}</label>
       <select
-        className="border border-gray-300 rounded-md px-3 py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        className="border border-input rounded-lg px-3 py-2 text-sm bg-background text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 transition-all disabled:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
         disabled={disabled}

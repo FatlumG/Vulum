@@ -15,9 +15,9 @@ const productsSlice = createSlice({
       const product = state.find((p) => p.id === action.payload.id);
       if (product) {
         // self-ignored
-        product.Status = action.payload.status;
+        product.status = action.payload.status;
         console.log(
-          `Updated product ${product.id} status to ${product.Status}`
+          `Updated product ${product.id} status to ${product.status}`
         );
       }
     },

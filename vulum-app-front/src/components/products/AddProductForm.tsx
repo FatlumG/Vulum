@@ -75,8 +75,8 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
           // dispatch(startLoading());
           // console.log("Fetching categories");
           const res = await api.get("/categories");
-          setCategories(res.data.rows);
-          console.log(res.data.rows, "res.data.rows");
+          setCategories(res.data.items);
+          console.log(res.data.items, "res.data.items");
           // dispatch(stopLoading());
         } catch (error) {
           console.error("Error fetching categories:", error);
@@ -278,11 +278,11 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
 
     return (
       <form
-        className="mt-5 grid grid-cols-5 grid-rows-3 gap-5"
+        className="mt-5 grid grid-cols-1 lg:grid-cols-5 grid-rows-auto lg:grid-rows-3 gap-5"
         onSubmit={handleSubmit(addProduct, onError)}
         ref={ref}
       >
-        <div className="col-span-3 row-span-2 grid grid-rows-6 gap-5 bg-gray-200 p-7 rounded-xl shadow-lg">
+        <div className="col-span-1 lg:col-span-3 row-span-2 grid grid-rows-6 gap-5 bg-card border border-border p-7 rounded-2xl">
           <span className="row-span-1 font-semibold text-lg">General Info</span>
           <div className="row-span-2">
             <Label htmlFor="pName">Product Name</Label>
@@ -319,7 +319,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
             />
           </div>
         </div>
-        <div className="col-span-2 row-span-2 flex flex-col gap-5 bg-gray-200 p-7 rounded-xl shadow-lg">
+        <div className="col-span-1 lg:col-span-2 row-span-2 flex flex-col gap-5 bg-card border border-border p-7 rounded-2xl">
           <span className="row-span-1 font-semibold text-lg">
             Upload Images
           </span>
@@ -341,7 +341,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
                 );
               })}
             </div>
-            <div className="w-60 h-64 relative group bg-white rounded-md cursor-pointer hover:scale-[1.01] transition overflow-hidden">
+            <div className="w-60 h-64 relative group bg-card border border-border rounded-xl cursor-pointer hover:scale-[1.01] transition overflow-hidden">
               {images[selectedImageIndex || 0] instanceof File && (
                 <>
                   <img
@@ -351,13 +351,13 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
                   />
                   <IoTrashBin
                     onClick={() => handleRemoveImage(selectedImageIndex || 0)}
-                    className="w-6 h-6 p-1 absolute bottom-2 right-2 text-red-500 bg-white rounded-md cursor-pointer hover:transform hover:scale-110"
+                    className="w-6 h-6 p-1 absolute bottom-2 right-2 text-red-500 bg-card rounded-lg cursor-pointer hover:transform hover:scale-110"
                   />
                 </>
               )}
             </div>
           </div>
-          <div className="relative w-full h-20 bg-white rounded-md grid place-items-center cursor-pointer hover:scale-[1.03] transition">
+          <div className="relative w-full h-20 bg-card border border-border rounded-xl grid place-items-center cursor-pointer hover:scale-[1.03] transition">
             <Input
               type="file"
               id="pImage"
@@ -368,7 +368,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
             <FaPlusCircle className="text-primaryBlue" />
           </div>
         </div>
-        <div className="col-span-3 row-span-2 grid grid-cols-2 grid-rows-3 gap-5 bg-gray-200 h-[180px] p-7 rounded-xl shadow-lg">
+        <div className="col-span-1 lg:col-span-3 row-span-2 grid grid-cols-2 grid-rows-3 gap-5 bg-card border border-border p-7 rounded-2xl">
           <span className="row-span-1 col-span-2 font-semibold text-lg">
             Pricing and Stock
           </span>
@@ -412,7 +412,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
             />
           </div>
         </div>
-        <div className="col-span-2 row-span-2 flex flex-col gap-5 bg-gray-200 h-[180px] p-7 rounded-xl shadow-lg">
+        <div className="col-span-1 lg:col-span-2 row-span-2 flex flex-col gap-5 bg-card border border-border p-7 rounded-2xl">
           <Select
             label="Product Category"
             options={categories ?? []}
@@ -424,7 +424,7 @@ const AddProductForm = forwardRef<HTMLFormElement, AddProductFormProps>(
           />
           <Button
             type="button"
-            className="rounded-3xl bg-primaryBlue relative transition-all duration-300 active:-translate-y-[2px]"
+            className="rounded-xl bg-primaryBlue hover:bg-darkBlue text-white relative transition-all duration-300 active:-translate-y-[2px]"
             onClick={() => {}}
           >
             Add Category

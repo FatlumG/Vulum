@@ -12,8 +12,9 @@ export const useAllProducts = () => {
     async function fetchProducts() {
       try {
         const res = await api.get("/products/available-products");
-        setLocalProducts(res.data);
-        dispatch(setProducts(res.data));
+        const items = res.data.items || res.data;
+        setLocalProducts(items);
+        dispatch(setProducts(items));
       } catch (error) {
         console.error(error);
       }

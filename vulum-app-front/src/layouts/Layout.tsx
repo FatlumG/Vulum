@@ -25,8 +25,8 @@ const Layout: FC<LayoutProps> = ({ children }) => {
     fetchUser();
   }, []);
 
-  const userInitials = `${user?.FName?.[0].toUpperCase() ?? ""}${
-    user?.LName?.[0].toUpperCase() ?? ""
+  const userInitials = `${user?.first_name?.[0].toUpperCase() ?? ""}${
+    user?.last_name?.[0].toUpperCase() ?? ""
   }`;
   // console.log(userInitials, "userInitials");
 
@@ -34,8 +34,8 @@ const Layout: FC<LayoutProps> = ({ children }) => {
     <>
       <Header
         userInitials={userInitials}
-        FullName={user?.FullName ?? ""}
-        RoleName={user?.role.RoleName}
+        FullName={`${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim()}
+        RoleName={user?.role_name ?? ""}
       />
       <div className="grid grid-cols-12">
         <DashboardSidebar classes="col-span-2" />

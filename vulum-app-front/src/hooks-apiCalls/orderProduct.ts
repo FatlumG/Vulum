@@ -11,13 +11,14 @@ export const useOrderProduct = async (id: number) => {
         },
       ],
     });
+    // V2 returns { url, invoiceId } — redirect to Stripe Checkout
     const url = response.data.url;
     if (url) {
       window.location.href = url;
     }
     return response.data;
   } catch (error: any) {
-    toast.error(error.response.data.message);
-    // console.error(error.response.data, "error.response.data");
+    const message = error.response?.data?.error?.message || error.response?.data?.message || 'Order failed';
+    toast.error(message);
   }
 };

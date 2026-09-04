@@ -49,7 +49,7 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
         try {
           const res = await api.get(`/products/${id}`);
           setProduct(res.data);
-          setImages(res.data.productImages);
+          setImages(res.data.product_images);
         } catch (error: any) {
           notify.error(error.response.data.message);
           console.error(error.message, "error.message");
@@ -62,8 +62,8 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
       const fetchCategories = async () => {
         try {
           const res = await api.get("/categories");
-          // console.log(res.data.rows, "res.data.rows");
-          setCategories(res.data.rows);
+          // console.log(res.data.items, "res.data.items");
+          setCategories(res.data.items);
         } catch (error) {
           notify.error("Failed to fetch categories");
           console.error("Error fetching categories:", error);
@@ -109,12 +109,11 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
       console.log(product.Category, "product");
 
       return {
-        ProductName: product.ProductName,
-        ProductDescription: product.ProductDescription,
-        Price: Number(product.Price),
-        Stock: Number(product.Stock),
-        // @ts-ignore
-        Category: Number(product.category.id),
+        product_name: product.ProductName,
+        product_description: product.ProductDescription,
+        price: Number(product.Price),
+        stock: Number(product.Stock),
+        category_id: Number(product.Category ?? selectedCategory),
       };
     }
 
@@ -138,11 +137,11 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
 
     return (
       <form
-        className="mt-5 grid grid-cols-5 grid-rows-3 gap-5"
+        className="mt-5 grid grid-cols-1 lg:grid-cols-5 grid-rows-auto lg:grid-rows-3 gap-5"
         onSubmit={updateProduct}
         ref={ref}
       >
-        <div className="col-span-3 row-span-2 grid grid-rows-6 gap-5 bg-gray-200 p-7 rounded-xl shadow-lg">
+        <div className="col-span-1 lg:col-span-3 row-span-2 grid grid-rows-6 gap-5 bg-card border border-border p-7 rounded-2xl">
           <span className="row-span-1 font-semibold text-lg">General Info</span>
           <div className="row-span-2">
             <Label htmlFor="pName">Product Name</Label>
@@ -171,7 +170,7 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
             />
           </div>
         </div>
-        <div className="col-span-2 row-span-2 flex flex-col gap-5 bg-gray-200 p-7 rounded-xl shadow-lg">
+        <div className="col-span-1 lg:col-span-2 row-span-2 flex flex-col gap-5 bg-card border border-border p-7 rounded-2xl">
           <span className="row-span-1 font-semibold text-lg">
             Upload Images
           </span>
@@ -195,7 +194,7 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
                 );
               })}
             </div>
-            <div className="w-60 h-64 relative group bg-white rounded-md cursor-pointer hover:scale-[1.01] transition overflow-hidden">
+            <div className="w-60 h-64 relative group bg-card border border-border rounded-xl cursor-pointer hover:scale-[1.01] transition overflow-hidden">
               {images[selectedImageIndex || 0] && (
                 <>
                   <img
@@ -209,13 +208,13 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
                   />
                   <IoTrashBin
                     // onClick={() => handleRemoveImage(selectedImageIndex || 0)}
-                    className="w-6 h-6 p-1 absolute bottom-2 right-2 text-red-500 bg-white rounded-md cursor-pointer hover:transform hover:scale-110"
+                    className="w-6 h-6 p-1 absolute bottom-2 right-2 text-red-500 bg-card rounded-lg cursor-pointer hover:transform hover:scale-110"
                   />
                 </>
               )}
             </div>
           </div>
-          <div className="relative w-full h-20 bg-white rounded-md grid place-items-center cursor-pointer hover:scale-[1.03] transition">
+          <div className="relative w-full h-20 bg-card border border-border rounded-xl grid place-items-center cursor-pointer hover:scale-[1.03] transition">
             <Input
               // type="file"
               id="pImage"
@@ -230,7 +229,7 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
             <Label htmlFor="pImage">Product Images</Label>
           </div>
         </div>
-        <div className="col-span-3 row-span-2 grid grid-cols-2 grid-rows-3 gap-5 bg-gray-200 h-[180px] p-7 rounded-xl shadow-lg">
+        <div className="col-span-1 lg:col-span-3 row-span-2 grid grid-cols-2 grid-rows-3 gap-5 bg-card border border-border p-7 rounded-2xl">
           <span className="row-span-1 col-span-2 font-semibold text-lg">
             Pricing and Stock
           </span>
@@ -264,7 +263,7 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
             />
           </div>
         </div>
-        <div className="col-span-2 row-span-2 flex flex-col gap-5 bg-gray-200 h-[180px] p-7 rounded-xl shadow-lg">
+        <div className="col-span-1 lg:col-span-2 row-span-2 flex flex-col gap-5 bg-card border border-border p-7 rounded-2xl">
           <Select
             label="Product Category"
             options={categories ?? []}
@@ -276,7 +275,7 @@ const UpdateProductForm = forwardRef<HTMLFormElement, UpdateProductFormProps>(
           />
           <Button
             type="button"
-            className="rounded-3xl bg-primaryBlue"
+            className="rounded-xl bg-primaryBlue hover:bg-darkBlue text-white"
             onClick={() => {}}
           >
             Add Category

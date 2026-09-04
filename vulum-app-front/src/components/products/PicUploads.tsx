@@ -7,7 +7,7 @@ interface PicUploadsProps {
 const PicUploads: FC<PicUploadsProps> = ({ src, onClick }) => {
   return (
     <div
-      className="!w-20 !h-20 bg-white rounded-md cursor-pointer hover:scale-105 transition-all overflow-hidden flex-shrink-0"
+      className="!w-20 !h-20 bg-card border border-border rounded-xl cursor-pointer hover:scale-105 transition-all overflow-hidden flex-shrink-0"
       onClick={onClick}
     >
       <img

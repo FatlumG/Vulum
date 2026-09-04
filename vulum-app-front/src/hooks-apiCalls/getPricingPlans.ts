@@ -1,15 +1,15 @@
-import { FC, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import api from "../auth/api";
 
-export const getPricingPlans: FC = () => {
+export const getPricingPlans = () => {
   const [plans, setPlans] = useState([]);
 
   useEffect(() => {
     const getPlans = async () => {
       try {
         const res = await api.get("/pricing");
-        setPlans(res.data.rows);
-        console.log(res.data.rows, "res.data.rows");
+        setPlans(res.data.items || res.data);
+        console.log(res.data.items || res.data, "res.data.items");
         
       } catch (error: any) {
         console.error(error.message);

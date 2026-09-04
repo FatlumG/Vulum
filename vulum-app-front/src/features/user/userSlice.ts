@@ -2,13 +2,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserUpdateInterface } from "../../interfaces/UserUpdateInterface";
 
 const initialState: UserUpdateInterface = {
-  Username: "",
-  FName: "",
-  LName: "",
-  Email: "",
-  Phone: "",
-  Address: "",
-  Bio: "",
+  username: "",
+  first_name: "",
+  last_name: "",
+  email: "",
+  phone: "",
+  address: "",
+  bio: "",
 };
 
 export const userSlice = createSlice({

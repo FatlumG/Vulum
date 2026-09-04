@@ -14,13 +14,23 @@ const AddProductPage: React.FC = () => {
   };
 
   return (
-    <>
-      <div className="w-full my-7 flex justify-between">
-        <span className="text-2xl">Create New Product</span>
-        <div className="flex gap-3">
-          <Button className="rounded-3xl bg-primaryBlue">Save Draft</Button>
+    <div className="page-enter">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">
+            Create New Product
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Fill in the details to list a new product.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm">
+            Save Draft
+          </Button>
           <Button
-            className="rounded-3xl bg-primaryBlue"
+            size="sm"
+            className="bg-primaryBlue hover:bg-darkBlue text-white"
             onClick={handleAddClick}
           >
             Add Product
@@ -28,7 +38,7 @@ const AddProductPage: React.FC = () => {
         </div>
       </div>
       <AddProductForm onSubmit={handleFormSubmit} ref={formRef} />
-    </>
+    </div>
   );
 };
 
